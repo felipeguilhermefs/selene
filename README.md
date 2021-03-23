@@ -1,24 +1,22 @@
-# Pages:
 
-*FE will be changed to a rect app in the future*
-
-## Signup Page
+---
+# Signup Page
 
 **URL:** `GET /signup`
 
-### Form Fields:
+## Form Fields:
 - Name *
 - Email *
 - Password *
 
-### Flow
+## Flow
 
 1. Clicking in Signup button should send `POST /api/users`
 1. Model validations should be done in server
 1. *OK:* User should be logged in and redirected to **Books Page**
 1. *Error:* Error should pop up in **Signup Page**
 
-### Requirements
+## Requirements
 - *Name:*
   - Non blank
   - 200 max length
@@ -32,23 +30,22 @@
   - Server should salt and pepper
 
 ---
-
-## Login Page
+# Login Page
 
 **URL:** `GET /login`
 
-### Form Fields:
+## Form Fields:
 - Email *
 - Password *
 
-### Flow
+## Flow
 
 1. Clicking in Login button should send `POST /api/login`
 1. Model validations should be done in server
 1. *OK:* User should be logged in and redirected to **Books Page**
 1. *Error:* Error should pop up in **Login Page**
 
-### Requirements
+## Requirements
 - *Email*
   - 200 max length
   - Email format
@@ -61,7 +58,8 @@
 ## GET /books/create
 ## GET /books/:id/edit
 ## GET /books/:id/view
-
+---
 # Next Steps:
 - Use external Auth provider like Auth0
 - Drop custom user CRUD
+- Migrate FE to React
