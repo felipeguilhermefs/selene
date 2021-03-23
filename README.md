@@ -3,8 +3,8 @@
 - [Login Page](./docs/pages/login)
 - [Books Page](./docs/pages/books)
 - [New Book Page](./docs/pages/new_book)
+- [Edit Book Page](./docs/pages/edit_book)
 
-## GET /books/:id/edit
 ## GET /books/:id/view
 ---
 # Next Steps:
