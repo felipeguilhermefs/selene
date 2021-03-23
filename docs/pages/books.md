@@ -18,16 +18,15 @@ Pageable Table roughly like:
 
 | Title | Author | Tags | Actions |
 | ----- | ------ | ---- | ------- |
-| The Hobbit | JRR Tolkien | adventure, fantasy | Edit , Delete, View |
-| The Raven | Edgar Allan Poe | terror | Edit , Delete, View |
+| The Hobbit | JRR Tolkien | adventure, fantasy | Edit , Delete |
+| The Raven | Edgar Allan Poe | terror | Edit , Delete |
 | | | < 1/10 > | |
 
 Default Page Size: 10
 
 ### Flow
 
-1. Clicking in Edit button should direct to [Edit Book Page](./edit_book.md)
-1. Clicking in View button should direct to [View Book Page](./view_book.md)
+1. Clicking in Edit button should direct to [Book Page](./book.md)
 1. Clicking in View button should send `DELETE /api/books/:id`
    - *OK:* should show an sucess message
    - *Error:* should show error message

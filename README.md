@@ -3,8 +3,7 @@
 - [Login Page](./docs/pages/login.md)
 - [Books Page](./docs/pages/books.md)
 - [New Book Page](./docs/pages/new_book.md)
-- [Edit Book Page](./docs/pages/edit_book.md)
-- [View Book Page](./docs/pages/view_book.md)
+- [Book Page](./docs/pages/book.md)
 
 ---
 # Next Steps:
