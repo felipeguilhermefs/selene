@@ -8,10 +8,9 @@
 - Login Form
 
 ---
-## Signup Form
+## Login Form
 
 ### Form Fields
-- Name *
 - Email *
 - Password *
 
@@ -22,12 +21,3 @@
 1. *OK:* User should be logged in and redirected to [Books Page](./books.md)
 1. *Error:* Error should pop up in [Login Page](./login.md)
 
-### Requirements
-- *Email*
-  - 200 max length
-  - Email format
-  - should exist in DB
-- *Password*
-  - 8 min length
-  - 200 max length
-  - Server should compare raw with salt and pepper
