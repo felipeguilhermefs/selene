@@ -4,6 +4,8 @@
 
 **URL:** `GET /books`
 
+*User should be logged in
+
 ## Components
 - Bookshelf
 - Book Search
@@ -58,5 +60,6 @@ Default Page Size: 10
 
 ### Flow
 
-1. Clicking in *New Book* button should redirect to [Books Page](./books)
+1. Clicking in *New Book* button should redirect to [New Book Page](./new_book)
+
 ---

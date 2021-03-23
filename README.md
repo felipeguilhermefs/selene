@@ -2,8 +2,8 @@
 - [Signup Page](./docs/pages/signup)
 - [Login Page](./docs/pages/login)
 - [Books Page](./docs/pages/books)
+- [New Book Page](./docs/pages/new_book)
 
-## GET /books/create
 ## GET /books/:id/edit
 ## GET /books/:id/view
 ---
