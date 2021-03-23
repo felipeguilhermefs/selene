@@ -26,8 +26,8 @@ Default Page Size: 10
 
 ### Flow
 
-1. Clicking in Edit button should direct to [Edit Book Page](./edit_book)
-1. Clicking in View button should direct to [View Book Page](./view_book)
+1. Clicking in Edit button should direct to [Edit Book Page](./edit_book.md)
+1. Clicking in View button should direct to [View Book Page](./view_book.md)
 1. Clicking in View button should send `DELETE /api/books/:id`
    - *OK:* should show an sucess message
    - *Error:* should show error message
@@ -49,7 +49,7 @@ Default Page Size: 10
    - text starts with `title:`, *Title:* contains text
    - text starts with `tag:`, *Tags:* contains text
    - blank text should not filter books
-1. User will be shown [Books Page](./books) with filtered books in *Bookshelf* component
+1. User will be shown [Books Page](./books.md) with filtered books in *Bookshelf* component
 
 ### Requirements
 - *Search Text*
@@ -60,6 +60,6 @@ Default Page Size: 10
 
 ### Flow
 
-1. Clicking in *New Book* button should redirect to [New Book Page](./new_book)
+1. Clicking in *New Book* button should redirect to [New Book Page](./new_book.md)
 
 ---
