@@ -4,8 +4,8 @@
 - [Books Page](./docs/pages/books)
 - [New Book Page](./docs/pages/new_book)
 - [Edit Book Page](./docs/pages/edit_book)
+- [View Book Page](./docs/pages/view_book)
 
-## GET /books/:id/view
 ---
 # Next Steps:
 - Use external Auth provider like Auth0

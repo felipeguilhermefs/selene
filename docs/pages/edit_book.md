@@ -1,6 +1,6 @@
 
 ---
-# Add Book Page
+# Edit Book Page
 
 **URL:** `GET /books/:id/edit`
 
