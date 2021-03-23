@@ -19,8 +19,8 @@
 
 1. Clicking in Signup button should send `POST /api/users`
 1. Model validations should be done in server
-1. *OK:* User should be logged in and redirected to **Books Page**
-1. *Error:* Error should pop up in **Signup Page**
+1. *OK:* User should be logged in and redirected to [Books Page](./books)
+1. *Error:* Error should pop up in [Signup Page](./signup)
 
 ### Requirements
 - *Name:*
