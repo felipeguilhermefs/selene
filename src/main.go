@@ -13,7 +13,7 @@ import (
 func newServer() http.Handler {
 	router := mux.NewRouter()
 
-	view, err := views.NewView("home")
+	view, err := views.NewView("books")
 	if err != nil {
 		panic(err)
 	}

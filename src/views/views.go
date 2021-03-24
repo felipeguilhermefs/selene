@@ -46,8 +46,25 @@ func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) {
 	w.Header().Set("Content-Type", "text/html")
 
+	type book struct {
+		ID uint
+		Title string
+		Author string
+		Tags string
+	}
+
+	books := struct {
+		Yield []book
+	}{
+		Yield: []book{
+			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
+			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
+			{3, "1984", "George Orwell", "dystopian, political fiction"},
+		},
+	}
+
 	var buf bytes.Buffer
-	if err := v.template.ExecuteTemplate(&buf, baseLayout, nil); err != nil {
+	if err := v.template.ExecuteTemplate(&buf, baseLayout, books); err != nil {
 		log.Println(err)
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
