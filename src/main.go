@@ -8,14 +8,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func YourHandler(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte("Gorilla!\n"))
-}
-
 func newServer() http.Handler {
 	router := mux.NewRouter()
 
-    router.HandleFunc("/", YourHandler)
+	view, err := NewView("home")
+	if err != nil {
+		panic(err)
+	}
+    router.Handle("/", view)
 
 	return router
 }
