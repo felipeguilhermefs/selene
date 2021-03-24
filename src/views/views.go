@@ -1,4 +1,4 @@
-package main
+package views
 
 import (
 	"bytes"
@@ -57,9 +57,9 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 }
 
 func findTemplateFiles(templateName string) ([]string, error) {
-	templateFile := fmt.Sprintf("templates/%s.gohtml", templateName)
+	templateFile := fmt.Sprintf("views/templates/%s.gohtml", templateName)
 
-	layoutFiles, err := filepath.Glob("templates/layouts/*.gohtml")
+	layoutFiles, err := filepath.Glob("views/templates/layouts/*.gohtml")
 	if err != nil {
 		return nil, err
 	}

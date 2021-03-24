@@ -6,23 +6,25 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"github.com/felipeguilhermefs/selene/views"
 )
 
 func newServer() http.Handler {
 	router := mux.NewRouter()
 
-	view, err := NewView("home")
+	view, err := views.NewView("home")
 	if err != nil {
 		panic(err)
 	}
-    router.Handle("/", view)
+	router.Handle("/", view)
 
 	return router
 }
 
 func run() error {
 	server := newServer()
-	port := 8000;
+	port := 8000
 
 	log.Printf("Server started at :%d...\n", port)
 
