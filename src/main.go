@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/felipeguilhermefs/selene/views"
+	// "github.com/felipeguilhermefs/selene/views"
 )
 
 type server struct {
@@ -18,18 +18,39 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
 
+func (s *server) handleBooksPage() http.HandlerFunc {
+	type book struct {
+		ID     uint
+		Title  string
+		Author string
+		Tags   string
+	}
+
+	books := struct {
+		Yield []book
+	}{
+		Yield: []book{
+			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
+			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
+			{3, "1984", "George Orwell", "dystopian, political fiction"},
+		},
+	}
+
+	return HandleTemplate("books", func(r *http.Request) (interface{}, error) {
+		return books, nil
+	})
+}
+
 func newServer() (*server, error) {
 	router := mux.NewRouter()
 
-	view, err := views.NewView("books")
-	if err != nil {
-		return nil, err
-	}
-	router.Handle("/", view)
-
-	return &server{
+	s := server{
 		router: router,
-	}, nil
+	}
+
+	router.Handle("/", s.handleBooksPage())
+
+	return &s, nil
 }
 
 func run() error {
