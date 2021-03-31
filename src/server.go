@@ -24,7 +24,7 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 		Tags   string
 	}
 
-	books := struct {
+	data := struct {
 		Yield []book
 	}{
 		Yield: []book{
@@ -35,7 +35,33 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 	}
 
 	return HandleTemplate("books", func(r *http.Request) (interface{}, error) {
-		return books, nil
+		return data, nil
+	})
+}
+
+func (s *Server) handleBookPage() http.HandlerFunc {
+	type book struct {
+		ID       uint
+		Title    string
+		Author   string
+		Comments string
+		Tags     string
+	}
+
+	data := struct {
+		Yield book
+	}{
+		Yield: book{
+			ID:       2,
+			Title:    "Do Androids Dream of Electric Sheep?",
+			Author:   "Philip K. Dick",
+			Comments: "quero muito ler esse",
+			Tags:     "sci-fi, philosophical",
+		},
+	}
+
+	return HandleTemplate("book", func(r *http.Request) (interface{}, error) {
+		return data, nil
 	})
 }
 
@@ -47,7 +73,8 @@ func NewServer() (*Server, error) {
 		router: router,
 	}
 
-	router.Handle("/", s.handleBooksPage())
+	router.Handle("/books", s.handleBooksPage())
+	router.Handle("/books/{id:[0-9]+}", s.handleBookPage())
 
 	return &s, nil
 }
