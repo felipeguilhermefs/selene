@@ -10,20 +10,34 @@ import (
 	"github.com/felipeguilhermefs/selene/views"
 )
 
-func newServer() http.Handler {
+type server struct {
+	router *mux.Router
+}
+
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.router.ServeHTTP(w, r)
+}
+
+func newServer() (*server, error) {
 	router := mux.NewRouter()
 
 	view, err := views.NewView("books")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	router.Handle("/", view)
 
-	return router
+	return &server{
+		router: router,
+	}, nil
 }
 
 func run() error {
-	server := newServer()
+	server, err := newServer()
+	if err != nil {
+		return err
+	}
+
 	port := 8000
 
 	log.Printf("Server started at :%d...\n", port)
