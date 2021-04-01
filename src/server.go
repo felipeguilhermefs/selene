@@ -65,6 +65,30 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 	})
 }
 
+func (s *Server) handleNewBookPage() http.HandlerFunc {
+	type book struct {
+		Title    string
+		Author   string
+		Comments string
+		Tags     string
+	}
+
+	data := struct {
+		Yield book
+	}{
+		Yield: book{
+			Title:    "American Gods",
+			Author:   "Neil Gaiman",
+			Comments: "opa",
+			Tags:     "fantasy",
+		},
+	}
+
+	return HandleTemplate("new_book", func(r *http.Request) (interface{}, error) {
+		return data, nil
+	})
+}
+
 // NewServer creates a new server instance
 func NewServer() (*Server, error) {
 	router := mux.NewRouter()
@@ -73,8 +97,9 @@ func NewServer() (*Server, error) {
 		router: router,
 	}
 
-	router.Handle("/books", s.handleBooksPage())
-	router.Handle("/books/{id:[0-9]+}", s.handleBookPage())
+	router.HandleFunc("/books", s.handleBooksPage()).Methods("GET")
+	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
+	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
 
 	return &s, nil
 }
