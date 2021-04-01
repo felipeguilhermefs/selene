@@ -40,7 +40,7 @@ func HandleTemplate(name string, fetcher TemplateDataFetcher) http.HandlerFunc {
 				return
 			}
 
-			tpl, tplerr = template.New("").ParseFiles(templateFiles...)
+			tpl, tplerr = template.ParseFiles(templateFiles...)
 		})
 
 		if tplerr != nil {
