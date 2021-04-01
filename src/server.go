@@ -24,9 +24,8 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 		Tags   string
 	}
 
-	data := struct {
-		Yield []book
-	}{
+	data := TemplateData{
+		User:  "someone",
 		Yield: []book{
 			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
 			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
@@ -34,8 +33,8 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("books", func(r *http.Request) (interface{}, error) {
-		return data, nil
+	return HandleTemplate("books", func(r *http.Request) (*TemplateData, error) {
+		return &data, nil
 	})
 }
 
@@ -48,9 +47,8 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 		Tags     string
 	}
 
-	data := struct {
-		Yield book
-	}{
+	data := TemplateData{
+		User:  "someone",
 		Yield: book{
 			ID:       2,
 			Title:    "Do Androids Dream of Electric Sheep?",
@@ -60,8 +58,8 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("book", func(r *http.Request) (interface{}, error) {
-		return data, nil
+	return HandleTemplate("book", func(r *http.Request) (*TemplateData, error) {
+		return &data, nil
 	})
 }
 
@@ -73,9 +71,8 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 		Tags     string
 	}
 
-	data := struct {
-		Yield book
-	}{
+	data := TemplateData{
+		User:  "someone",
 		Yield: book{
 			Title:    "American Gods",
 			Author:   "Neil Gaiman",
@@ -84,8 +81,8 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("new_book", func(r *http.Request) (interface{}, error) {
-		return data, nil
+	return HandleTemplate("new_book", func(r *http.Request) (*TemplateData, error) {
+		return &data, nil
 	})
 }
 
@@ -94,16 +91,14 @@ func (s *Server) handleLoginPage() http.HandlerFunc {
 		Email string
 	}
 
-	data := struct {
-		Yield login
-	}{
+	data := TemplateData{
 		Yield: login{
 			Email: "king@nnt.leo",
 		},
 	}
 
-	return HandleTemplate("login", func(r *http.Request) (interface{}, error) {
-		return data, nil
+	return HandleTemplate("login", func(r *http.Request) (*TemplateData, error) {
+		return &data, nil
 	})
 }
 
@@ -113,17 +108,15 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 		Email string
 	}
 
-	data := struct {
-		Yield signup
-	}{
+	data := TemplateData{
 		Yield: signup{
 			Name:  "Harlequin",
 			Email: "king@nnt.leo",
 		},
 	}
 
-	return HandleTemplate("signup", func(r *http.Request) (interface{}, error) {
-		return data, nil
+	return HandleTemplate("signup", func(r *http.Request) (*TemplateData, error) {
+		return &data, nil
 	})
 }
 

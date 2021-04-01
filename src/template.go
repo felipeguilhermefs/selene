@@ -16,9 +16,15 @@ const (
 	defaultErrorMessage = "Something whent wrong. Please contact us if this error persists"
 )
 
+// TemplateData dynamic data to enrich templates
+type TemplateData struct {
+	User  interface{}
+	Yield interface{}
+}
+
 // TemplateDataFetcher is a function used to fetch dynamic data to be
 // injected into a template before its render
-type TemplateDataFetcher func (r *http.Request) (interface{}, error)
+type TemplateDataFetcher func (r *http.Request) (*TemplateData, error)
 
 // HandleTemplate lazily initialize a template with the given name and
 // renders it with dynamic data retrieved from fetcher.
