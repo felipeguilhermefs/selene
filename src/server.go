@@ -98,11 +98,31 @@ func (s *Server) handleLoginPage() http.HandlerFunc {
 		Yield login
 	}{
 		Yield: login{
-			Email: "harlequin@nnt.leo",
+			Email: "king@nnt.leo",
 		},
 	}
 
 	return HandleTemplate("login", func(r *http.Request) (interface{}, error) {
+		return data, nil
+	})
+}
+
+func (s *Server) handleSignupPage() http.HandlerFunc {
+	type signup struct {
+		Name  string
+		Email string
+	}
+
+	data := struct {
+		Yield signup
+	}{
+		Yield: signup{
+			Name:  "Harlequin",
+			Email: "king@nnt.leo",
+		},
+	}
+
+	return HandleTemplate("signup", func(r *http.Request) (interface{}, error) {
 		return data, nil
 	})
 }
@@ -119,6 +139,7 @@ func NewServer() (*Server, error) {
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
 	router.HandleFunc("/login", s.handleLoginPage()).Methods("GET")
+	router.HandleFunc("/signup", s.handleSignupPage()).Methods("GET")
 
 	return &s, nil
 }
