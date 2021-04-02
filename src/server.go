@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
+	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
@@ -127,9 +128,9 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 
 // NewServer creates a new server instance
 func NewServer(cfg *config.Postgres) (*Server, error) {
-	db, err := ConnectDatabase(cfg)
+	db, err := database.ConnectPostgres(cfg)
 	if err != nil {
-		return nil, errors.Wrap(err, "Connecting to DB")
+		return nil, errors.Wrap(err, "Connecting to Postgres")
 	}
 
 	router := mux.NewRouter()
