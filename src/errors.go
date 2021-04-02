@@ -6,5 +6,5 @@ const errorSeparator = " >> "
 
 // WrapError Improve an error with a message giving it more context
 func WrapError(err error, message string) error {
-	return errors.Wrap(err, message + errorSeparator)
+	return errors.Wrap(err, message+errorSeparator)
 }

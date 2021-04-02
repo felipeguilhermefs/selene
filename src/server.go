@@ -4,10 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 // Server represents all insfrastructure used in this server app
 type Server struct {
+	db     *gorm.DB
 	router *mux.Router
 }
 
@@ -25,7 +27,7 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 	}
 
 	data := TemplateData{
-		User:  "someone",
+		User: "someone",
 		Yield: []book{
 			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
 			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
@@ -48,7 +50,7 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 	}
 
 	data := TemplateData{
-		User:  "someone",
+		User: "someone",
 		Yield: book{
 			ID:       2,
 			Title:    "Do Androids Dream of Electric Sheep?",
@@ -72,7 +74,7 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 	}
 
 	data := TemplateData{
-		User:  "someone",
+		User: "someone",
 		Yield: book{
 			Title:    "American Gods",
 			Author:   "Neil Gaiman",
@@ -121,10 +123,16 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 }
 
 // NewServer creates a new server instance
-func NewServer() (*Server, error) {
+func NewServer(cfg *Config) (*Server, error) {
+	db, err := ConnectDatabase(&cfg.Postgres)
+	if err != nil {
+		return nil, WrapError(err, "Connecting to DB")
+	}
+
 	router := mux.NewRouter()
 
 	s := Server{
+		db:     db,
 		router: router,
 	}
 

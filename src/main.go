@@ -12,7 +12,7 @@ func run() error {
 		return WrapError(err, "Loading config")
 	}
 
-	server, err := NewServer()
+	server, err := NewServer(cfg)
 	if err != nil {
 		return WrapError(err, "Setting up Server")
 	}

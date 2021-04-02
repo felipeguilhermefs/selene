@@ -24,7 +24,7 @@ type TemplateData struct {
 
 // TemplateDataFetcher is a function used to fetch dynamic data to be
 // injected into a template before its render
-type TemplateDataFetcher func (r *http.Request) (*TemplateData, error)
+type TemplateDataFetcher func(r *http.Request) (*TemplateData, error)
 
 // HandleTemplate lazily initialize a template with the given name and
 // renders it with dynamic data retrieved from fetcher.
@@ -39,7 +39,7 @@ func HandleTemplate(templateName string, fetcher TemplateDataFetcher) http.Handl
 	)
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		once.Do(func(){
+		once.Do(func() {
 			tpl, tplerr = parseTemplate(templateName)
 		})
 
