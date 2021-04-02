@@ -9,12 +9,12 @@ import (
 func run() error {
 	cfg, err := LoadConfig()
 	if err != nil {
-		return err
+		return WrapError(err, "Loading config")
 	}
 
 	server, err := NewServer()
 	if err != nil {
-		return err
+		return WrapError(err, "Setting up Server")
 	}
 
 	log.Printf("Server started at :%d...\n", cfg.Port)

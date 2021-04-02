@@ -31,7 +31,7 @@ type TemplateDataFetcher func (r *http.Request) (*TemplateData, error)
 //
 // name argument should be a file name (without extension) in templates directory.
 //    EX: HandleTemplate("books", someDataFetcher) will use "templates/books.gohtml"
-func HandleTemplate(name string, fetcher TemplateDataFetcher) http.HandlerFunc {
+func HandleTemplate(templateName string, fetcher TemplateDataFetcher) http.HandlerFunc {
 	var (
 		once   sync.Once
 		tpl    *template.Template
@@ -40,24 +40,18 @@ func HandleTemplate(name string, fetcher TemplateDataFetcher) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		once.Do(func(){
-			templateFiles, err := findTemplateFiles(name)
-			if err != nil {
-				tpl, tplerr = nil, err
-				return
-			}
-
-			tpl, tplerr = template.ParseFiles(templateFiles...)
+			tpl, tplerr = parseTemplate(templateName)
 		})
 
 		if tplerr != nil {
-			log.Println(tplerr)
+			log.Println(WrapError(tplerr, "Template parsing"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 			return
 		}
 
 		data, err := fetcher(r)
 		if err != nil {
-			log.Println(err)
+			log.Println(WrapError(err, "Template data fetching"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		}
 
@@ -65,7 +59,7 @@ func HandleTemplate(name string, fetcher TemplateDataFetcher) http.HandlerFunc {
 
 		var buf bytes.Buffer
 		if err := tpl.ExecuteTemplate(&buf, baseLayout, data); err != nil {
-			log.Println(err)
+			log.Println(WrapError(err, "Template rendering"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 			return
 		}
@@ -74,15 +68,20 @@ func HandleTemplate(name string, fetcher TemplateDataFetcher) http.HandlerFunc {
 	}
 }
 
-func findTemplateFiles(templateName string) ([]string, error) {
+func parseTemplate(templateName string) (*template.Template, error) {
 	templateFile := fmt.Sprintf("templates/%s.gohtml", templateName)
 
 	layoutFiles, err := filepath.Glob("templates/layouts/*.gohtml")
 	if err != nil {
-		return nil, err
+		return nil, WrapError(err, "Finding layout files")
 	}
 
 	templateFiles := append([]string{templateFile}, layoutFiles...)
 
-	return templateFiles, nil
+	tpl, err := template.ParseFiles(templateFiles...)
+	if err != nil {
+		return nil, WrapError(err, "Parsing files found")
+	}
+
+	return tpl, nil
 }
