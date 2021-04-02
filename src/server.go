@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
+	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
@@ -125,8 +126,8 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 }
 
 // NewServer creates a new server instance
-func NewServer(cfg *Config) (*Server, error) {
-	db, err := ConnectDatabase(&cfg.Postgres)
+func NewServer(cfg *config.Postgres) (*Server, error) {
+	db, err := ConnectDatabase(cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "Connecting to DB")
 	}
