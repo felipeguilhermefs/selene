@@ -7,17 +7,20 @@ import (
 )
 
 func run() error {
+	cfg, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+
 	server, err := NewServer()
 	if err != nil {
 		return err
 	}
 
-	port := 8000
-
-	log.Printf("Server started at :%d...\n", port)
+	log.Printf("Server started at :%d...\n", cfg.Port)
 
 	return http.ListenAndServe(
-		fmt.Sprintf(":%d", port),
+		fmt.Sprintf(":%d", cfg.Port),
 		server,
 	)
 }
