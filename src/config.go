@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 // Config hold all general configurable data of the server
@@ -54,7 +56,7 @@ func (c *PostgresConfig) ConnectionTTL() time.Duration {
 func LoadConfig() (*Config, error) {
 	f, err := os.Open(".config")
 	if err != nil {
-		return nil, WrapError(err, "Opening .config")
+		return nil, errors.Wrap(err, "Opening .config")
 	}
 	defer f.Close()
 
@@ -62,7 +64,7 @@ func LoadConfig() (*Config, error) {
 	dec := json.NewDecoder(f)
 	err = dec.Decode(&cfg)
 	if err != nil {
-		return nil, WrapError(err, "Parsing .config")
+		return nil, errors.Wrap(err, "Parsing .config")
 	}
 
 	return &cfg, nil

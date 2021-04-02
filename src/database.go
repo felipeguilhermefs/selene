@@ -5,6 +5,8 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 // ConnectDatabase initiates DB abstraction
@@ -14,12 +16,12 @@ func ConnectDatabase(dbConfig *PostgresConfig) (*gorm.DB, error) {
 
 	db, err := gorm.Open(pgDialect, &gorm.Config{})
 	if err != nil {
-		return nil, WrapError(err, "Opening DB Connection")
+		return nil, errors.Wrap(err, "Opening DB Connection")
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		return nil, WrapError(err, "Configuring Connection Pool")
+		return nil, errors.Wrap(err, "Configuring Connection Pool")
 	}
 
 	fmt.Println(dbConfig)

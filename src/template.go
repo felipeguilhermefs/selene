@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"path/filepath"
 	"sync"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 const (
@@ -44,14 +46,14 @@ func HandleTemplate(templateName string, fetcher TemplateDataFetcher) http.Handl
 		})
 
 		if tplerr != nil {
-			log.Println(WrapError(tplerr, "Template parsing"))
+			log.Println(errors.Wrap(tplerr, "Template parsing"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 			return
 		}
 
 		data, err := fetcher(r)
 		if err != nil {
-			log.Println(WrapError(err, "Template data fetching"))
+			log.Println(errors.Wrap(err, "Template data fetching"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		}
 
@@ -59,7 +61,7 @@ func HandleTemplate(templateName string, fetcher TemplateDataFetcher) http.Handl
 
 		var buf bytes.Buffer
 		if err := tpl.ExecuteTemplate(&buf, baseLayout, data); err != nil {
-			log.Println(WrapError(err, "Template rendering"))
+			log.Println(errors.Wrap(err, "Template rendering"))
 			http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 			return
 		}
@@ -73,14 +75,14 @@ func parseTemplate(templateName string) (*template.Template, error) {
 
 	layoutFiles, err := filepath.Glob("templates/layouts/*.gohtml")
 	if err != nil {
-		return nil, WrapError(err, "Finding layout files")
+		return nil, errors.Wrap(err, "Finding layout files")
 	}
 
 	templateFiles := append([]string{templateFile}, layoutFiles...)
 
 	tpl, err := template.ParseFiles(templateFiles...)
 	if err != nil {
-		return nil, WrapError(err, "Parsing files found")
+		return nil, errors.Wrap(err, "Parsing files found")
 	}
 
 	return tpl, nil

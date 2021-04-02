@@ -5,6 +5,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 // Server represents all insfrastructure used in this server app
@@ -126,7 +128,7 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 func NewServer(cfg *Config) (*Server, error) {
 	db, err := ConnectDatabase(&cfg.Postgres)
 	if err != nil {
-		return nil, WrapError(err, "Connecting to DB")
+		return nil, errors.Wrap(err, "Connecting to DB")
 	}
 
 	router := mux.NewRouter()
