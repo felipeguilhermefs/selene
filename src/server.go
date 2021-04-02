@@ -127,8 +127,8 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 }
 
 // NewServer creates a new server instance
-func NewServer(cfg *config.Postgres) (*Server, error) {
-	db, err := database.ConnectPostgres(cfg)
+func NewServer(cfg *config.Config) (*Server, error) {
+	db, err := database.ConnectPostgres(&cfg.Postgres)
 	if err != nil {
 		return nil, errors.Wrap(err, "Connecting to Postgres")
 	}

@@ -15,7 +15,7 @@ func run() error {
 		return errors.Wrap(err, "Loading config")
 	}
 
-	server, err := NewServer(&cfg.Postgres)
+	server, err := NewServer(cfg)
 	if err != nil {
 		return errors.Wrap(err, "Setting up Server")
 	}

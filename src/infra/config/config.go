@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 // Config hold all general configurable data of the server
 type Config struct {
-	Port     int      `json:"server"`
-	Postgres Postgres `json:"postgres"`
+	Port     int                     `json:"server"`
+	Postgres database.PostgresConfig `json:"postgres"`
 }
 
 // LoadFromFile parse config from given file
