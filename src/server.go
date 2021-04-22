@@ -4,18 +4,21 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
 
+	"github.com/felipeguilhermefs/selene/controllers"
 	"github.com/felipeguilhermefs/selene/infra/config"
-	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/repositories"
+	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 // Server represents all insfrastructure used in this server app
 type Server struct {
-	db     *gorm.DB
-	router *mux.Router
+	repositories *repositories.Repositories
+	services     *services.Services
+	controllers  *controllers.Controllers
+	router       *mux.Router
 }
 
 // ServeHTTP just delegates to router so we can start Server in http.ListenAndServe
@@ -113,44 +116,31 @@ func (s *Server) handleLoginPage() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleSignupPage() http.HandlerFunc {
-	type signup struct {
-		Name  string
-		Email string
-	}
-
-	data := view.Data{
-		Yield: signup{
-			Name:  "Harlequin",
-			Email: "king@nnt.leo",
-		},
-	}
-
-	page := view.NewView("signup")
-	return func(w http.ResponseWriter, r *http.Request) {
-		page.Render(w, r, &data)
-	}
-}
-
 // NewServer creates a new server instance
 func NewServer(cfg *config.Config) (*Server, error) {
-	db, err := database.ConnectPostgres(&cfg.Postgres)
-	if err != nil {
-		return nil, errors.Wrap(err, "Connecting to Postgres")
-	}
-
 	router := mux.NewRouter()
 
+	repos, err := repositories.NewRepositories(cfg)
+	if err != nil {
+		return nil, errors.Wrap(err, "Creating repositories")
+	}
+
+	srvcs := services.NewServices(cfg, repos)
+
+	ctrls := controllers.NewControllers(srvcs)
+	ctrls.RegisterRoutes(router)
+
 	s := Server{
-		db:     db,
-		router: router,
+		repositories: repos,
+		services:     srvcs,
+		controllers:  ctrls,
+		router:       router,
 	}
 
 	router.HandleFunc("/books", s.handleBooksPage()).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
 	router.HandleFunc("/login", s.handleLoginPage()).Methods("GET")
-	router.HandleFunc("/signup", s.handleSignupPage()).Methods("GET")
 
 	return &s, nil
 }

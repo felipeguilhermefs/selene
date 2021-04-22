@@ -12,6 +12,9 @@ import (
 type Config struct {
 	Port     int                     `json:"server"`
 	Postgres database.PostgresConfig `json:"postgres"`
+	Sec      struct {
+		Pepper string `json:"pepper"`
+	} `json:"security"`
 }
 
 // LoadFromFile parse config from given file

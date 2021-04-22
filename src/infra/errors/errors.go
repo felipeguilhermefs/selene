@@ -17,6 +17,9 @@ const (
 
 	// ErrPasswordTooShort Password too short
 	ErrPasswordTooShort knownError = "Password too short"
+
+	// ErrCredentialsInvalid username or password not valid
+	ErrCredentialsInvalid knownError = "Invalid credentials"
 )
 
 // Wrap Improve an error with a message giving it more context
