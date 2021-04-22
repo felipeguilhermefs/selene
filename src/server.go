@@ -9,6 +9,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/view"
 )
 
 // Server represents all insfrastructure used in this server app
@@ -30,7 +31,7 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 		Tags   string
 	}
 
-	data := TemplateData{
+	data := view.Data{
 		User: "someone",
 		Yield: []book{
 			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
@@ -39,9 +40,10 @@ func (s *Server) handleBooksPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("books", func(r *http.Request) (*TemplateData, error) {
-		return &data, nil
-	})
+	page := view.NewView("books")
+	return func(w http.ResponseWriter, r *http.Request) {
+		page.Render(w, r, &data)
+	}
 }
 
 func (s *Server) handleBookPage() http.HandlerFunc {
@@ -53,7 +55,7 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 		Tags     string
 	}
 
-	data := TemplateData{
+	data := view.Data{
 		User: "someone",
 		Yield: book{
 			ID:       2,
@@ -64,9 +66,10 @@ func (s *Server) handleBookPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("book", func(r *http.Request) (*TemplateData, error) {
-		return &data, nil
-	})
+	page := view.NewView("book")
+	return func(w http.ResponseWriter, r *http.Request) {
+		page.Render(w, r, &data)
+	}
 }
 
 func (s *Server) handleNewBookPage() http.HandlerFunc {
@@ -77,7 +80,7 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 		Tags     string
 	}
 
-	data := TemplateData{
+	data := view.Data{
 		User: "someone",
 		Yield: book{
 			Title:    "American Gods",
@@ -87,9 +90,10 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 		},
 	}
 
-	return HandleTemplate("new_book", func(r *http.Request) (*TemplateData, error) {
-		return &data, nil
-	})
+	page := view.NewView("new_book")
+	return func(w http.ResponseWriter, r *http.Request) {
+		page.Render(w, r, &data)
+	}
 }
 
 func (s *Server) handleLoginPage() http.HandlerFunc {
@@ -97,15 +101,16 @@ func (s *Server) handleLoginPage() http.HandlerFunc {
 		Email string
 	}
 
-	data := TemplateData{
+	data := view.Data{
 		Yield: login{
 			Email: "king@nnt.leo",
 		},
 	}
 
-	return HandleTemplate("login", func(r *http.Request) (*TemplateData, error) {
-		return &data, nil
-	})
+	page := view.NewView("login")
+	return func(w http.ResponseWriter, r *http.Request) {
+		page.Render(w, r, &data)
+	}
 }
 
 func (s *Server) handleSignupPage() http.HandlerFunc {
@@ -114,16 +119,17 @@ func (s *Server) handleSignupPage() http.HandlerFunc {
 		Email string
 	}
 
-	data := TemplateData{
+	data := view.Data{
 		Yield: signup{
 			Name:  "Harlequin",
 			Email: "king@nnt.leo",
 		},
 	}
 
-	return HandleTemplate("signup", func(r *http.Request) (*TemplateData, error) {
-		return &data, nil
-	})
+	page := view.NewView("signup")
+	return func(w http.ResponseWriter, r *http.Request) {
+		page.Render(w, r, &data)
+	}
 }
 
 // NewServer creates a new server instance
