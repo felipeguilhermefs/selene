@@ -129,7 +129,6 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		return nil, errors.Wrap(err, "Migrating repositories")
 	}
 
-
 	srvcs := services.NewServices(cfg, repos)
 
 	ctrls := controllers.NewControllers(srvcs)

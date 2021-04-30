@@ -16,6 +16,10 @@
         {{template "navbar" .}}
 
         <div class="container-fluid">
+            {{if .Alert}}
+                {{template "alert" .Alert}}
+            {{end}}
+
             {{template "yield" .Yield}}
 
             {{template "footer"}}
