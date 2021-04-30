@@ -7,21 +7,24 @@ import (
 )
 
 // NewControllers init all Controllers
-func NewControllers(srvcs *services.Services) *Controllers {
+func NewControllers(router *mux.Router, srvcs *services.Services) *Controllers {
+
+	loginCtrl := newLoginController(srvcs.User)
+	signupCtrl := newSignupController(srvcs.User)
+
+	router.HandleFunc("/login", loginCtrl.Login).Methods("POST")
+	router.HandleFunc("/login", loginCtrl.LoginPage).Methods("GET")
+	router.HandleFunc("/signup", signupCtrl.SignupPage).Methods("GET")
+	router.HandleFunc("/signup", signupCtrl.Signup).Methods("POST")
+
 	return &Controllers{
-		user: newUserController(srvcs.User),
+		login:  loginCtrl,
+		signup: signupCtrl,
 	}
 }
 
 // Controllers holds reference to all controllers
 type Controllers struct {
-	user *UserController
-}
-
-// RegisterRoutes
-func (c *Controllers) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/signup", c.user.SignupPage).Methods("GET")
-	router.HandleFunc("/signup", c.user.Signup).Methods("POST")
-	router.HandleFunc("/login", c.user.LoginPage).Methods("GET")
-	router.HandleFunc("/login", c.user.Login).Methods("POST")
+	login  *LoginController
+	signup *SignupController
 }

@@ -114,8 +114,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	ctrls := controllers.NewControllers(srvcs)
-	ctrls.RegisterRoutes(router)
+	ctrls := controllers.NewControllers(router, srvcs)
 
 	s := Server{
 		repositories: repos,
