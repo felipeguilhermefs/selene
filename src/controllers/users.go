@@ -11,6 +11,7 @@ import (
 
 // UserController controls all user view and endpoints
 type UserController struct {
+	loginView  *view.View
 	signupView *view.View
 	userSrvc   services.UserService
 }
@@ -19,6 +20,7 @@ type UserController struct {
 func newUserController(userSrvc services.UserService) *UserController {
 	return &UserController{
 		signupView: view.NewView("signup"),
+		loginView:  view.NewView("login"),
 		userSrvc:   userSrvc,
 	}
 }
@@ -61,3 +63,34 @@ func (uc *UserController) Signup(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/books", http.StatusFound)
 }
 
+// loginForm data necessary to login a user
+type loginForm struct {
+	Email    string `schema:"email"`
+	Password string `schema:"password"`
+}
+
+// LoginPage GET /login
+func (uc *UserController) LoginPage(w http.ResponseWriter, r *http.Request) {
+	var form loginForm
+	parseURLParams(r, &form)
+	uc.loginView.Render(w, r, view.NewData(&form))
+}
+
+// Login POST /login
+func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
+	var form loginForm
+	vd := view.NewData(&form)
+	if err := parseForm(r, &form); err != nil {
+		log.Println(err)
+		uc.loginView.Render(w, r, vd.WithError(err))
+		return
+	}
+
+	_, err := uc.userSrvc.Authenticate(form.Email, form.Password)
+	if err != nil {
+		uc.loginView.Render(w, r, vd.WithError(err))
+		return
+	}
+
+	http.Redirect(w, r, "/books", http.StatusFound)
+}

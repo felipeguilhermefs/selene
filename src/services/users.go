@@ -12,6 +12,7 @@ import (
 // UserService handle operations over users
 type UserService interface {
 	Create(user *models.User) error
+	Authenticate(email, password string) (*models.User, error)
 }
 
 // newUserService creates a new instance of UserService
@@ -59,6 +60,30 @@ func (us *userService) Create(user *models.User) error {
 	return us.repository.Create(user)
 }
 
+func (us *userService) Authenticate(email, password string) (*models.User, error) {
+	user, err := us.byEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = us.secretSrvc.Compare(user.Secret, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (us *userService) normalizeEmail(input string) string {
 	return strings.ToLower(strings.TrimSpace(input))
+}
+
+func (us *userService) byEmail(email string) (*models.User, error) {
+	normalized := us.normalizeEmail(email)
+
+	if !us.emailRegex.MatchString(normalized) {
+		return nil, errors.ErrEmailInvalid
+	}
+
+	return us.repository.ByEmail(normalized)
 }

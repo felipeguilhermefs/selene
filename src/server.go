@@ -99,23 +99,6 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleLoginPage() http.HandlerFunc {
-	type login struct {
-		Email string
-	}
-
-	data := view.Data{
-		Yield: login{
-			Email: "king@nnt.leo",
-		},
-	}
-
-	page := view.NewView("login")
-	return func(w http.ResponseWriter, r *http.Request) {
-		page.Render(w, r, &data)
-	}
-}
-
 // NewServer creates a new server instance
 func NewServer(cfg *config.Config) (*Server, error) {
 	router := mux.NewRouter()
@@ -144,7 +127,6 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	router.HandleFunc("/books", s.handleBooksPage()).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
-	router.HandleFunc("/login", s.handleLoginPage()).Methods("GET")
 
 	return &s, nil
 }

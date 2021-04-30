@@ -22,4 +22,6 @@ type Controllers struct {
 func (c *Controllers) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/signup", c.user.SignupPage).Methods("GET")
 	router.HandleFunc("/signup", c.user.Signup).Methods("POST")
+	router.HandleFunc("/login", c.user.LoginPage).Methods("GET")
+	router.HandleFunc("/login", c.user.Login).Methods("POST")
 }
