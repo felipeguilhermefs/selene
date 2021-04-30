@@ -10,7 +10,7 @@ import (
 
 // Config hold all general configurable data of the server
 type Config struct {
-	Port     int                     `json:"server"`
+	Port     int                     `json:"port"`
 	Postgres database.PostgresConfig `json:"postgres"`
 	Sec      struct {
 		Pepper string `json:"pepper"`
