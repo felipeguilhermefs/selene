@@ -39,7 +39,7 @@ func (ss *secretService) Compare(secret, password string) error {
 	secretBytes := []byte(secret)
 	passwordBytes := []byte(password + ss.pwPepper)
 
-	err :=  bcrypt.CompareHashAndPassword(secretBytes, passwordBytes)
+	err := bcrypt.CompareHashAndPassword(secretBytes, passwordBytes)
 
 	if err == bcrypt.ErrMismatchedHashAndPassword {
 		return errors.ErrCredentialsInvalid
