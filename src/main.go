@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/errors"
@@ -20,12 +18,7 @@ func run() error {
 		return errors.Wrap(err, "Setting up Server")
 	}
 
-	log.Printf("Server started at :%d...\n", cfg.Port)
-
-	return http.ListenAndServe(
-		fmt.Sprintf(":%d", cfg.Port),
-		server,
-	)
+	return server.Start()
 }
 
 func main() {

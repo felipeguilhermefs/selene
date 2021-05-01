@@ -61,8 +61,6 @@ func ConnectPostgres(cfg *PostgresConfig) (*gorm.DB, error) {
 		return nil, errors.Wrap(err, "Configuring Connection Pool")
 	}
 
-	fmt.Println(cfg)
-
 	sqlDB.SetMaxIdleConns(cfg.MaxIdleConnections())
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConnections())
 	sqlDB.SetConnMaxLifetime(cfg.ConnectionTTL())

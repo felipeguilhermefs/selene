@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -18,12 +20,13 @@ type Server struct {
 	repositories *repositories.Repositories
 	services     *services.Services
 	controllers  *controllers.Controllers
-	router       *mux.Router
+	server       *http.Server
 }
 
-// ServeHTTP just delegates to router so we can start Server in http.ListenAndServe
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+// Start start listening and serving requests
+func (s *Server) Start() error {
+	log.Printf("Server started at %v...\n", s.server.Addr)
+	return s.server.ListenAndServe()
 }
 
 func (s *Server) handleBooksPage() http.HandlerFunc {
@@ -120,7 +123,13 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		repositories: repos,
 		services:     srvcs,
 		controllers:  ctrls,
-		router:       router,
+		server: &http.Server{
+			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
+			ReadTimeout:  cfg.ServerReadTimeout(),
+			WriteTimeout: cfg.ServerWriteTimeout(),
+			IdleTimeout:  cfg.ServerIdleTimeout(),
+			Handler:      router,
+		},
 	}
 
 	router.HandleFunc("/books", s.handleBooksPage()).Methods("GET")
