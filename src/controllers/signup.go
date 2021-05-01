@@ -11,15 +11,15 @@ import (
 
 // SignupController controls singup and endpoints
 type SignupController struct {
-	page *view.View
-	userSrvc   services.UserService
+	page     *view.View
+	userSrvc services.UserService
 }
 
 // newSignupController creates a new instance of SignupController
 func newSignupController(userSrvc services.UserService) *SignupController {
 	return &SignupController{
-		page: view.NewView("signup"),
-		userSrvc:   userSrvc,
+		page:     view.NewView("signup"),
+		userSrvc: userSrvc,
 	}
 }
 
