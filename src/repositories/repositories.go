@@ -11,7 +11,7 @@ import (
 
 // NewRepositories init all repositories
 func NewRepositories(cfg *config.Config) (*Repositories, error) {
-	db, err := database.ConnectPostgres(cfg)
+	db, err := database.ConnectPostgres(&cfg.DB)
 	if err != nil {
 		return nil, errors.Wrap(err, "Connecting to Postgres")
 	}

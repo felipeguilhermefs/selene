@@ -9,8 +9,8 @@ import (
 )
 
 // ConnectPostgres connect to DB and creates a connection pool
-func ConnectPostgres(cfg *config.Config) (*gorm.DB, error) {
-	pgDialect := postgres.Open(cfg.PGConnInfo())
+func ConnectPostgres(cfg *config.DBConfig) (*gorm.DB, error) {
+	pgDialect := postgres.Open(cfg.ConnInfo())
 
 	db, err := gorm.Open(pgDialect, &gorm.Config{})
 	if err != nil {
@@ -22,9 +22,9 @@ func ConnectPostgres(cfg *config.Config) (*gorm.DB, error) {
 		return nil, errors.Wrap(err, "Configuring Connection Pool")
 	}
 
-	sqlDB.SetMaxIdleConns(cfg.PG.Conn.MaxIdle)
-	sqlDB.SetMaxOpenConns(cfg.PG.Conn.MaxOpen)
-	sqlDB.SetConnMaxLifetime(cfg.PGConnTTL())
+	sqlDB.SetMaxIdleConns(cfg.MaxIdleConn())
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConn())
+	sqlDB.SetConnMaxLifetime(cfg.ConnTTL())
 
 	return db, nil
 }

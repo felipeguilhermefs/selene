@@ -125,9 +125,9 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		controllers:  ctrls,
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
-			ReadTimeout:  cfg.ServerReadTimeout(),
-			WriteTimeout: cfg.ServerWriteTimeout(),
-			IdleTimeout:  cfg.ServerIdleTimeout(),
+			ReadTimeout:  cfg.Server.ReadTimeout(),
+			WriteTimeout: cfg.Server.WriteTimeout(),
+			IdleTimeout:  cfg.Server.IdleTimeout(),
 			Handler:      router,
 		},
 	}
