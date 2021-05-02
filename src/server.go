@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/errors"
-	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"

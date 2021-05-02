@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	sessionCookie      = "session"
-	userKey            = "email"
-	noUser             = ""
+	sessionCookie = "session"
+	userKey       = "email"
+	noUser        = ""
 )
 
 // SessionRepository interacts with session storage

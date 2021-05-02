@@ -24,14 +24,14 @@ func newAuthService(
 ) AuthService {
 
 	return &authService{
-		passwordService:     passwordService,
+		passwordService:   passwordService,
 		sessionRepository: sessionRepository,
 		userRepository:    userRepository,
 	}
 }
 
 type authService struct {
-	passwordService     PasswordService
+	passwordService   PasswordService
 	sessionRepository repositories.SessionRepository
 	userRepository    repositories.UserRepository
 }

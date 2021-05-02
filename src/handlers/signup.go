@@ -50,7 +50,6 @@ func HandleSignup(signupView *view.View, authService services.AuthService) http.
 			return
 		}
 
-
 		http.Redirect(w, r, "/books", http.StatusFound)
 	}
 }
