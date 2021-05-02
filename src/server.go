@@ -39,7 +39,6 @@ func (s *Server) handleBooksPage(authService services.AuthService) http.HandlerF
 	}
 
 	data := view.Data{
-		User: "someone",
 		Yield: []book{
 			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
 			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
@@ -52,6 +51,7 @@ func (s *Server) handleBooksPage(authService services.AuthService) http.HandlerF
 		user, err := authService.GetUser(r)
 		if err != nil {
 			page.Render(w, r, data.WithError(err))
+			return
 		}
 
 		data.User = user
@@ -140,8 +140,8 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		},
 	}
 
-	loginView := view.NewView("signup")
-	signupView := view.NewView("login")
+	loginView := view.NewView("login")
+	signupView := view.NewView("signup")
 
 	router.HandleFunc("/signup", handlers.HandleSignupPage(signupView)).Methods("GET")
 	router.HandleFunc("/signup", handlers.HandleSignup(signupView, srvcs.Auth)).Methods("POST")
