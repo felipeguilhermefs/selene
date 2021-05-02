@@ -17,7 +17,6 @@ const (
 
 // SessionService handle operations over sessions
 type SessionService interface {
-	SignIn(w http.ResponseWriter, r *http.Request, user *models.User) error
 	SignOut(w http.ResponseWriter, r *http.Request) error
 	GetUser(r *http.Request) (*models.User, error)
 }
@@ -42,17 +41,6 @@ func newSessionService(cfg *config.SessionConfig) SessionService {
 
 type sessionService struct {
 	store *sessions.CookieStore
-}
-
-func (ss *sessionService) SignIn(w http.ResponseWriter, r *http.Request, user *models.User) error {
-	session, err := ss.store.Get(r, sessionCookie)
-	if err != nil {
-		return err
-	}
-
-	session.Values[authenticatedKey] = true
-
-	return session.Save(r, w)
 }
 
 func (ss *sessionService) SignOut(w http.ResponseWriter, r *http.Request) error {

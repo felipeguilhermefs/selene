@@ -10,6 +10,7 @@ import (
 	"github.com/felipeguilhermefs/selene/controllers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -138,6 +139,11 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			Handler:      router,
 		},
 	}
+
+	signupView := view.NewView("signup")
+
+	router.HandleFunc("/signup", handlers.HandleSignupPage(signupView)).Methods("GET")
+	router.HandleFunc("/signup", handlers.HandleSignup(signupView, srvcs.Auth)).Methods("POST")
 
 	router.HandleFunc("/books", s.handleBooksPage(srvcs.Session)).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")

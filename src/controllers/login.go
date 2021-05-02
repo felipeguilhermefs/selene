@@ -48,17 +48,17 @@ func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := lc.userSrvc.Authenticate(form.Email, form.Password)
+	_, err := lc.userSrvc.Authenticate(form.Email, form.Password)
 	if err != nil {
 		lc.page.Render(w, r, vd.WithError(err))
 		return
 	}
 
-	err = lc.sessionSrvc.SignIn(w, r, user)
-	if err != nil {
-		lc.page.Render(w, r, vd.WithError(err))
-		return
-	}
+	// err = lc.sessionSrvc.SignIn(w, r, user)
+	// if err != nil {
+	// 	lc.page.Render(w, r, vd.WithError(err))
+	// 	return
+	// }
 
 	http.Redirect(w, r, "/books", http.StatusFound)
 }

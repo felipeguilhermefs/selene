@@ -1,9 +1,10 @@
 package repositories
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/models"
-	"gorm.io/gorm"
 )
 
 // UserRepository interacts with user DB
