@@ -20,18 +20,18 @@ type AuthService interface {
 func newAuthService(
 	sessionRepository repositories.SessionRepository,
 	userRepository repositories.UserRepository,
-	secretService SecretService,
+	passwordService PasswordService,
 ) AuthService {
 
 	return &authService{
-		secretService:     secretService,
+		passwordService:     passwordService,
 		sessionRepository: sessionRepository,
 		userRepository:    userRepository,
 	}
 }
 
 type authService struct {
-	secretService     SecretService
+	passwordService     PasswordService
 	sessionRepository repositories.SessionRepository
 	userRepository    repositories.UserRepository
 }
@@ -58,7 +58,7 @@ func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, pass
 		return err
 	}
 
-	err = as.secretService.Compare(user.Secret, password)
+	err = as.passwordService.Compare(user.Secret, password)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *mode
 		return errors.ErrEmailRequired
 	}
 
-	secret, err := as.secretService.Generate(user.Password)
+	secret, err := as.passwordService.Generate(user.Password)
 	if err != nil {
 		return err
 	}

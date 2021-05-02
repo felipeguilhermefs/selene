@@ -2,8 +2,13 @@ package config
 
 // SecurityConfig security config data
 type SecurityConfig struct {
-	Pepper  string        `json:"pepper"`
-	Session SessionConfig `json:"session"`
+	Password PasswordConfig `json:"password"`
+	Session  SessionConfig  `json:"session"`
+}
+
+type PasswordConfig struct {
+	MinLen int    `json:"min_length"`
+	Pepper string `json:"pepper"`
 }
 
 type SessionConfig struct {

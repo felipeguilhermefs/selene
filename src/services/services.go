@@ -7,17 +7,17 @@ import (
 
 // NewServices init all services
 func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services {
-	secretSrvc := newSecretService(cfg)
-	authSrvc := newAuthService(repos.Session, repos.User, secretSrvc)
+	passwordService := newPasswordService(&cfg.Sec.Password)
+	authService := newAuthService(repos.Session, repos.User, passwordService)
 
 	return &Services{
-		Auth:    authSrvc,
-		Secret:  secretSrvc,
+		Auth:     authService,
+		Password: passwordService,
 	}
 }
 
 // Services all services in this app
 type Services struct {
-	Auth    AuthService
-	Secret  SecretService
+	Auth     AuthService
+	Password PasswordService
 }
