@@ -9,7 +9,9 @@ import (
 
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
+	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -112,11 +114,14 @@ func (s *Server) handleNewBookPage() http.HandlerFunc {
 func NewServer(cfg *config.Config) (*Server, error) {
 	router := mux.NewRouter()
 
-	repos, err := repositories.NewRepositories(cfg)
+	db, err := database.ConnectPostgres(&cfg.DB)
 	if err != nil {
-		return nil, errors.Wrap(err, "Creating repositories")
+		return nil, errors.Wrap(err, "Connecting to Postgres")
 	}
 
+	sessionStore := session.NewCookieStore(&cfg.Sec.Session)
+
+	repos := repositories.NewRepositories(db, sessionStore)
 	if err := repos.AutoMigrate(); err != nil {
 		return nil, errors.Wrap(err, "Migrating repositories")
 	}
