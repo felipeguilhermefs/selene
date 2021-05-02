@@ -7,7 +7,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/felipeguilhermefs/selene/controllers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/handlers"
@@ -20,7 +19,6 @@ import (
 type Server struct {
 	repositories *repositories.Repositories
 	services     *services.Services
-	controllers  *controllers.Controllers
 	server       *http.Server
 }
 
@@ -125,12 +123,9 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	ctrls := controllers.NewControllers(router, srvcs)
-
 	s := Server{
 		repositories: repos,
 		services:     srvcs,
-		controllers:  ctrls,
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
 			ReadTimeout:  cfg.Server.ReadTimeout(),
@@ -140,10 +135,13 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		},
 	}
 
-	signupView := view.NewView("signup")
+	loginView := view.NewView("signup")
+	signupView := view.NewView("login")
 
 	router.HandleFunc("/signup", handlers.HandleSignupPage(signupView)).Methods("GET")
 	router.HandleFunc("/signup", handlers.HandleSignup(signupView, srvcs.Auth)).Methods("POST")
+	router.HandleFunc("/login", handlers.HandleLoginPage(loginView)).Methods("GET")
+	router.HandleFunc("/login", handlers.HandleLogin(loginView, srvcs.Auth)).Methods("POST")
 
 	router.HandleFunc("/books", s.handleBooksPage(srvcs.Session)).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")

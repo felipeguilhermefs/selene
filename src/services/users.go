@@ -9,17 +9,11 @@ import (
 	"github.com/felipeguilhermefs/selene/repositories"
 )
 
-// UserService handle operations over users
-type UserService interface {
-	Create(user *models.User) error
-	Authenticate(email, password string) (*models.User, error)
-}
-
 // newUserService creates a new instance of UserService
 func newUserService(
 	ur repositories.UserRepository,
 	ss SecretService,
-) UserService {
+) *userService {
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`)
 
 	return &userService{
@@ -58,20 +52,6 @@ func (us *userService) Create(user *models.User) error {
 	user.Password = ""
 
 	return us.repository.Create(user)
-}
-
-func (us *userService) Authenticate(email, password string) (*models.User, error) {
-	user, err := us.byEmail(email)
-	if err != nil {
-		return nil, err
-	}
-
-	err = us.secretSrvc.Compare(user.Secret, password)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
 }
 
 func (us *userService) normalizeEmail(input string) string {
