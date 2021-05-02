@@ -20,6 +20,10 @@
                 {{template "alert" .Alert}}
             {{end}}
 
+            {{if .User}}
+                <p><h1>Olá {{.User.Name}}!<h1></p>
+            {{end}}
+
             {{template "yield" .Yield}}
 
             {{template "footer"}}

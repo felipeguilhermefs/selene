@@ -9,8 +9,8 @@ import (
 // NewControllers init all Controllers
 func NewControllers(router *mux.Router, srvcs *services.Services) *Controllers {
 
-	loginCtrl := newLoginController(srvcs.User)
-	signupCtrl := newSignupController(srvcs.User)
+	loginCtrl := newLoginController(srvcs.User, srvcs.Session)
+	signupCtrl := newSignupController(srvcs.User, srvcs.Session)
 
 	router.HandleFunc("/login", loginCtrl.Login).Methods("POST")
 	router.HandleFunc("/login", loginCtrl.LoginPage).Methods("GET")

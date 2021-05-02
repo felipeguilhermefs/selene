@@ -20,6 +20,9 @@ const (
 
 	// ErrCredentialsInvalid username or password not valid
 	ErrCredentialsInvalid knownError = "Invalid credentials"
+
+	// ErrNotLoggedIn user not logged in
+	ErrNotLoggedIn knownError = "Not logged in"
 )
 
 // Wrap Improve an error with a message giving it more context
