@@ -10,6 +10,7 @@ import (
 
 // AuthService handle operations over sessions
 type AuthService interface {
+	GetUser(r *http.Request) (*models.User, error)
 	Login(w http.ResponseWriter, r *http.Request, email, password string) error
 	Logout(w http.ResponseWriter, r *http.Request) error
 	SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error
@@ -33,6 +34,22 @@ type authService struct {
 	secretService     SecretService
 	sessionRepository repositories.SessionRepository
 	userRepository    repositories.UserRepository
+}
+
+func (as *authService) GetUser(r *http.Request) (*models.User, error) {
+	email, err := as.sessionRepository.GetUserEmail(r)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := as.userRepository.ByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Secret = ""
+
+	return user, nil
 }
 
 func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {

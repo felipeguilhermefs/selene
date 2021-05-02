@@ -8,12 +8,10 @@ import (
 // NewServices init all services
 func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services {
 	secretSrvc := newSecretService(cfg)
-	sessionSrvc := newSessionService(&cfg.Sec.Session)
 	authSrvc := newAuthService(repos.Session, repos.User, secretSrvc)
 
 	return &Services{
 		Auth:    authSrvc,
-		Session: sessionSrvc,
 		Secret:  secretSrvc,
 	}
 }
@@ -21,6 +19,5 @@ func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services
 // Services all services in this app
 type Services struct {
 	Auth    AuthService
-	Session SessionService
 	Secret  SecretService
 }

@@ -5,17 +5,19 @@ import (
 
 	"github.com/gorilla/sessions"
 
+	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/models"
 )
 
 const (
-	sessionCookie = "session"
-	idKey         = "id"
-	emailKey      = "email"
+	sessionCookie      = "session"
+	userKey            = "email"
+	noUser             = ""
 )
 
 // SessionRepository interacts with session storage
 type SessionRepository interface {
+	GetUserEmail(r *http.Request) (string, error)
 	SignIn(w http.ResponseWriter, r *http.Request, user *models.User) error
 	SignOut(w http.ResponseWriter, r *http.Request) error
 }
@@ -29,6 +31,21 @@ type sessionRepository struct {
 	store sessions.Store
 }
 
+func (sr *sessionRepository) GetUserEmail(r *http.Request) (string, error) {
+	session, err := sr.store.Get(r, sessionCookie)
+	if err != nil {
+		return "", err
+	}
+
+	email, ok := session.Values[userKey].(string)
+
+	if !ok || email == noUser {
+		return "", errors.ErrNotLoggedIn
+	}
+
+	return email, nil
+}
+
 func (sr *sessionRepository) SignIn(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -39,8 +56,7 @@ func (sr *sessionRepository) SignIn(
 		return err
 	}
 
-	session.Values[idKey] = user.ID
-	session.Values[emailKey] = user.Email
+	session.Values[userKey] = user.Email
 
 	return session.Save(r, w)
 }
@@ -51,8 +67,7 @@ func (sr *sessionRepository) SignOut(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	session.Values[idKey] = -1
-	session.Values[emailKey] = ""
+	session.Values[userKey] = noUser
 	session.Options.MaxAge = -1
 
 	return session.Save(r, w)

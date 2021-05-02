@@ -28,7 +28,7 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-func (s *Server) handleBooksPage(sessionSrvc services.SessionService) http.HandlerFunc {
+func (s *Server) handleBooksPage(authService services.AuthService) http.HandlerFunc {
 	type book struct {
 		ID     uint
 		Title  string
@@ -47,7 +47,7 @@ func (s *Server) handleBooksPage(sessionSrvc services.SessionService) http.Handl
 
 	page := view.NewView("books")
 	return func(w http.ResponseWriter, r *http.Request) {
-		user, err := sessionSrvc.GetUser(r)
+		user, err := authService.GetUser(r)
 		if err != nil {
 			page.Render(w, r, data.WithError(err))
 		}
@@ -144,7 +144,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	router.HandleFunc("/login", handlers.HandleLogin(loginView, srvcs.Auth)).Methods("POST")
 	router.HandleFunc("/logout", handlers.HandleLogout(srvcs.Auth)).Methods("POST")
 
-	router.HandleFunc("/books", s.handleBooksPage(srvcs.Session)).Methods("GET")
+	router.HandleFunc("/books", s.handleBooksPage(srvcs.Auth)).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
 
