@@ -26,6 +26,10 @@ type secretService struct {
 
 // Generate creates a salt and pepper secret
 func (ss *secretService) Generate(password string) (string, error) {
+	if len(password) < 8 {
+		return "", errors.ErrPasswordTooShort
+	}
+
 	raw := []byte(password + ss.pwPepper)
 	hashed, err := bcrypt.GenerateFromPassword(raw, bcrypt.DefaultCost)
 	if err != nil {

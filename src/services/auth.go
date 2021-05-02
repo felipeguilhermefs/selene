@@ -3,6 +3,7 @@ package services
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -48,8 +49,18 @@ func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, pass
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
+	if user.Email == "" {
+		return errors.ErrEmailRequired
+	}
 
-	err := as.userRepository.Create(user)
+	secret, err := as.secretService.Generate(user.Password)
+	if err != nil {
+		return err
+	}
+	user.Secret = secret
+	user.Password = ""
+
+	err = as.userRepository.Create(user)
 	if err != nil {
 		return err
 	}
