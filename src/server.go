@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 
 	"github.com/felipeguilhermefs/selene/controllers"
 	"github.com/felipeguilhermefs/selene/infra/config"
@@ -21,6 +22,7 @@ type Server struct {
 	services     *services.Services
 	controllers  *controllers.Controllers
 	server       *http.Server
+	sessionStore *sessions.CookieStore
 }
 
 // Start start listening and serving requests
@@ -119,6 +121,17 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	ctrls := controllers.NewControllers(router, srvcs)
 
+	sessionStore := sessions.NewCookieStore(
+		[]byte(cfg.Sec.Session.AuthKey),
+		[]byte(cfg.Sec.Session.CryptoKey),
+	)
+
+	sessionStore.Options = &sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+	}
+	sessionStore.MaxAge(cfg.Sec.Session.TTL)
+
 	s := Server{
 		repositories: repos,
 		services:     srvcs,
@@ -130,6 +143,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			IdleTimeout:  cfg.Server.IdleTimeout(),
 			Handler:      router,
 		},
+		sessionStore: sessionStore,
 	}
 
 	router.HandleFunc("/books", s.handleBooksPage()).Methods("GET")
