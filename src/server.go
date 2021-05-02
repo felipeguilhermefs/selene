@@ -142,6 +142,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	router.HandleFunc("/signup", handlers.HandleSignup(signupView, srvcs.Auth)).Methods("POST")
 	router.HandleFunc("/login", handlers.HandleLoginPage(loginView)).Methods("GET")
 	router.HandleFunc("/login", handlers.HandleLogin(loginView, srvcs.Auth)).Methods("POST")
+	router.HandleFunc("/logout", handlers.HandleLogout(srvcs.Auth)).Methods("POST")
 
 	router.HandleFunc("/books", s.handleBooksPage(srvcs.Session)).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")

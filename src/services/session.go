@@ -17,7 +17,6 @@ const (
 
 // SessionService handle operations over sessions
 type SessionService interface {
-	SignOut(w http.ResponseWriter, r *http.Request) error
 	GetUser(r *http.Request) (*models.User, error)
 }
 
@@ -43,17 +42,6 @@ type sessionService struct {
 	store *sessions.CookieStore
 }
 
-func (ss *sessionService) SignOut(w http.ResponseWriter, r *http.Request) error {
-	session, err := ss.store.Get(r, sessionCookie)
-	if err != nil {
-		return err
-	}
-
-	session.Values[authenticatedKey] = false
-	session.Options.MaxAge = -1
-
-	return session.Save(r, w)
-}
 
 func (ss *sessionService) GetUser(r *http.Request) (*models.User, error) {
 	session, err := ss.store.Get(r, sessionCookie)

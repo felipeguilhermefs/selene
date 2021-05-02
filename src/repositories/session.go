@@ -17,6 +17,7 @@ const (
 // SessionRepository interacts with session storage
 type SessionRepository interface {
 	SignIn(w http.ResponseWriter, r *http.Request, user *models.User) error
+	SignOut(w http.ResponseWriter, r *http.Request) error
 }
 
 // newSessionRespository creates a new instance of SessionRepository
@@ -40,6 +41,19 @@ func (sr *sessionRepository) SignIn(
 
 	session.Values[idKey] = user.ID
 	session.Values[emailKey] = user.Email
+
+	return session.Save(r, w)
+}
+
+func (sr *sessionRepository) SignOut(w http.ResponseWriter, r *http.Request) error {
+	session, err := sr.store.Get(r, sessionCookie)
+	if err != nil {
+		return err
+	}
+
+	session.Values[idKey] = -1
+	session.Values[emailKey] = ""
+	session.Options.MaxAge = -1
 
 	return session.Save(r, w)
 }

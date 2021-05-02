@@ -11,6 +11,7 @@ import (
 // AuthService handle operations over sessions
 type AuthService interface {
 	Login(w http.ResponseWriter, r *http.Request, email, password string) error
+	Logout(w http.ResponseWriter, r *http.Request) error
 	SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error
 }
 
@@ -46,6 +47,10 @@ func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, pass
 	}
 
 	return as.sessionRepository.SignIn(w, r, user)
+}
+
+func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
+	return as.sessionRepository.SignOut(w, r)
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
