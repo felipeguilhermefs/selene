@@ -30,36 +30,6 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-func (s *Server) handleBooksPage(authService services.AuthService) http.HandlerFunc {
-	type book struct {
-		ID     uint
-		Title  string
-		Author string
-		Tags   string
-	}
-
-	data := view.Data{
-		Yield: []book{
-			{1, "The Hobbit", "JRR Tolkien", "adventure, fantasy"},
-			{2, "Do Androids Dream of Electric Sheep?", "Philip K. Dick", "sci-fi, philosophical"},
-			{3, "1984", "George Orwell", "dystopian, political fiction"},
-		},
-	}
-
-	page := view.NewView("books")
-	return func(w http.ResponseWriter, r *http.Request) {
-		user, err := authService.GetUser(r)
-		if err != nil {
-			page.Render(w, r, data.WithError(err))
-			return
-		}
-
-		data.User = user
-
-		page.Render(w, r, &data)
-	}
-}
-
 func (s *Server) handleBookPage() http.HandlerFunc {
 	type book struct {
 		ID       uint
@@ -149,7 +119,9 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	router.HandleFunc("/login", handlers.HandleLogin(loginView, srvcs.Auth)).Methods("POST")
 	router.HandleFunc("/logout", handlers.HandleLogout(srvcs.Auth)).Methods("POST")
 
-	router.HandleFunc("/books", s.handleBooksPage(srvcs.Auth)).Methods("GET")
+	booksView := view.NewView("books")
+
+	router.HandleFunc("/books", handlers.HandleBooksPage(booksView, srvcs.Auth, srvcs.Book)).Methods("GET")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 	router.HandleFunc("/books/new", s.handleNewBookPage()).Methods("GET")
 

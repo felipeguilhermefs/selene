@@ -23,6 +23,9 @@ const (
 
 	// ErrNotLoggedIn user not logged in
 	ErrNotLoggedIn knownError = "Not logged in"
+
+	// ErrUserIDRequired user id required
+	ErrUserIDRequired knownError = "UserID is required"
 )
 
 // Wrap Improve an error with a message giving it more context

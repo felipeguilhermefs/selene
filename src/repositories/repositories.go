@@ -14,6 +14,7 @@ func NewRepositories(db *gorm.DB, store sessions.Store) *Repositories {
 		db:      db,
 		Session: newSessionRespository(store),
 		User:    newUserRespository(db),
+		Book:    newBookRespository(db),
 	}
 }
 
@@ -22,11 +23,13 @@ type Repositories struct {
 	db      *gorm.DB
 	Session SessionRepository
 	User    UserRepository
+	Book    BookRepository
 }
 
 func (r *Repositories) allModels() []interface{} {
 	return []interface{}{
 		&models.User{},
+		&models.Book{},
 	}
 }
 

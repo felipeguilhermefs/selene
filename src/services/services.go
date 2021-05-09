@@ -8,11 +8,11 @@ import (
 // NewServices init all services
 func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services {
 	passwordService := newPasswordService(&cfg.Sec.Password)
-	authService := newAuthService(repos.Session, repos.User, passwordService)
 
 	return &Services{
-		Auth:     authService,
+		Auth:     newAuthService(repos.Session, repos.User, passwordService),
 		Password: passwordService,
+		Book:     newBookService(repos.Book),
 	}
 }
 
@@ -20,4 +20,5 @@ func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services
 type Services struct {
 	Auth     AuthService
 	Password PasswordService
+	Book     BookService
 }
