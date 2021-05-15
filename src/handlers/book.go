@@ -3,43 +3,57 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
+	"github.com/gorilla/mux"
 )
 
-type bookForm struct {
-	ID       uint   `schema:"id"`
-	Title    string `schema:"title"`
-	Author   string `schema:"author"`
-	Comments string `schema:"comments"`
-	Tags     string `schema:"tags"`
-}
-
-func HandleNewBookPage(
-	newBookView *view.View,
+func HandleBookPage(
+	bookView *view.View,
 	authService services.AuthService,
+	bookService services.BookService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		var form bookForm
-		vd := view.NewData(&form)
+		var vd view.Data
 
-		_, err := authService.GetUser(r)
+		user, err := authService.GetUser(r)
 		if err != nil {
 			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
 
-		parseURLParams(r, &form)
-		newBookView.Render(w, r, vd)
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+		}
+
+		book, err := bookService.GetBook(user.ID, uint(id))
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+		}
+
+		form := bookForm{
+			ID:       book.ID,
+			Title:    book.Title,
+			Author:   book.Author,
+			Comments: book.Comments,
+			Tags:     book.Tags,
+		}
+
+		bookView.Render(w, r, view.NewData(&form))
 	}
 }
 
-func HandleNewBook(
-	newBookView *view.View,
+func HandleBook(
+	bookView *view.View,
 	authService services.AuthService,
 	bookService services.BookService,
 ) http.HandlerFunc {
@@ -51,14 +65,14 @@ func HandleNewBook(
 		user, err := authService.GetUser(r)
 		if err != nil {
 			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
 
 		err = parseForm(r, &form)
 		if err != nil {
 			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
 
@@ -71,7 +85,7 @@ func HandleNewBook(
 		}
 		if err := bookService.Create(book); err != nil {
 			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
 

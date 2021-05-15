@@ -12,6 +12,7 @@ import (
 // BookRepository interacts with book DB
 type BookRepository interface {
 	Create(book *models.Book) error
+	ByUserAndID(userID, bookID uint) (*models.Book, error)
 	ByUserID(userID uint) ([]models.Book, error)
 }
 
@@ -41,6 +42,28 @@ func (br *bookRepository) Create(book *models.Book) error {
 	}
 
 	return br.db.Create(book).Error
+}
+
+func (br *bookRepository) ByUserAndID(userID, bookID uint) (*models.Book, error) {
+	if userID <= 0 {
+		return nil, errors.ErrUserIDRequired
+	}
+
+	if bookID <= 0 {
+		return nil, errors.ErrBookIDRequired
+	}
+
+	var book models.Book
+
+	err := br.db.Where("user_id = ? AND id = ?", userID, bookID).First(&book).Error
+	switch err {
+	case gorm.ErrRecordNotFound:
+		return nil, errors.ErrNotFound
+	case nil:
+		return &book, nil
+	default:
+		return nil, err
+	}
 }
 
 func (br *bookRepository) ByUserID(userID uint) ([]models.Book, error) {

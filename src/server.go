@@ -30,32 +30,6 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-func (s *Server) handleBookPage() http.HandlerFunc {
-	type book struct {
-		ID       uint
-		Title    string
-		Author   string
-		Comments string
-		Tags     string
-	}
-
-	data := view.Data{
-		User: "someone",
-		Yield: book{
-			ID:       2,
-			Title:    "Do Androids Dream of Electric Sheep?",
-			Author:   "Philip K. Dick",
-			Comments: "quero muito ler esse",
-			Tags:     "sci-fi, philosophical",
-		},
-	}
-
-	page := view.NewView("book")
-	return func(w http.ResponseWriter, r *http.Request) {
-		page.Render(w, r, &data)
-	}
-}
-
 // NewServer creates a new server instance
 func NewServer(cfg *config.Config) (*Server, error) {
 	router := mux.NewRouter()
@@ -97,11 +71,12 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	booksView := view.NewView("books")
 	newBookView := view.NewView("new_book")
+	bookView := view.NewView("book")
 
 	router.HandleFunc("/books", handlers.HandleBooksPage(booksView, srvcs.Auth, srvcs.Book)).Methods("GET")
 	router.HandleFunc("/books/new", handlers.HandleNewBookPage(newBookView, srvcs.Auth)).Methods("GET")
 	router.HandleFunc("/books/new", handlers.HandleNewBook(newBookView, srvcs.Auth, srvcs.Book)).Methods("POST")
-	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
+	router.HandleFunc("/books/{id:[0-9]+}", handlers.HandleBookPage(bookView, srvcs.Auth, srvcs.Book)).Methods("GET")
 
 	return &s, nil
 }
