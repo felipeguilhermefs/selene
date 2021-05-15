@@ -99,7 +99,8 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	newBookView := view.NewView("new_book")
 
 	router.HandleFunc("/books", handlers.HandleBooksPage(booksView, srvcs.Auth, srvcs.Book)).Methods("GET")
-	router.HandleFunc("/books/new", handlers.HandleNewBookPage(newBookView, srvcs.Auth, srvcs.Book)).Methods("GET")
+	router.HandleFunc("/books/new", handlers.HandleNewBookPage(newBookView, srvcs.Auth)).Methods("GET")
+	router.HandleFunc("/books/new", handlers.HandleNewBook(newBookView, srvcs.Auth, srvcs.Book)).Methods("POST")
 	router.HandleFunc("/books/{id:[0-9]+}", s.handleBookPage()).Methods("GET")
 
 	return &s, nil

@@ -26,6 +26,12 @@ const (
 
 	// ErrUserIDRequired user id required
 	ErrUserIDRequired knownError = "UserID is required"
+
+	// ErrTitleRequired book title required
+	ErrTitleRequired knownError = "Book title is required"
+
+	// ErrAuthorRequired book author required
+	ErrAuthorRequired knownError = "Book author is required"
 )
 
 // Wrap Improve an error with a message giving it more context
