@@ -8,6 +8,7 @@ import (
 // BookService handle operations over sessions
 type BookService interface {
 	Create(book *models.Book) error
+	Update(book *models.Book) error
 	GetBook(userID, bookID uint) (*models.Book, error)
 	GetBooks(userID uint) ([]models.Book, error)
 }
@@ -26,6 +27,10 @@ type bookService struct {
 
 func (bs *bookService) Create(book *models.Book) error {
 	return bs.bookRepository.Create(book)
+}
+
+func (bs *bookService) Update(book *models.Book) error {
+	return bs.bookRepository.Update(book)
 }
 
 func (bs *bookService) GetBook(userID, bookID uint) (*models.Book, error) {

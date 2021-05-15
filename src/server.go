@@ -77,6 +77,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	router.HandleFunc("/books/new", handlers.HandleNewBookPage(newBookView, srvcs.Auth)).Methods("GET")
 	router.HandleFunc("/books/new", handlers.HandleNewBook(newBookView, srvcs.Auth, srvcs.Book)).Methods("POST")
 	router.HandleFunc("/books/{id:[0-9]+}", handlers.HandleBookPage(bookView, srvcs.Auth, srvcs.Book)).Methods("GET")
+	router.HandleFunc("/books/{id:[0-9]+}/edit", handlers.HandleEditBook(bookView, srvcs.Auth, srvcs.Book)).Methods("POST")
 
 	return &s, nil
 }

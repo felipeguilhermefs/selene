@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 	"github.com/gorilla/mux"
@@ -52,7 +51,7 @@ func HandleBookPage(
 	}
 }
 
-func HandleBook(
+func HandleEditBook(
 	bookView *view.View,
 	authService services.AuthService,
 	bookService services.BookService,
@@ -76,14 +75,25 @@ func HandleBook(
 			return
 		}
 
-		book := &models.Book{
-			Title:    form.Title,
-			Author:   form.Author,
-			Comments: form.Comments,
-			Tags:     form.Tags,
-			UserID:   user.ID,
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
 		}
-		if err := bookService.Create(book); err != nil {
+
+		book, err := bookService.GetBook(user.ID, uint(id))
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+		}
+
+		book.Title = form.Title
+		book.Author = form.Author
+		book.Comments = form.Comments
+		book.Tags = form.Tags
+
+		if err := bookService.Update(book); err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 			return
