@@ -4,18 +4,21 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
+	"github.com/felipeguilhermefs/selene/services"
 )
 
-type Middleware = func(http.Handler) http.Handler
+type Middleware = func(http.HandlerFunc) http.HandlerFunc
 
 // Middlewares all middlewares in this app
 type Middlewares struct {
-	CSRF Middleware
+	CSRF  Middleware
+	Login Middleware
 }
 
 // NewMiddlewares init all middlewares
-func NewMiddlewares(cfg *config.Config) *Middlewares {
+func NewMiddlewares(cfg *config.Config, authService services.AuthService) *Middlewares {
 	return &Middlewares{
-		CSRF: newCSRFMiddleware(&cfg.Sec),
+		CSRF:  newCSRFMiddleware(&cfg.Sec),
+		Login: newLoginMiddleware(authService),
 	}
 }

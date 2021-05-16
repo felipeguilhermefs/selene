@@ -26,23 +26,23 @@ func (s *Server) RegisterRoutes() {
 	s.router.HandleFunc("/login", login).Methods("POST")
 
 	logout := handlers.HandleLogout(s.services.Auth)
-	s.router.HandleFunc("/logout", logout).Methods("POST")
+	s.router.HandleFunc("/logout", s.middlewares.Login(logout)).Methods("POST")
 
 	booksPage := handlers.HandleBooksPage(booksView, s.services.Auth, s.services.Book)
-	s.router.HandleFunc("/books", booksPage).Methods("GET")
+	s.router.HandleFunc("/books", s.middlewares.Login(booksPage)).Methods("GET")
 
 	newBookPage := handlers.HandleNewBookPage(newBookView, s.services.Auth)
-	s.router.HandleFunc("/books/new", newBookPage).Methods("GET")
+	s.router.HandleFunc("/books/new", s.middlewares.Login(newBookPage)).Methods("GET")
 
 	newBook := handlers.HandleNewBook(newBookView, s.services.Auth, s.services.Book)
-	s.router.HandleFunc("/books/new", newBook).Methods("POST")
+	s.router.HandleFunc("/books/new", s.middlewares.Login(newBook)).Methods("POST")
 
 	editBookPage := handlers.HandleBookPage(bookView, s.services.Auth, s.services.Book)
-	s.router.HandleFunc("/books/{id:[0-9]+}", editBookPage).Methods("GET")
+	s.router.HandleFunc("/books/{id:[0-9]+}", s.middlewares.Login(editBookPage)).Methods("GET")
 
 	editBook := handlers.HandleEditBook(bookView, s.services.Auth, s.services.Book)
-	s.router.HandleFunc("/books/{id:[0-9]+}/edit", editBook).Methods("POST")
+	s.router.HandleFunc("/books/{id:[0-9]+}/edit", s.middlewares.Login(editBook)).Methods("POST")
 
 	deleteBook := handlers.HandleDeleteBook(bookView, s.services.Auth, s.services.Book)
-	s.router.HandleFunc("/books/{id:[0-9]+}/delete", deleteBook).Methods("POST")
+	s.router.HandleFunc("/books/{id:[0-9]+}/delete", s.middlewares.Login(deleteBook)).Methods("POST")
 }

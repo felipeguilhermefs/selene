@@ -49,7 +49,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	mdw := middlewares.NewMiddlewares(cfg)
+	mdw := middlewares.NewMiddlewares(cfg, srvcs.Auth)
 
 	return &Server{
 		middlewares:  mdw,
@@ -61,7 +61,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      mdw.CSRF(router),
+			Handler:      mdw.CSRF(router.ServeHTTP),
 		},
 	}, nil
 }
