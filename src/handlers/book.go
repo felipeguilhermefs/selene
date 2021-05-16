@@ -3,12 +3,10 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/felipeguilhermefs/selene/context"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
-	"github.com/gorilla/mux"
 )
 
 func HandleBookPage(
@@ -19,8 +17,7 @@ func HandleBookPage(
 	return func(w http.ResponseWriter, r *http.Request) {
 		var vd view.Data
 
-		vars := mux.Vars(r)
-		id, err := strconv.Atoi(vars["id"])
+		id, err := getUIntFromPath(r, "id")
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -28,7 +25,7 @@ func HandleBookPage(
 
 		user := context.User(r)
 
-		book, err := bookService.GetBook(user.ID, uint(id))
+		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -62,8 +59,7 @@ func HandleEditBook(
 			return
 		}
 
-		vars := mux.Vars(r)
-		id, err := strconv.Atoi(vars["id"])
+		id, err := getUIntFromPath(r, "id")
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -71,7 +67,7 @@ func HandleEditBook(
 
 		user := context.User(r)
 
-		book, err := bookService.GetBook(user.ID, uint(id))
+		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -100,8 +96,7 @@ func HandleDeleteBook(
 	return func(w http.ResponseWriter, r *http.Request) {
 		var vd view.Data
 
-		vars := mux.Vars(r)
-		id, err := strconv.Atoi(vars["id"])
+		id, err := getUIntFromPath(r, "id")
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -109,7 +104,7 @@ func HandleDeleteBook(
 
 		user := context.User(r)
 
-		err = bookService.Delete(user.ID, uint(id))
+		err = bookService.Delete(user.ID, id)
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
