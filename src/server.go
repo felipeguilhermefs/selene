@@ -5,19 +5,20 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infra/session"
+	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 )
 
 // Server represents all insfrastructure used in this server app
 type Server struct {
+	middlewares  *middlewares.Middlewares
 	repositories *repositories.Repositories
 	services     *services.Services
 	server       *http.Server
@@ -48,12 +49,10 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	CSRF := csrf.Protect(
-		[]byte(cfg.Sec.CSRF),
-		csrf.SameSite(csrf.SameSiteStrictMode),
-	)
+	mdw := middlewares.NewMiddlewares(cfg)
 
 	return &Server{
+		middlewares:  mdw,
 		repositories: repos,
 		router:       router,
 		services:     srvcs,
@@ -62,7 +61,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      CSRF(router),
+			Handler:      mdw.CSRF(router),
 		},
 	}, nil
 }
