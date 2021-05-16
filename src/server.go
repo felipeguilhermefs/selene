@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
@@ -47,6 +48,11 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
+	CSRF := csrf.Protect(
+		[]byte(cfg.Sec.CSRF),
+		csrf.SameSite(csrf.SameSiteStrictMode),
+	)
+
 	return &Server{
 		repositories: repos,
 		router:       router,
@@ -56,7 +62,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      router,
+			Handler:      CSRF(router),
 		},
 	}, nil
 }

@@ -2,6 +2,7 @@ package config
 
 // SecurityConfig security config data
 type SecurityConfig struct {
+	CSRF     string         `json:"csrf"`
 	Password PasswordConfig `json:"password"`
 	Session  SessionConfig  `json:"session"`
 }
