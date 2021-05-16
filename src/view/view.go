@@ -10,8 +10,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/gorilla/csrf"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 const (

@@ -7,6 +7,14 @@ import (
 	"github.com/felipeguilhermefs/selene/models"
 )
 
+// Repositories holds reference to all repositories
+type Repositories struct {
+	db      *gorm.DB
+	Session SessionRepository
+	User    UserRepository
+	Book    BookRepository
+}
+
 // NewRepositories init all repositories
 func NewRepositories(db *gorm.DB, store sessions.Store) *Repositories {
 
@@ -16,14 +24,6 @@ func NewRepositories(db *gorm.DB, store sessions.Store) *Repositories {
 		User:    newUserRespository(db),
 		Book:    newBookRespository(db),
 	}
-}
-
-// Repositories holds reference to all repositories
-type Repositories struct {
-	db      *gorm.DB
-	Session SessionRepository
-	User    UserRepository
-	Book    BookRepository
 }
 
 func (r *Repositories) allModels() []interface{} {
