@@ -7,14 +7,12 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
-	"github.com/felipeguilhermefs/selene/view"
 )
 
 // Server represents all insfrastructure used in this server app
@@ -22,6 +20,7 @@ type Server struct {
 	repositories *repositories.Repositories
 	services     *services.Services
 	server       *http.Server
+	router       *mux.Router
 }
 
 // Start start listening and serving requests
@@ -48,8 +47,9 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	s := Server{
+	return &Server{
 		repositories: repos,
+		router:       router,
 		services:     srvcs,
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
@@ -58,27 +58,5 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			IdleTimeout:  cfg.Server.IdleTimeout(),
 			Handler:      router,
 		},
-	}
-
-	loginView := view.NewView("login")
-	signupView := view.NewView("signup")
-
-	router.HandleFunc("/signup", handlers.HandleSignupPage(signupView)).Methods("GET")
-	router.HandleFunc("/signup", handlers.HandleSignup(signupView, srvcs.Auth)).Methods("POST")
-	router.HandleFunc("/login", handlers.HandleLoginPage(loginView)).Methods("GET")
-	router.HandleFunc("/login", handlers.HandleLogin(loginView, srvcs.Auth)).Methods("POST")
-	router.HandleFunc("/logout", handlers.HandleLogout(srvcs.Auth)).Methods("POST")
-
-	booksView := view.NewView("books")
-	newBookView := view.NewView("new_book")
-	bookView := view.NewView("book")
-
-	router.HandleFunc("/books", handlers.HandleBooksPage(booksView, srvcs.Auth, srvcs.Book)).Methods("GET")
-	router.HandleFunc("/books/new", handlers.HandleNewBookPage(newBookView, srvcs.Auth)).Methods("GET")
-	router.HandleFunc("/books/new", handlers.HandleNewBook(newBookView, srvcs.Auth, srvcs.Book)).Methods("POST")
-	router.HandleFunc("/books/{id:[0-9]+}", handlers.HandleBookPage(bookView, srvcs.Auth, srvcs.Book)).Methods("GET")
-	router.HandleFunc("/books/{id:[0-9]+}/edit", handlers.HandleEditBook(bookView, srvcs.Auth, srvcs.Book)).Methods("POST")
-	router.HandleFunc("/books/{id:[0-9]+}/delete", handlers.HandleDeleteBook(bookView, srvcs.Auth, srvcs.Book)).Methods("POST")
-
-	return &s, nil
+	}, nil
 }
