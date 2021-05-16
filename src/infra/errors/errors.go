@@ -6,6 +6,9 @@ const (
 	// errorSeparator is just a format suggar to separate each known error step
 	errorSeparator = " >> "
 
+	// ErrNoCSRFField no CSRF field implemented
+	ErrNoCSRFField knownError = "No CSRF field implemented"
+
 	// ErrNotFound resource not found
 	ErrNotFound knownError = "Resource not found"
 

@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/gorilla/csrf"
 )
 
 const (
@@ -45,8 +46,10 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 		return
 	}
 
+	tpl := v.tpl.Funcs(v.csrfTag(r))
+
 	var buf bytes.Buffer
-	if err := v.tpl.ExecuteTemplate(&buf, baseLayout, data); err != nil {
+	if err := tpl.ExecuteTemplate(&buf, baseLayout, data); err != nil {
 		log.Println(errors.Wrap(err, "Template rendering"))
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
@@ -65,5 +68,21 @@ func (v *View) parse() {
 
 	templateFiles := append([]string{templateFile}, layoutFiles...)
 
-	v.tpl, v.tplerr = template.ParseFiles(templateFiles...)
+	v.tpl, v.tplerr = template.New("").
+		Funcs(v.csrfTag(nil)).
+		ParseFiles(templateFiles...)
+}
+
+func (v *View) csrfTag(r *http.Request) template.FuncMap {
+	custom := template.FuncMap{}
+
+	custom[csrf.TemplateTag] = func() (template.HTML, error) {
+		if r == nil {
+			return "", errors.ErrNoCSRFField
+		}
+
+		return csrf.TemplateField(r), nil
+	}
+
+	return custom
 }
