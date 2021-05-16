@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/context"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -17,21 +18,11 @@ type bookForm struct {
 	Tags     string `schema:"tags"`
 }
 
-func HandleNewBookPage(
-	newBookView *view.View,
-	authService services.AuthService,
-) http.HandlerFunc {
+func HandleNewBookPage(newBookView *view.View) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var form bookForm
 		vd := view.NewData(&form)
-
-		_, err := authService.GetUser(r)
-		if err != nil {
-			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
-			return
-		}
 
 		parseURLParams(r, &form)
 		newBookView.Render(w, r, vd)
@@ -40,7 +31,6 @@ func HandleNewBookPage(
 
 func HandleNewBook(
 	newBookView *view.View,
-	authService services.AuthService,
 	bookService services.BookService,
 ) http.HandlerFunc {
 
@@ -48,19 +38,14 @@ func HandleNewBook(
 		var form bookForm
 		vd := view.NewData(&form)
 
-		user, err := authService.GetUser(r)
+		err := parseForm(r, &form)
 		if err != nil {
 			log.Println(err)
 			newBookView.Render(w, r, vd.WithError(err))
 			return
 		}
 
-		err = parseForm(r, &form)
-		if err != nil {
-			log.Println(err)
-			newBookView.Render(w, r, vd.WithError(err))
-			return
-		}
+		user := context.User(r)
 
 		book := &models.Book{
 			Title:    form.Title,

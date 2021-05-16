@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/felipeguilhermefs/selene/context"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 	"github.com/gorilla/mux"
@@ -12,19 +13,11 @@ import (
 
 func HandleBookPage(
 	bookView *view.View,
-	authService services.AuthService,
 	bookService services.BookService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var vd view.Data
-
-		user, err := authService.GetUser(r)
-		if err != nil {
-			log.Println(err)
-			bookView.Render(w, r, vd.WithError(err))
-			return
-		}
 
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -32,6 +25,8 @@ func HandleBookPage(
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
+
+		user := context.User(r)
 
 		book, err := bookService.GetBook(user.ID, uint(id))
 		if err != nil {
@@ -53,7 +48,6 @@ func HandleBookPage(
 
 func HandleEditBook(
 	bookView *view.View,
-	authService services.AuthService,
 	bookService services.BookService,
 ) http.HandlerFunc {
 
@@ -61,14 +55,7 @@ func HandleEditBook(
 		var form bookForm
 		vd := view.NewData(&form)
 
-		user, err := authService.GetUser(r)
-		if err != nil {
-			log.Println(err)
-			bookView.Render(w, r, vd.WithError(err))
-			return
-		}
-
-		err = parseForm(r, &form)
+		err := parseForm(r, &form)
 		if err != nil {
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
@@ -81,6 +68,8 @@ func HandleEditBook(
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
+
+		user := context.User(r)
 
 		book, err := bookService.GetBook(user.ID, uint(id))
 		if err != nil {
@@ -105,19 +94,11 @@ func HandleEditBook(
 
 func HandleDeleteBook(
 	bookView *view.View,
-	authService services.AuthService,
 	bookService services.BookService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var vd view.Data
-
-		user, err := authService.GetUser(r)
-		if err != nil {
-			log.Println(err)
-			bookView.Render(w, r, vd.WithError(err))
-			return
-		}
 
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -125,6 +106,8 @@ func HandleDeleteBook(
 			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
+
+		user := context.User(r)
 
 		err = bookService.Delete(user.ID, uint(id))
 		if err != nil {
