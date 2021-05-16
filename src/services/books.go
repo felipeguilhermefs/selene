@@ -9,6 +9,7 @@ import (
 type BookService interface {
 	Create(book *models.Book) error
 	Update(book *models.Book) error
+	Delete(userID, bookID uint) error
 	GetBook(userID, bookID uint) (*models.Book, error)
 	GetBooks(userID uint) ([]models.Book, error)
 }
@@ -31,6 +32,10 @@ func (bs *bookService) Create(book *models.Book) error {
 
 func (bs *bookService) Update(book *models.Book) error {
 	return bs.bookRepository.Update(book)
+}
+
+func (bs *bookService) Delete(userID, bookID uint) error {
+	return bs.bookRepository.Delete(userID, bookID)
 }
 
 func (bs *bookService) GetBook(userID, bookID uint) (*models.Book, error) {

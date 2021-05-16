@@ -27,8 +27,8 @@ const (
 	// ErrUserIDRequired user id required
 	ErrUserIDRequired knownError = "UserID is required"
 
-	// ErrBookIDRequired book id required
-	ErrBookIDRequired knownError = "Book id is required"
+	// ErrIDInvalid book id required
+	ErrIDInvalid knownError = "ID is invalid"
 
 	// ErrTitleRequired book title required
 	ErrTitleRequired knownError = "Book title is required"

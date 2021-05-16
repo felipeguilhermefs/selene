@@ -102,3 +102,36 @@ func HandleEditBook(
 		http.Redirect(w, r, "/books", http.StatusFound)
 	}
 }
+
+func HandleDeleteBook(
+	bookView *view.View,
+	authService services.AuthService,
+	bookService services.BookService,
+) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		var vd view.Data
+
+		user, err := authService.GetUser(r)
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+			return
+		}
+
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+		}
+
+		err = bookService.Delete(user.ID, uint(id))
+		if err != nil {
+			log.Println(err)
+			bookView.Render(w, r, vd.WithError(err))
+		}
+
+		http.Redirect(w, r, "/books", http.StatusFound)
+	}
+}
