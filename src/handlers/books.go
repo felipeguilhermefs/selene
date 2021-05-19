@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
@@ -21,7 +20,6 @@ func HandleBooksPage(
 
 		books, err := bookService.GetBooks(user.ID)
 		if err != nil {
-			log.Println(err)
 			booksView.Render(w, r, vd.WithError(err))
 			return
 		}

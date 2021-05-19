@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/services"
@@ -31,7 +30,6 @@ func HandleLogin(loginView *view.View, authService services.AuthService) http.Ha
 
 		err := parseForm(r, &form)
 		if err != nil {
-			log.Println(err)
 			loginView.Render(w, r, vd.WithError(err))
 			return
 		}

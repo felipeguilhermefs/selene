@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
@@ -40,7 +39,6 @@ func HandleNewBook(
 
 		err := parseForm(r, &form)
 		if err != nil {
-			log.Println(err)
 			newBookView.Render(w, r, vd.WithError(err))
 			return
 		}
@@ -55,7 +53,6 @@ func HandleNewBook(
 			UserID:   user.ID,
 		}
 		if err := bookService.Create(book); err != nil {
-			log.Println(err)
 			newBookView.Render(w, r, vd.WithError(err))
 			return
 		}

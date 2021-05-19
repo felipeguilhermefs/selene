@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
@@ -19,7 +18,6 @@ func HandleBookPage(
 
 		id, err := getUIntFromPath(r, "id")
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
@@ -27,7 +25,6 @@ func HandleBookPage(
 
 		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
@@ -54,14 +51,12 @@ func HandleEditBook(
 
 		err := parseForm(r, &form)
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
 
 		id, err := getUIntFromPath(r, "id")
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
@@ -69,7 +64,6 @@ func HandleEditBook(
 
 		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
@@ -79,7 +73,6 @@ func HandleEditBook(
 		book.Tags = form.Tags
 
 		if err := bookService.Update(book); err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 			return
 		}
@@ -98,7 +91,6 @@ func HandleDeleteBook(
 
 		id, err := getUIntFromPath(r, "id")
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
@@ -106,7 +98,6 @@ func HandleDeleteBook(
 
 		err = bookService.Delete(user.ID, id)
 		if err != nil {
-			log.Println(err)
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
