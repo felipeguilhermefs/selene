@@ -1,6 +1,10 @@
 package view
 
-import "github.com/felipeguilhermefs/selene/infra/errors"
+import (
+	"log"
+
+	"github.com/felipeguilhermefs/selene/infra/errors"
+)
 
 const (
 	// AlertLvError error alert level
@@ -22,9 +26,13 @@ type Alert struct {
 }
 
 func newErrorAlert(err error) *Alert {
-	message := defaultErrorMessage
+	var message string
+
 	if _, ok := err.(errors.PublicError); ok {
 		message = err.Error()
+	} else {
+		log.Println(err)
+		message = defaultErrorMessage
 	}
 
 	return &Alert{
