@@ -2,20 +2,20 @@ package errors
 
 const (
 	// ErrNoCSRFField no CSRF field implemented
-	ErrNoCSRFField privateError = "No CSRF field implemented"
+	ErrNoCSRFField PrivateError = "No CSRF field implemented"
 
 	// ErrNotLoggedIn user not logged in
-	ErrNotLoggedIn privateError = "Not logged in"
+	ErrNotLoggedIn PrivateError = "Not logged in"
 
 	// ErrUserIDRequired user id required
-	ErrUserIDRequired privateError = "UserID is required"
+	ErrUserIDRequired PrivateError = "UserID is required"
 
 	// ErrIDInvalid book id required
-	ErrIDInvalid privateError = "ID is invalid"
+	ErrIDInvalid PrivateError = "ID is invalid"
 )
 
-type privateError string
+type PrivateError string
 
-func (e privateError) Error() string {
+func (e PrivateError) Error() string {
 	return string(e)
 }

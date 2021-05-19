@@ -15,10 +15,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
-const (
-	baseLayout          = "base"
-	defaultErrorMessage = "Something whent wrong. Please contact us if this error persists"
-)
+const baseLayout = "base"
 
 // NewView creates a new instance of a view
 func NewView(templateName string) *View {
