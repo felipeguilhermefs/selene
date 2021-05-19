@@ -60,7 +60,7 @@ func (ur *userRepository) first(query interface{}, params ...interface{}) (*mode
 	err := ur.db.Where(query, params...).First(&user).Error
 	switch err {
 	case gorm.ErrRecordNotFound:
-		return nil, errors.ErrNotFound
+		return nil, errors.ErrUserNotFound
 	case nil:
 		return &user, nil
 	default:

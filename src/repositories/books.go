@@ -89,7 +89,7 @@ func (br *bookRepository) ByUserAndID(userID, bookID uint) (*models.Book, error)
 	err := br.db.Where("user_id = ? AND id = ?", userID, bookID).First(&book).Error
 	switch err {
 	case gorm.ErrRecordNotFound:
-		return nil, errors.ErrNotFound
+		return nil, errors.ErrBookNotFound
 	case nil:
 		return &book, nil
 	default:
