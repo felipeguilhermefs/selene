@@ -18,8 +18,6 @@ func run() error {
 		return errors.Wrap(err, "Setting up Server")
 	}
 
-	server.RegisterRoutes()
-
 	return server.Start()
 }
 

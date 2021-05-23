@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/errors"
@@ -22,7 +20,6 @@ type Server struct {
 	repositories *repositories.Repositories
 	services     *services.Services
 	server       *http.Server
-	router       *mux.Router
 }
 
 // Start start listening and serving requests
@@ -33,8 +30,6 @@ func (s *Server) Start() error {
 
 // NewServer creates a new server instance
 func NewServer(cfg *config.Config) (*Server, error) {
-	router := mux.NewRouter()
-
 	db, err := database.ConnectPostgres(&cfg.DB)
 	if err != nil {
 		return nil, errors.Wrap(err, "Connecting to Postgres")
@@ -54,14 +49,13 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	return &Server{
 		middlewares:  mdw,
 		repositories: repos,
-		router:       router,
 		services:     srvcs,
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      mdw.CSRF(router.ServeHTTP),
+			Handler:      NewRouter(mdw, srvcs),
 		},
 	}, nil
 }
