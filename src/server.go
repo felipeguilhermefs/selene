@@ -46,9 +46,9 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	srvcs := services.NewServices(cfg, repos)
 
-	mdw := middlewares.NewMiddlewares(cfg, srvcs.Auth)
-
 	views := view.NewViews()
+
+	mdw := middlewares.NewMiddlewares(cfg, srvcs.Auth, &views.Error)
 
 	router := NewRouter(mdw, srvcs, views)
 
