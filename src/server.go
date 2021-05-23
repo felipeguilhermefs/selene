@@ -12,6 +12,7 @@ import (
 	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/view"
 )
 
 // Server represents all insfrastructure used in this server app
@@ -20,6 +21,7 @@ type Server struct {
 	repositories *repositories.Repositories
 	services     *services.Services
 	server       *http.Server
+	views        *view.Views
 }
 
 // Start start listening and serving requests
@@ -46,6 +48,10 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	mdw := middlewares.NewMiddlewares(cfg, srvcs.Auth)
 
+	views := view.NewViews()
+
+	router := NewRouter(mdw, srvcs, views)
+
 	return &Server{
 		middlewares:  mdw,
 		repositories: repos,
@@ -55,7 +61,8 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      NewRouter(mdw, srvcs),
+			Handler:      router,
 		},
+		views: views,
 	}, nil
 }
