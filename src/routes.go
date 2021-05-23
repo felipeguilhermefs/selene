@@ -42,4 +42,7 @@ func (s *Server) RegisterRoutes() {
 
 	notFoundView := view.NewView("404")
 	s.router.NotFoundHandler = handlers.HandleNotFound(notFoundView)
+
+	methodNotAllowedView := view.NewView("405")
+	s.router.MethodNotAllowedHandler = handlers.HandleMethodNotAllowed(methodNotAllowedView)
 }
