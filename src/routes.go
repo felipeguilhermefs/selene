@@ -39,4 +39,7 @@ func (s *Server) RegisterRoutes() {
 	s.router.HandleFunc("/books/{id:[0-9]+}/edit", s.middlewares.Login(editBook)).Methods("POST")
 	deleteBook := handlers.HandleDeleteBook(bookView, s.services.Book)
 	s.router.HandleFunc("/books/{id:[0-9]+}/delete", s.middlewares.Login(deleteBook)).Methods("POST")
+
+	notFoundView := view.NewView("404")
+	s.router.NotFoundHandler = handlers.HandleNotFound(notFoundView)
 }
