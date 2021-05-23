@@ -17,13 +17,6 @@ import (
 
 const baseLayout = "base"
 
-// NewView creates a new instance of a view
-func NewView(templateName string) *View {
-	return &View{
-		name: templateName,
-	}
-}
-
 // View represents a page that renders (lazily) from a template
 type View struct {
 	name   string

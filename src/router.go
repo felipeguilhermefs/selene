@@ -29,43 +29,43 @@ func registerRoutes(
 	srvcs *services.Services,
 	views *view.Views,
 ) {
-	signupPage := handlers.HandleSignupPage(views.Signup)
+	signupPage := handlers.HandleSignupPage(&views.Signup)
 	router.HandleFunc("/signup", signupPage).Methods("GET")
 
-	signup := handlers.HandleSignup(views.Signup, srvcs.Auth)
+	signup := handlers.HandleSignup(&views.Signup, srvcs.Auth)
 	router.HandleFunc("/signup", signup).Methods("POST")
 
-	loginPage := handlers.HandleLoginPage(views.Login)
+	loginPage := handlers.HandleLoginPage(&views.Login)
 	router.HandleFunc("/login", loginPage).Methods("GET")
 
-	login := handlers.HandleLogin(views.Login, srvcs.Auth)
+	login := handlers.HandleLogin(&views.Login, srvcs.Auth)
 	router.HandleFunc("/login", login).Methods("POST")
 
 	logout := handlers.HandleLogout(srvcs.Auth)
 	router.HandleFunc("/logout", loginMdw(logout)).Methods("POST")
 
-	booksPage := handlers.HandleBooksPage(views.Books, srvcs.Book)
+	booksPage := handlers.HandleBooksPage(&views.Books, srvcs.Book)
 	router.HandleFunc("/books", loginMdw(booksPage)).Methods("GET")
 
-	newBookPage := handlers.HandleNewBookPage(views.NewBook)
+	newBookPage := handlers.HandleNewBookPage(&views.NewBook)
 	router.HandleFunc("/books/new", loginMdw(newBookPage)).Methods("GET")
 
-	newBook := handlers.HandleNewBook(views.NewBook, srvcs.Book)
+	newBook := handlers.HandleNewBook(&views.NewBook, srvcs.Book)
 	router.HandleFunc("/books/new", loginMdw(newBook)).Methods("POST")
 
-	editBookPage := handlers.HandleBookPage(views.EditBook, srvcs.Book)
+	editBookPage := handlers.HandleBookPage(&views.EditBook, srvcs.Book)
 	router.HandleFunc("/books/{id:[0-9]+}", loginMdw(editBookPage)).Methods("GET")
 
-	editBook := handlers.HandleEditBook(views.EditBook, srvcs.Book)
+	editBook := handlers.HandleEditBook(&views.EditBook, srvcs.Book)
 	router.HandleFunc("/books/{id:[0-9]+}/edit", loginMdw(editBook)).Methods("POST")
 
-	deleteBook := handlers.HandleDeleteBook(views.EditBook, srvcs.Book)
+	deleteBook := handlers.HandleDeleteBook(&views.EditBook, srvcs.Book)
 	router.HandleFunc("/books/{id:[0-9]+}/delete", loginMdw(deleteBook)).Methods("POST")
 
-	router.NotFoundHandler = handlers.HandleNotFound(views.NotFound)
+	router.NotFoundHandler = handlers.HandleNotFound(&views.NotFound)
 
 	router.MethodNotAllowedHandler = handlers.HandleError(
-		views.Error,
+		&views.Error,
 		http.StatusMethodNotAllowed,
 		"Sorry, this HTTP method is not allowed in this route.",
 	)
