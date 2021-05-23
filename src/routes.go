@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -43,6 +45,10 @@ func (s *Server) RegisterRoutes() {
 	notFoundView := view.NewView("404")
 	s.router.NotFoundHandler = handlers.HandleNotFound(notFoundView)
 
-	methodNotAllowedView := view.NewView("405")
-	s.router.MethodNotAllowedHandler = handlers.HandleMethodNotAllowed(methodNotAllowedView)
+	errorView := view.NewView("error")
+	s.router.MethodNotAllowedHandler = handlers.HandleError(
+		errorView,
+		http.StatusMethodNotAllowed,
+		"Sorry, this HTTP method is not allowed in this route.",
+	)
 }
