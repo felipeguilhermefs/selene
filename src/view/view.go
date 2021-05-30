@@ -32,7 +32,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 	v.once.Do(func() { v.parse() })
 
 	if v.tplerr != nil {
-		log.Println(errors.Wrap(v.tplerr, "Template parsing"))
+		log.Println(v.tplerr)
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
 	}
@@ -41,7 +41,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 
 	var buf bytes.Buffer
 	if err := tpl.ExecuteTemplate(&buf, baseLayout, data); err != nil {
-		log.Println(errors.Wrap(err, "Template rendering"))
+		log.Println(err)
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
 	}
@@ -54,7 +54,7 @@ func (v *View) parse() {
 
 	layoutFiles, err := filepath.Glob("view/templates/layouts/*.gohtml")
 	if err != nil {
-		v.tplerr = errors.Wrap(err, "Finding layout files")
+		v.tplerr = err
 	}
 
 	templateFiles := append([]string{templateFile}, layoutFiles...)

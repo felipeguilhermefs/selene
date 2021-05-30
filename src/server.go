@@ -7,7 +7,6 @@ import (
 
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
@@ -34,14 +33,14 @@ func (s *Server) Start() error {
 func NewServer(cfg *config.Config) (*Server, error) {
 	db, err := database.ConnectPostgres(&cfg.DB)
 	if err != nil {
-		return nil, errors.Wrap(err, "Connecting to Postgres")
+		return nil, err
 	}
 
 	sessionStore := session.NewCookieStore(&cfg.Sec.Session)
 
 	repos := repositories.NewRepositories(db, sessionStore)
 	if err := repos.AutoMigrate(); err != nil {
-		return nil, errors.Wrap(err, "Migrating repositories")
+		return nil, err
 	}
 
 	srvcs := services.NewServices(cfg, repos)
