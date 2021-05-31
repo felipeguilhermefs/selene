@@ -23,19 +23,26 @@ type View struct {
 	once   sync.Once
 	tpl    *template.Template
 	tplerr error
+	csp    string
 }
 
 // Render will render and enrich a view template with provided data
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 	w.Header().Set("Content-Type", "text/html")
 
-	v.once.Do(func() { v.parse() })
+	v.once.Do(func() {
+		v.csp = buildCSP(allowedScripts)
+		v.parse()
+	})
 
 	if v.tplerr != nil {
 		log.Println(v.tplerr)
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Security-Policy", v.csp)
+	data.Static.Scripts = allowedScripts
 
 	tpl := v.tpl.Funcs(v.csrfTag(r))
 
@@ -76,4 +83,14 @@ func (v *View) csrfTag(r *http.Request) template.FuncMap {
 	}
 
 	return custom
+}
+
+func buildCSP(scripts []Script) string {
+	csp := "script-src "
+
+	for _, script := range scripts {
+		csp += script.URL + " "
+	}
+
+	return csp
 }
