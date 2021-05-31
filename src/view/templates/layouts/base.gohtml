@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         {{range .Static.Styles}}
-            <link rel="stylesheet" href="{{.URL}}" integrity=".Checksum" crossorigin="anonymous">
+            <link rel="stylesheet" href="{{.URL}}" integrity="{{.Checksum}}" crossorigin="anonymous">
         {{end}}
 
         <title>Selene</title>
@@ -31,7 +31,7 @@
         </div>
 
         {{range .Static.Scripts}}
-            <script src="{{.URL}}" integrity=".Checksum" crossorigin="anonymous"></script>
+            <script src="{{.URL}}" integrity="{{.Checksum}}" crossorigin="anonymous"></script>
         {{end}}
 
     </body>
