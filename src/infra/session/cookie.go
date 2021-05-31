@@ -1,6 +1,8 @@
 package session
 
 import (
+	"net/http"
+
 	"github.com/gorilla/sessions"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
@@ -16,6 +18,8 @@ func NewCookieStore(cfg *config.SessionConfig) sessions.Store {
 	cookieStore.Options = &sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	}
 	cookieStore.MaxAge(cfg.TTL)
 
