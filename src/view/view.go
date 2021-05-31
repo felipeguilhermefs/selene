@@ -29,6 +29,7 @@ type View struct {
 
 // Render will render and enrich a view template with provided data
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("Content-Type", "text/html")
 
 	v.once.Do(func() {
