@@ -24,6 +24,7 @@ type View struct {
 	tpl    *template.Template
 	tplerr error
 	csp    string
+	static StaticData
 }
 
 // Render will render and enrich a view template with provided data
@@ -31,8 +32,14 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 	w.Header().Set("Content-Type", "text/html")
 
 	v.once.Do(func() {
-		v.csp = buildCSP(allowedScripts)
 		v.parse()
+
+		v.csp = buildCSP(allowedScripts, allowedStyles)
+
+		v.static = StaticData{
+			Scripts: allowedScripts,
+			Styles:  allowedStyles,
+		}
 	})
 
 	if v.tplerr != nil {
@@ -41,8 +48,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 		return
 	}
 
-	w.Header().Set("Content-Security-Policy", v.csp)
-	data.Static.Scripts = allowedScripts
+	v.setContentSecurityPolicy(w, data)
 
 	tpl := v.tpl.Funcs(v.csrfTag(r))
 
@@ -85,12 +91,22 @@ func (v *View) csrfTag(r *http.Request) template.FuncMap {
 	return custom
 }
 
-func buildCSP(scripts []Script) string {
-	csp := "script-src "
+func (v *View) setContentSecurityPolicy(w http.ResponseWriter, data *Data) {
+	data.Static = v.static
 
+	w.Header().Set("Content-Security-Policy", v.csp)
+}
+
+func buildCSP(scripts []Dependency, styles []Dependency) string {
+	cspScripts := "script-src "
 	for _, script := range scripts {
-		csp += script.URL + " "
+		cspScripts += script.URL + " "
 	}
 
-	return csp
+	cspStyles := "style-src "
+	for _, style := range styles {
+		cspStyles += style.URL + " "
+	}
+
+	return cspScripts + "; " + cspStyles
 }
