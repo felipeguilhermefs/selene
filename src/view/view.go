@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/gorilla/csrf"
@@ -99,6 +100,14 @@ func (v *View) setContentSecurityPolicy(w http.ResponseWriter, data *Data) {
 }
 
 func buildCSP(scripts []Dependency, styles []Dependency) string {
+	csp := []string{
+		"default-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
+		"frame-ancestors 'none'",
+		"upgrade-insecure-requests",
+	}
+
 	cspScripts := "script-src "
 	for _, script := range scripts {
 		cspScripts += script.URL + " "
@@ -109,5 +118,7 @@ func buildCSP(scripts []Dependency, styles []Dependency) string {
 		cspStyles += style.URL + " "
 	}
 
-	return cspScripts + "; " + cspStyles
+	csp = append(csp, cspScripts, cspStyles)
+
+	return strings.Join(csp, ";")
 }
