@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/gorilla/csrf"
@@ -24,8 +23,6 @@ type View struct {
 	once   sync.Once
 	tpl    *template.Template
 	tplerr error
-	csp    string
-	static StaticData
 }
 
 // Render will render and enrich a view template with provided data
@@ -33,24 +30,13 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	v.once.Do(func() {
-		v.parse()
-
-		v.csp = buildCSP(allowedScripts, allowedStyles)
-
-		v.static = StaticData{
-			Scripts: allowedScripts,
-			Styles:  allowedStyles,
-		}
-	})
+	v.once.Do(func() { v.parse() })
 
 	if v.tplerr != nil {
 		log.Println(v.tplerr)
 		http.Error(w, defaultErrorMessage, http.StatusInternalServerError)
 		return
 	}
-
-	v.setContentSecurityPolicy(w, data)
 
 	tpl := v.tpl.Funcs(v.csrfTag(r))
 
@@ -91,34 +77,4 @@ func (v *View) csrfTag(r *http.Request) template.FuncMap {
 	}
 
 	return custom
-}
-
-func (v *View) setContentSecurityPolicy(w http.ResponseWriter, data *Data) {
-	data.Static = v.static
-
-	w.Header().Set("Content-Security-Policy", v.csp)
-}
-
-func buildCSP(scripts []Dependency, styles []Dependency) string {
-	csp := []string{
-		"default-src 'none'",
-		"base-uri 'self'",
-		"form-action 'self'",
-		"frame-ancestors 'none'",
-		"upgrade-insecure-requests",
-	}
-
-	cspScripts := "script-src "
-	for _, script := range scripts {
-		cspScripts += script.URL + " "
-	}
-
-	cspStyles := "style-src "
-	for _, style := range styles {
-		cspStyles += style.URL + " "
-	}
-
-	csp = append(csp, cspScripts, cspStyles)
-
-	return strings.Join(csp, ";")
 }
