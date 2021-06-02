@@ -20,7 +20,7 @@ func NewRouter(
 
 	registerRoutes(router, mdw.Login, srvcs, views)
 
-	return mdw.CSRF(mdw.CSP(router.ServeHTTP))
+	return mdw.CSRF(mdw.SecHeaders(router.ServeHTTP))
 }
 
 func registerRoutes(

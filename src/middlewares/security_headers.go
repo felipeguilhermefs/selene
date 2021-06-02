@@ -7,14 +7,15 @@ import (
 )
 
 const (
-	cspHeader = "Content-Security-Policy"
+	referrerHeader = "Referrer-Policy"
+	cspHeader      = "Content-Security-Policy"
 
 	jquery       = "https://code.jquery.com/jquery-3.5.1.slim.min.js"
 	bootstrapJS  = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
 	bootstrapCSS = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
 )
 
-func newCSPMiddleware() Middleware {
+func newSecHeaderMiddleware() Middleware {
 	cspValue := buildCSP()
 
 	return func(next http.HandlerFunc) http.HandlerFunc {
@@ -22,6 +23,7 @@ func newCSPMiddleware() Middleware {
 		return func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set(cspHeader, cspValue)
+			w.Header().Set(referrerHeader, "no-referrer")
 
 			next(w, r)
 		}
