@@ -12,6 +12,7 @@ const (
 	coop     = "Cross-Origin-Opener-Policy"
 	coep     = "Cross-Origin-Embedder-Policy"
 	corp     = "Cross-Origin-Resource-Policy"
+	hsts     = "Strict-Transport-Security"
 
 	jquery       = "https://code.jquery.com/jquery-3.5.1.slim.min.js"
 	bootstrapJS  = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
@@ -30,6 +31,7 @@ func newSecHeaderMiddleware() Middleware {
 			w.Header().Set(coop, "same-origin")
 			w.Header().Set(coep, "require-corp")
 			w.Header().Set(corp, "same-origin")
+			w.Header().Set(hsts, "max-age=63072000; includeSubDomains; preload")
 
 			next(w, r)
 		}
