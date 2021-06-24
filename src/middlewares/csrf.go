@@ -4,21 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/csrf"
-
-	"github.com/felipeguilhermefs/selene/handlers"
-	"github.com/felipeguilhermefs/selene/infra/config"
-	"github.com/felipeguilhermefs/selene/view"
 )
 
-func newCSRFMiddleware(cfg *config.SecurityConfig, errorView *view.View) Middleware {
-	notAuthentic := handlers.HandleError(
-		errorView,
-		http.StatusForbidden,
-		"Sorry, authenticity check has failed.",
-	)
-
+func newCSRFMiddleware(secret string, notAuthentic http.HandlerFunc) Middleware {
 	csrfCheck := csrf.Protect(
-		[]byte(cfg.CSRF),
+		[]byte(secret),
 		csrf.SameSite(csrf.SameSiteStrictMode),
 		csrf.ErrorHandler(notAuthentic),
 	)

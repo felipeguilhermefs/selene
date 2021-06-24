@@ -12,9 +12,9 @@ type Services struct {
 	Book     BookService
 }
 
-// NewServices init all services
-func NewServices(cfg *config.Config, repos *repositories.Repositories) *Services {
-	passwordService := newPasswordService(&cfg.Sec.Password)
+// New init all services
+func New(passwordConfig *config.PasswordConfig, repos *repositories.Repositories) *Services {
+	passwordService := newPasswordService(passwordConfig)
 
 	return &Services{
 		Auth:     newAuthService(repos.Session, repos.User, passwordService),

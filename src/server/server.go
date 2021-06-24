@@ -1,15 +1,17 @@
-package main
+package server
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
+	"github.com/felipeguilhermefs/selene/router"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -18,6 +20,7 @@ import (
 type Server struct {
 	middlewares  *middlewares.Middlewares
 	repositories *repositories.Repositories
+	router       router.Router
 	services     *services.Services
 	server       *http.Server
 	views        *view.Views
@@ -29,8 +32,8 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-// NewServer creates a new server instance
-func NewServer(cfg *config.Config) (*Server, error) {
+// New creates a new server instance
+func New(cfg *config.Config) (*Server, error) {
 	db, err := database.ConnectPostgres(&cfg.DB)
 	if err != nil {
 		return nil, err
@@ -38,29 +41,32 @@ func NewServer(cfg *config.Config) (*Server, error) {
 
 	sessionStore := session.NewCookieStore(&cfg.Sec.Session)
 
-	repos := repositories.NewRepositories(db, sessionStore)
+	repos := repositories.New(db, sessionStore)
 	if err := repos.AutoMigrate(); err != nil {
 		return nil, err
 	}
 
-	srvcs := services.NewServices(cfg, repos)
+	srvcs := services.New(&cfg.Sec.Password, repos)
 
 	views := view.NewViews()
 
-	mdw := middlewares.NewMiddlewares(cfg, srvcs.Auth, &views.Error)
+	hdlrs := handlers.New(srvcs, views)
 
-	router := NewRouter(mdw, srvcs, views)
+	mdw := middlewares.New(cfg.Sec.CSRF, srvcs.Auth, hdlrs.NotAuthentic)
+
+	r := router.New(mdw, hdlrs)
 
 	return &Server{
 		middlewares:  mdw,
 		repositories: repos,
+		router:       r,
 		services:     srvcs,
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
 			ReadTimeout:  cfg.Server.ReadTimeout(),
 			WriteTimeout: cfg.Server.WriteTimeout(),
 			IdleTimeout:  cfg.Server.IdleTimeout(),
-			Handler:      router,
+			Handler:      r,
 		},
 		views: views,
 	}, nil

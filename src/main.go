@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/felipeguilhermefs/selene/infra/config"
+	"github.com/felipeguilhermefs/selene/server"
 )
 
 func run() error {
@@ -12,12 +13,12 @@ func run() error {
 		return err
 	}
 
-	server, err := NewServer(cfg)
+	s, err := server.New(cfg)
 	if err != nil {
 		return err
 	}
 
-	return server.Start()
+	return s.Start()
 }
 
 func main() {

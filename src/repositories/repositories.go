@@ -15,8 +15,8 @@ type Repositories struct {
 	Book    BookRepository
 }
 
-// NewRepositories init all repositories
-func NewRepositories(db *gorm.DB, store sessions.Store) *Repositories {
+// New init all repositories
+func New(db *gorm.DB, store sessions.Store) *Repositories {
 
 	return &Repositories{
 		db:      db,

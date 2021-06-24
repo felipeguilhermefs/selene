@@ -3,9 +3,7 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/services"
-	"github.com/felipeguilhermefs/selene/view"
 )
 
 type Middleware = func(http.HandlerFunc) http.HandlerFunc
@@ -17,10 +15,14 @@ type Middlewares struct {
 	Login      Middleware
 }
 
-// NewMiddlewares init all middlewares
-func NewMiddlewares(cfg *config.Config, authService services.AuthService, errorView *view.View) *Middlewares {
+// New init all middlewares
+func New(
+	csrfSecret string,
+	authService services.AuthService,
+	notAuthentic http.HandlerFunc,
+) *Middlewares {
 	return &Middlewares{
-		CSRF:       newCSRFMiddleware(&cfg.Sec, errorView),
+		CSRF:       newCSRFMiddleware(csrfSecret, notAuthentic),
 		SecHeaders: newSecHeaderMiddleware(),
 		Login:      newLoginMiddleware(authService),
 	}
