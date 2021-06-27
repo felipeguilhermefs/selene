@@ -9,6 +9,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/copolicy"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
@@ -69,21 +70,21 @@ func run() error {
 			Opener:   "same-origin",
 			Resource: "same-origin",
 		}),
-		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
-			CSP: middleware.CSPConfig{
-				BaseURI:        "'self'",
-				DefaultSrc:     "'none'",
-				FormAction:     "'self'",
-				FrameAncestors: "'none'",
-				ScriptSrc: []string{
-					"https://code.jquery.com/jquery-3.5.1.slim.min.js",
-					"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js",
-				},
-				StyleSrc: []string{
-					"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
-				},
-				UpgradeInsecure: true,
+		csp.New(&csp.Config{
+			BaseURI:        "'self'",
+			DefaultSrc:     "'none'",
+			FormAction:     "'self'",
+			FrameAncestors: "'none'",
+			ScriptSrc: []string{
+				"https://code.jquery.com/jquery-3.5.1.slim.min.js",
+				"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js",
 			},
+			StyleSrc: []string{
+				"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
+			},
+			UpgradeInsecure: true,
+		}),
+		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
 			HSTS: middleware.HSTSConfig{
 				IncludeSubDomains: true,
 				MaxAge:            63072000,
