@@ -7,7 +7,6 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -64,7 +63,7 @@ func run() error {
 		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: mdw.Login(hdlrs.DeleteBook)},
 	}
 
-	mdws := []middleware.Middleware{
+	mdws := []router.Middleware{
 		csrf.New(cfg.Sec.CSRF),
 		policy.New(policy.Config{
 			Embedder: "require-corp",

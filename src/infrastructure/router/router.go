@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
 )
 
 type Route struct {
@@ -14,9 +12,11 @@ type Route struct {
 	Handler http.Handler
 }
 
+type Middleware func(http.Handler) http.Handler
+
 func New(
 	routes []Route,
-	middlewares []middleware.Middleware,
+	middlewares []Middleware,
 	notFound http.Handler,
 ) http.Handler {
 	router := mux.NewRouter()
