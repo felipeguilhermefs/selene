@@ -8,6 +8,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/copolicy"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
@@ -63,10 +64,12 @@ func run() error {
 
 	mdws := []middleware.Middleware{
 		csrf.New(cfg.Sec.CSRF),
+		copolicy.New(copolicy.Config{
+			Embedder: "require-corp",
+			Opener:   "same-origin",
+			Resource: "same-origin",
+		}),
 		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
-			COEP: "require-corp",
-			COOP: "same-origin",
-			CORP: "same-origin",
 			CSP: middleware.CSPConfig{
 				BaseURI:        "'self'",
 				DefaultSrc:     "'none'",

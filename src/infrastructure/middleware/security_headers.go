@@ -9,16 +9,10 @@ import (
 const (
 	referrer = "Referrer-Policy"
 	csp      = "Content-Security-Policy"
-	coop     = "Cross-Origin-Opener-Policy"
-	coep     = "Cross-Origin-Embedder-Policy"
-	corp     = "Cross-Origin-Resource-Policy"
 	hsts     = "Strict-Transport-Security"
 )
 
 type SecHeaderConfig struct {
-	COEP           string
-	COOP           string
-	CORP           string
 	CSP            CSPConfig
 	HSTS           HSTSConfig
 	ReferrerPolicy string
@@ -43,16 +37,13 @@ type HSTSConfig struct {
 func NewSecHeaders(cfg *SecHeaderConfig) Middleware {
 	cspValue := cfg.CSP.build()
 	hstsValue := cfg.HSTS.build()
-	
+
 	return func(next http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set(csp, cspValue)
 			w.Header().Set(referrer, cfg.ReferrerPolicy)
-			w.Header().Set(coop, cfg.COOP)
-			w.Header().Set(coep, cfg.COEP)
-			w.Header().Set(corp, cfg.CORP)
 			w.Header().Set(hsts, hstsValue)
 
 			next.ServeHTTP(w, r)
