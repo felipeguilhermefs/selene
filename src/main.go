@@ -8,6 +8,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/middlewares"
@@ -61,7 +62,7 @@ func run() error {
 	}
 
 	mdws := []middleware.Middleware{
-		middleware.NewCSRF(cfg.Sec.CSRF),
+		csrf.New(cfg.Sec.CSRF),
 		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
 			COEP: "require-corp",
 			COOP: "same-origin",
