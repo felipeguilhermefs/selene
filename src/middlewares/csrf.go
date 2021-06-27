@@ -13,7 +13,7 @@ func newCSRFMiddleware(secret string, notAuthentic http.HandlerFunc) Middleware 
 		csrf.ErrorHandler(notAuthentic),
 	)
 
-	return func(next http.HandlerFunc) http.HandlerFunc {
-		return csrfCheck(next).ServeHTTP
+	return func(next http.Handler) http.Handler {
+		return csrfCheck(next)
 	}
 }

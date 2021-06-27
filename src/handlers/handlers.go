@@ -22,7 +22,6 @@ type Handlers struct {
 	DeleteBook   http.HandlerFunc
 	NotFound     http.HandlerFunc
 	NotAuthentic http.HandlerFunc
-	Error        http.HandlerFunc
 }
 
 // New init all handlers
@@ -44,11 +43,6 @@ func New(srvcs *services.Services, views *view.Views) *Handlers {
 			&views.Error,
 			http.StatusForbidden,
 			"Sorry, authenticity check has failed.",
-		),
-		Error: HandleError(
-			&views.Error,
-			http.StatusMethodNotAllowed,
-			"Sorry, this HTTP method is not allowed in this route.",
 		),
 	}
 }

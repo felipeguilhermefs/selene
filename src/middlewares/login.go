@@ -9,9 +9,9 @@ import (
 
 func newLoginMiddleware(authService services.AuthService) Middleware {
 
-	return func(next http.HandlerFunc) http.HandlerFunc {
+	return func(next http.Handler) http.Handler {
 
-		return func(w http.ResponseWriter, r *http.Request) {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			user, err := authService.GetUser(r)
 			if err != nil {
@@ -21,7 +21,7 @@ func newLoginMiddleware(authService services.AuthService) Middleware {
 
 			ctx := context.WithUser(r, user)
 
-			next(w, r.WithContext(ctx))
-		}
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	}
 }

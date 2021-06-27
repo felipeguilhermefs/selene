@@ -7,10 +7,11 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
+	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
-	"github.com/felipeguilhermefs/selene/router"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -45,7 +46,23 @@ func run() error {
 
 	mdw := middlewares.New(cfg.Sec.CSRF, srvcs.Auth, hdlrs.NotAuthentic)
 
-	r := router.New(mdw, hdlrs)
+	routes := []router.Route{
+		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},
+		{Method: "POST", Path: "/signup", Handler: hdlrs.Signup},
+		{Method: "GET", Path: "/login", Handler: hdlrs.LoginPage},
+		{Method: "POST", Path: "/login", Handler: hdlrs.Login},
+		{Method: "POST", Path: "/logout", Handler: mdw.Login(hdlrs.Logout)},
+		{Method: "GET", Path: "/books", Handler: mdw.Login(hdlrs.BooksPage)},
+		{Method: "GET", Path: "/books/new", Handler: mdw.Login(hdlrs.NewBookPage)},
+		{Method: "POST", Path: "/books/new", Handler: mdw.Login(hdlrs.NewBook)},
+		{Method: "GET", Path: "/books/{id:[0-9]+}", Handler: mdw.Login(hdlrs.BookPage)},
+		{Method: "POST", Path: "/books/{id:[0-9]+}/edit", Handler: mdw.Login(hdlrs.EditBook)},
+		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: mdw.Login(hdlrs.DeleteBook)},
+	}
+
+	mdws := []middleware.Middleware{mdw.CSRF, mdw.SecHeaders}
+
+	r := router.New(routes, mdws, hdlrs.NotFound)
 
 	s := server.New(&cfg.Server, r)
 

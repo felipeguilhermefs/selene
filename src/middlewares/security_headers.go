@@ -22,9 +22,9 @@ const (
 func newSecHeaderMiddleware() Middleware {
 	cspValue := buildCSP()
 
-	return func(next http.HandlerFunc) http.HandlerFunc {
+	return func(next http.Handler) http.Handler {
 
-		return func(w http.ResponseWriter, r *http.Request) {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set(csp, cspValue)
 			w.Header().Set(referrer, "no-referrer")
@@ -33,8 +33,8 @@ func newSecHeaderMiddleware() Middleware {
 			w.Header().Set(corp, "same-origin")
 			w.Header().Set(hsts, "max-age=63072000; includeSubDomains; preload")
 
-			next(w, r)
-		}
+			next.ServeHTTP(w, r)
+		})
 	}
 }
 

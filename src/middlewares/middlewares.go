@@ -6,7 +6,7 @@ import (
 	"github.com/felipeguilhermefs/selene/services"
 )
 
-type Middleware = func(http.HandlerFunc) http.HandlerFunc
+type Middleware = func(http.Handler) http.Handler
 
 // Middlewares all middlewares in this app
 type Middlewares struct {
