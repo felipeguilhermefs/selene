@@ -7,13 +7,11 @@ import (
 )
 
 const (
-	referrer = "Referrer-Policy"
-	hsts     = "Strict-Transport-Security"
+	hsts = "Strict-Transport-Security"
 )
 
 type SecHeaderConfig struct {
 	HSTS           HSTSConfig
-	ReferrerPolicy string
 }
 
 type HSTSConfig struct {
@@ -29,7 +27,6 @@ func NewSecHeaders(cfg *SecHeaderConfig) Middleware {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			w.Header().Set(referrer, cfg.ReferrerPolicy)
 			w.Header().Set(hsts, hstsValue)
 
 			next.ServeHTTP(w, r)

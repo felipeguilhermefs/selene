@@ -8,9 +8,9 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware/copolicy"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/policy"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/middlewares"
@@ -65,9 +65,10 @@ func run() error {
 
 	mdws := []middleware.Middleware{
 		csrf.New(cfg.Sec.CSRF),
-		copolicy.New(copolicy.Config{
+		policy.New(policy.Config{
 			Embedder: "require-corp",
 			Opener:   "same-origin",
+			Referrer: "no-referrer",
 			Resource: "same-origin",
 		}),
 		csp.New(&csp.Config{
@@ -90,7 +91,6 @@ func run() error {
 				MaxAge:            63072000,
 				Preload:           true,
 			},
-			ReferrerPolicy: "no-referrer",
 		}),
 	}
 
