@@ -2,9 +2,17 @@ package config
 
 // SecurityConfig security config data
 type SecurityConfig struct {
-	CSRF     string         `json:"csrf"`
+	CSRF     CSRFConfig     `json:"csrf"`
 	Password PasswordConfig `json:"password"`
 	Session  SessionConfig  `json:"session"`
+}
+
+type CSRFConfig struct {
+	Sct string `json:"secret"`
+}
+
+func (c *CSRFConfig) Secret() string {
+	return c.Sct
 }
 
 type PasswordConfig struct {

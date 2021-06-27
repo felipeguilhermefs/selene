@@ -64,7 +64,7 @@ func run() error {
 	}
 
 	mdws := []router.Middleware{
-		csrf.New(cfg.Sec.CSRF),
+		csrf.New(&cfg.Sec.CSRF),
 		policy.New(policy.Config{
 			Embedder: "require-corp",
 			Opener:   "same-origin",
