@@ -1,4 +1,4 @@
-package middleware
+package hsts
 
 import (
 	"fmt"
@@ -10,18 +10,14 @@ const (
 	hsts = "Strict-Transport-Security"
 )
 
-type SecHeaderConfig struct {
-	HSTS           HSTSConfig
-}
-
-type HSTSConfig struct {
+type Config struct {
 	IncludeSubDomains bool
 	MaxAge            int
 	Preload           bool
 }
 
-func NewSecHeaders(cfg *SecHeaderConfig) Middleware {
-	hstsValue := cfg.HSTS.build()
+func New(cfg *Config) func(next http.Handler) http.Handler {
+	hstsValue := cfg.build()
 
 	return func(next http.Handler) http.Handler {
 
@@ -34,7 +30,7 @@ func NewSecHeaders(cfg *SecHeaderConfig) Middleware {
 	}
 }
 
-func (c *HSTSConfig) build() string {
+func (c *Config) build() string {
 	var rules []string
 
 	if c.MaxAge > 0 {

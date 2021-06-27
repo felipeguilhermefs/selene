@@ -10,6 +10,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/policy"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
@@ -71,6 +72,11 @@ func run() error {
 			Referrer: "no-referrer",
 			Resource: "same-origin",
 		}),
+		hsts.New(&hsts.Config{
+			IncludeSubDomains: true,
+			MaxAge:            63072000,
+			Preload:           true,
+		}),
 		csp.New(&csp.Config{
 			BaseURI:        "'self'",
 			DefaultSrc:     "'none'",
@@ -84,13 +90,6 @@ func run() error {
 				"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
 			},
 			UpgradeInsecure: true,
-		}),
-		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
-			HSTS: middleware.HSTSConfig{
-				IncludeSubDomains: true,
-				MaxAge:            63072000,
-				Preload:           true,
-			},
 		}),
 	}
 
