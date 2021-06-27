@@ -65,12 +65,7 @@ func run() error {
 
 	mdws := []router.Middleware{
 		csrf.New(&cfg.Sec.CSRF),
-		policy.New(policy.Config{
-			Embedder: "require-corp",
-			Opener:   "same-origin",
-			Referrer: "no-referrer",
-			Resource: "same-origin",
-		}),
+		policy.New(&cfg.Sec.Policy),
 		hsts.New(&hsts.Config{
 			IncludeSubDomains: true,
 			MaxAge:            63072000,

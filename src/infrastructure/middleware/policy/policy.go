@@ -9,22 +9,26 @@ const (
 	referrer = "Referrer-Policy"
 )
 
-type Config struct {
-	Embedder string
-	Opener   string
-	Referrer string
-	Resource string
+type Config interface {
+	Embedder() string
+	Opener() string
+	Referrer() string
+	Resource() string
 }
 
 func New(cfg Config) func(next http.Handler) http.Handler {
+	embedder := cfg.Embedder()
+	opener := cfg.Opener()
+	referrer := cfg.Referrer()
+	resource := cfg.Resource()
 	return func(next http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			w.Header().Set(coep, cfg.Embedder)
-			w.Header().Set(coop, cfg.Opener)
-			w.Header().Set(corp, cfg.Resource)
-			w.Header().Set(referrer, cfg.Referrer)
+			w.Header().Set(coep, embedder)
+			w.Header().Set(coop, opener)
+			w.Header().Set(corp, resource)
+			w.Header().Set(referrer, referrer)
 
 			next.ServeHTTP(w, r)
 		})
