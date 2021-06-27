@@ -10,20 +10,12 @@ type Middleware = func(http.Handler) http.Handler
 
 // Middlewares all middlewares in this app
 type Middlewares struct {
-	CSRF       Middleware
-	SecHeaders Middleware
-	Login      Middleware
+	Login Middleware
 }
 
 // New init all middlewares
-func New(
-	csrfSecret string,
-	authService services.AuthService,
-	notAuthentic http.HandlerFunc,
-) *Middlewares {
+func New(authService services.AuthService) *Middlewares {
 	return &Middlewares{
-		CSRF:       newCSRFMiddleware(csrfSecret, notAuthentic),
-		SecHeaders: newSecHeaderMiddleware(),
-		Login:      newLoginMiddleware(authService),
+		Login: newLoginMiddleware(authService),
 	}
 }

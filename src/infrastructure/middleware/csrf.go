@@ -1,4 +1,4 @@
-package middlewares
+package middleware
 
 import (
 	"net/http"
@@ -6,11 +6,10 @@ import (
 	"github.com/gorilla/csrf"
 )
 
-func newCSRFMiddleware(secret string, notAuthentic http.HandlerFunc) Middleware {
+func NewCSRF(secret string) Middleware {
 	csrfCheck := csrf.Protect(
 		[]byte(secret),
 		csrf.SameSite(csrf.SameSiteStrictMode),
-		csrf.ErrorHandler(notAuthentic),
 	)
 
 	return func(next http.Handler) http.Handler {

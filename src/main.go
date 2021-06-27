@@ -44,7 +44,7 @@ func run() error {
 
 	hdlrs := handlers.New(srvcs, views)
 
-	mdw := middlewares.New(cfg.Sec.CSRF, srvcs.Auth, hdlrs.NotAuthentic)
+	mdw := middlewares.New(srvcs.Auth)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},
@@ -60,7 +60,34 @@ func run() error {
 		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: mdw.Login(hdlrs.DeleteBook)},
 	}
 
-	mdws := []middleware.Middleware{mdw.CSRF, mdw.SecHeaders}
+	mdws := []middleware.Middleware{
+		middleware.NewCSRF(cfg.Sec.CSRF),
+		middleware.NewSecHeaders(&middleware.SecHeaderConfig{
+			COEP: "require-corp",
+			COOP: "same-origin",
+			CORP: "same-origin",
+			CSP: middleware.CSPConfig{
+				BaseURI:        "'self'",
+				DefaultSrc:     "'none'",
+				FormAction:     "'self'",
+				FrameAncestors: "'none'",
+				ScriptSrc: []string{
+					"https://code.jquery.com/jquery-3.5.1.slim.min.js",
+					"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js",
+				},
+				StyleSrc: []string{
+					"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
+				},
+				UpgradeInsecure: true,
+			},
+			HSTS: middleware.HSTSConfig{
+				IncludeSubDomains: true,
+				MaxAge:            63072000,
+				Preload:           true,
+			},
+			ReferrerPolicy: "no-referrer",
+		}),
+	}
 
 	r := router.New(routes, mdws, hdlrs.NotFound)
 
