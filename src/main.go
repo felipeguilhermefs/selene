@@ -64,9 +64,9 @@ func run() error {
 	}
 
 	mdws := []router.Middleware{
-		csrf.New(&cfg.Sec.CSRF),
-		policy.New(&cfg.Sec.Policy),
-		hsts.New(&cfg.Sec.HSTS),
+		csrf.New(&cfg.Sec),
+		policy.New(&cfg.Sec),
+		hsts.New(&cfg.Sec),
 		csp.New(&cfg.Sec),
 	}
 

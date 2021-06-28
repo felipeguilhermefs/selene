@@ -11,11 +11,22 @@ type SecurityConfig struct {
 		ScriptSrc       []string `json:"scriptSrc"`
 		UpgradeInsecure bool     `json:"upgradeInsecure"`
 	} `json:"csp"`
-	CSRF     CSRFConfig     `json:"csrf"`
-	HSTS     HSTSConfig     `json:"hsts"`
+	CSRF struct {
+		Secret string `json:"secret"`
+	} `json:"csrf"`
+	HSTS struct {
+		IncludeSubDomains bool `json:"includeSubDomains"`
+		MaxAge            int  `json:"maxAge"`
+		Preload           bool `json:"preload"`
+	} `json:"hsts"`
 	Password PasswordConfig `json:"password"`
-	Policy   PolicyConfig   `json:"policy"`
-	Session  SessionConfig  `json:"session"`
+	Policy   struct {
+		Embedder string `json:"embedder"`
+		Opener   string `json:"opener"`
+		Referrer string `json:"referrer"`
+		Resource string `json:"resource"`
+	} `json:"policy"`
+	Session SessionConfig `json:"session"`
 }
 
 func (c *SecurityConfig) BaseURI() string {
@@ -46,58 +57,41 @@ func (c *SecurityConfig) UpgradeInsecure() bool {
 	return c.CSP.UpgradeInsecure
 }
 
-type CSRFConfig struct {
-	Sct string `json:"secret"`
+func (c *SecurityConfig) Secret() string {
+	return c.CSRF.Secret
 }
 
-func (c *CSRFConfig) Secret() string {
-	return c.Sct
+func (c *SecurityConfig) IncludeSubDomains() bool {
+	return c.HSTS.IncludeSubDomains
 }
 
-type HSTSConfig struct {
-	IncSubDomain bool `json:"includeSubDomains"`
-	MxAge        int  `json:"maxAge"`
-	Preld        bool `json:"preload"`
+func (c *SecurityConfig) MaxAge() int {
+	return c.HSTS.MaxAge
 }
 
-func (c *HSTSConfig) IncludeSubDomains() bool {
-	return c.IncSubDomain
+func (c *SecurityConfig) Preload() bool {
+	return c.HSTS.Preload
 }
 
-func (c *HSTSConfig) MaxAge() int {
-	return c.MxAge
+func (c *SecurityConfig) Embedder() string {
+	return c.Policy.Embedder
 }
 
-func (c *HSTSConfig) Preload() bool {
-	return c.Preld
+func (c *SecurityConfig) Opener() string {
+	return c.Policy.Opener
+}
+
+func (c *SecurityConfig) Referrer() string {
+	return c.Policy.Referrer
+}
+
+func (c *SecurityConfig) Resource() string {
+	return c.Policy.Resource
 }
 
 type PasswordConfig struct {
 	MinLen int    `json:"min_length"`
 	Pepper string `json:"pepper"`
-}
-
-type PolicyConfig struct {
-	Emb   string `json:"embedder"`
-	Open  string `json:"opener"`
-	Refer string `json:"referrer"`
-	Res   string `json:"resource"`
-}
-
-func (c *PolicyConfig) Embedder() string {
-	return c.Emb
-}
-
-func (c *PolicyConfig) Opener() string {
-	return c.Open
-}
-
-func (c *PolicyConfig) Referrer() string {
-	return c.Refer
-}
-
-func (c *PolicyConfig) Resource() string {
-	return c.Res
 }
 
 type SessionConfig struct {
