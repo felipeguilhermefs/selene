@@ -10,18 +10,18 @@ const (
 	csp = "Content-Security-Policy"
 )
 
-type Config struct {
-	BaseURI         string
-	DefaultSrc      string
-	FormAction      string
-	FrameAncestors  string
-	StyleSrc        []string
-	ScriptSrc       []string
-	UpgradeInsecure bool
+type Config interface {
+	BaseURI() string
+	DefaultSrc() string
+	FormAction() string
+	FrameAncestors() string
+	StyleSrc() []string
+	ScriptSrc() []string
+	UpgradeInsecure() bool
 }
 
-func New(cfg *Config) func(next http.Handler) http.Handler {
-	cspValue := cfg.build()
+func New(cfg Config) func(next http.Handler) http.Handler {
+	cspValue := build(cfg)
 
 	return func(next http.Handler) http.Handler {
 
@@ -34,36 +34,36 @@ func New(cfg *Config) func(next http.Handler) http.Handler {
 	}
 }
 
-func (c *Config) build() string {
+func build(cfg Config) string {
 	var rules []string
 
-	if defaultSrc := strings.TrimSpace(c.DefaultSrc); defaultSrc != "" {
+	if defaultSrc := strings.TrimSpace(cfg.DefaultSrc()); defaultSrc != "" {
 		rules = append(rules, fmt.Sprintf("default-src %s", defaultSrc))
 	}
 
-	if baseURI := strings.TrimSpace(c.BaseURI); baseURI != "" {
+	if baseURI := strings.TrimSpace(cfg.BaseURI()); baseURI != "" {
 		rules = append(rules, fmt.Sprintf("base-uri %s", baseURI))
 	}
 
-	if formAction := strings.TrimSpace(c.FormAction); formAction != "" {
+	if formAction := strings.TrimSpace(cfg.FormAction()); formAction != "" {
 		rules = append(rules, fmt.Sprintf("form-action %s", formAction))
 	}
 
-	if frameAncestors := strings.TrimSpace(c.FrameAncestors); frameAncestors != "" {
+	if frameAncestors := strings.TrimSpace(cfg.FrameAncestors()); frameAncestors != "" {
 		rules = append(rules, fmt.Sprintf("frame-ancestors %s", frameAncestors))
 	}
 
-	if c.UpgradeInsecure {
+	if cfg.UpgradeInsecure() {
 		rules = append(rules, "upgrade-insecure-requests")
 	}
 
-	if len(c.ScriptSrc) > 0 {
-		scriptSrc := fmt.Sprintf("script-src %s", strings.Join(c.ScriptSrc, " "))
+	if len(cfg.ScriptSrc()) > 0 {
+		scriptSrc := fmt.Sprintf("script-src %s", strings.Join(cfg.ScriptSrc(), " "))
 		rules = append(rules, scriptSrc)
 	}
 
-	if len(c.StyleSrc) > 0 {
-		styleSrc := fmt.Sprintf("style-src %s", strings.Join(c.StyleSrc, " "))
+	if len(cfg.StyleSrc()) > 0 {
+		styleSrc := fmt.Sprintf("style-src %s", strings.Join(cfg.StyleSrc(), " "))
 		rules = append(rules, styleSrc)
 	}
 

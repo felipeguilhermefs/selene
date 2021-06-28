@@ -67,20 +67,7 @@ func run() error {
 		csrf.New(&cfg.Sec.CSRF),
 		policy.New(&cfg.Sec.Policy),
 		hsts.New(&cfg.Sec.HSTS),
-		csp.New(&csp.Config{
-			BaseURI:        "'self'",
-			DefaultSrc:     "'none'",
-			FormAction:     "'self'",
-			FrameAncestors: "'none'",
-			ScriptSrc: []string{
-				"https://code.jquery.com/jquery-3.5.1.slim.min.js",
-				"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js",
-			},
-			StyleSrc: []string{
-				"https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
-			},
-			UpgradeInsecure: true,
-		}),
+		csp.New(&cfg.Sec),
 	}
 
 	r := router.New(routes, mdws, hdlrs.NotFound)

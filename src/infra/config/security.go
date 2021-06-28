@@ -2,11 +2,48 @@ package config
 
 // SecurityConfig security config data
 type SecurityConfig struct {
+	CSP struct {
+		BaseURI         string   `json:"baseURI"`
+		DefaultSrc      string   `json:"defaultSrc"`
+		FormAction      string   `json:"formAction"`
+		FrameAncestors  string   `json:"frameAncestors"`
+		StyleSrc        []string `json:"styleSrc"`
+		ScriptSrc       []string `json:"scriptSrc"`
+		UpgradeInsecure bool     `json:"upgradeInsecure"`
+	} `json:"csp"`
 	CSRF     CSRFConfig     `json:"csrf"`
 	HSTS     HSTSConfig     `json:"hsts"`
 	Password PasswordConfig `json:"password"`
 	Policy   PolicyConfig   `json:"policy"`
 	Session  SessionConfig  `json:"session"`
+}
+
+func (c *SecurityConfig) BaseURI() string {
+	return c.CSP.BaseURI
+}
+
+func (c *SecurityConfig) DefaultSrc() string {
+	return c.CSP.DefaultSrc
+}
+
+func (c *SecurityConfig) FormAction() string {
+	return c.CSP.FormAction
+}
+
+func (c *SecurityConfig) FrameAncestors() string {
+	return c.CSP.FrameAncestors
+}
+
+func (c *SecurityConfig) StyleSrc() []string {
+	return c.CSP.StyleSrc
+}
+
+func (c *SecurityConfig) ScriptSrc() []string {
+	return c.CSP.ScriptSrc
+}
+
+func (c *SecurityConfig) UpgradeInsecure() bool {
+	return c.CSP.UpgradeInsecure
 }
 
 type CSRFConfig struct {
