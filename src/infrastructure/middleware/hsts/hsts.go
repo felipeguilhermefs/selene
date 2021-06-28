@@ -10,14 +10,14 @@ const (
 	hsts = "Strict-Transport-Security"
 )
 
-type Config struct {
-	IncludeSubDomains bool
-	MaxAge            int
-	Preload           bool
+type Config interface {
+	IncludeSubDomains() bool
+	MaxAge() int
+	Preload() bool
 }
 
-func New(cfg *Config) func(next http.Handler) http.Handler {
-	hstsValue := cfg.build()
+func New(cfg Config) func(next http.Handler) http.Handler {
+	hstsValue := build(cfg)
 
 	return func(next http.Handler) http.Handler {
 
@@ -30,18 +30,18 @@ func New(cfg *Config) func(next http.Handler) http.Handler {
 	}
 }
 
-func (c *Config) build() string {
+func build(cfg Config) string {
 	var rules []string
 
-	if c.MaxAge > 0 {
-		rules = append(rules, fmt.Sprintf("max-age=%d", c.MaxAge))
+	if cfg.MaxAge() > 0 {
+		rules = append(rules, fmt.Sprintf("max-age=%d", cfg.MaxAge()))
 	}
 
-	if c.IncludeSubDomains {
+	if cfg.IncludeSubDomains() {
 		rules = append(rules, "includeSubDomains")
 	}
 
-	if c.Preload {
+	if cfg.Preload() {
 		rules = append(rules, "preload")
 	}
 

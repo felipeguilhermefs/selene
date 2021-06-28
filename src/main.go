@@ -66,11 +66,7 @@ func run() error {
 	mdws := []router.Middleware{
 		csrf.New(&cfg.Sec.CSRF),
 		policy.New(&cfg.Sec.Policy),
-		hsts.New(&hsts.Config{
-			IncludeSubDomains: true,
-			MaxAge:            63072000,
-			Preload:           true,
-		}),
+		hsts.New(&cfg.Sec.HSTS),
 		csp.New(&csp.Config{
 			BaseURI:        "'self'",
 			DefaultSrc:     "'none'",

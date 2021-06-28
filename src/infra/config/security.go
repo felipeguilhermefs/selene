@@ -3,6 +3,7 @@ package config
 // SecurityConfig security config data
 type SecurityConfig struct {
 	CSRF     CSRFConfig     `json:"csrf"`
+	HSTS     HSTSConfig     `json:"hsts"`
 	Password PasswordConfig `json:"password"`
 	Policy   PolicyConfig   `json:"policy"`
 	Session  SessionConfig  `json:"session"`
@@ -14,6 +15,24 @@ type CSRFConfig struct {
 
 func (c *CSRFConfig) Secret() string {
 	return c.Sct
+}
+
+type HSTSConfig struct {
+	IncSubDomain bool `json:"includeSubDomains"`
+	MxAge        int  `json:"maxAge"`
+	Preld        bool `json:"preload"`
+}
+
+func (c *HSTSConfig) IncludeSubDomains() bool {
+	return c.IncSubDomain
+}
+
+func (c *HSTSConfig) MaxAge() int {
+	return c.MxAge
+}
+
+func (c *HSTSConfig) Preload() bool {
+	return c.Preld
 }
 
 type PasswordConfig struct {
