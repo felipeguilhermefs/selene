@@ -1,4 +1,4 @@
-package middlewares
+package auth
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/felipeguilhermefs/selene/services"
 )
 
-func newLoginMiddleware(authService services.AuthService) Middleware {
+func New(authService services.AuthService) func(next http.Handler) http.Handler {
 
 	return func(next http.Handler) http.Handler {
 

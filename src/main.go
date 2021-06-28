@@ -7,13 +7,13 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
+	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/policy"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
-	"github.com/felipeguilhermefs/selene/middlewares"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -45,9 +45,9 @@ func run() error {
 
 	views := view.NewViews()
 
-	mdw := middlewares.New(srvcs.Auth)
+	authenticated := auth.New(srvcs.Auth)
 
-	hdlrs := handlers.New(srvcs, views, mdw.Login)
+	hdlrs := handlers.New(srvcs, views, authenticated)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},
