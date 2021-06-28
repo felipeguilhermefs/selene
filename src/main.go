@@ -45,22 +45,22 @@ func run() error {
 
 	views := view.NewViews()
 
-	hdlrs := handlers.New(srvcs, views)
-
 	mdw := middlewares.New(srvcs.Auth)
+
+	hdlrs := handlers.New(srvcs, views, mdw.Login)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},
 		{Method: "POST", Path: "/signup", Handler: hdlrs.Signup},
 		{Method: "GET", Path: "/login", Handler: hdlrs.LoginPage},
 		{Method: "POST", Path: "/login", Handler: hdlrs.Login},
-		{Method: "POST", Path: "/logout", Handler: mdw.Login(hdlrs.Logout)},
-		{Method: "GET", Path: "/books", Handler: mdw.Login(hdlrs.BooksPage)},
-		{Method: "GET", Path: "/books/new", Handler: mdw.Login(hdlrs.NewBookPage)},
-		{Method: "POST", Path: "/books/new", Handler: mdw.Login(hdlrs.NewBook)},
-		{Method: "GET", Path: "/books/{id:[0-9]+}", Handler: mdw.Login(hdlrs.BookPage)},
-		{Method: "POST", Path: "/books/{id:[0-9]+}/edit", Handler: mdw.Login(hdlrs.EditBook)},
-		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: mdw.Login(hdlrs.DeleteBook)},
+		{Method: "POST", Path: "/logout", Handler: hdlrs.Logout},
+		{Method: "GET", Path: "/books", Handler: hdlrs.BooksPage},
+		{Method: "GET", Path: "/books/new", Handler: hdlrs.NewBookPage},
+		{Method: "POST", Path: "/books/new", Handler: hdlrs.NewBook},
+		{Method: "GET", Path: "/books/{id:[0-9]+}", Handler: hdlrs.BookPage},
+		{Method: "POST", Path: "/books/{id:[0-9]+}/edit", Handler: hdlrs.EditBook},
+		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: hdlrs.DeleteBook},
 	}
 
 	mdws := []router.Middleware{

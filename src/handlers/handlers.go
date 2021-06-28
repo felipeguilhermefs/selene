@@ -3,41 +3,46 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 // Handlers all handlers in this app
 type Handlers struct {
-	SignupPage   http.HandlerFunc
-	Signup       http.HandlerFunc
-	LoginPage    http.HandlerFunc
-	Login        http.HandlerFunc
-	Logout       http.HandlerFunc
-	BooksPage    http.HandlerFunc
-	NewBookPage  http.HandlerFunc
-	NewBook      http.HandlerFunc
-	BookPage     http.HandlerFunc
-	EditBook     http.HandlerFunc
-	DeleteBook   http.HandlerFunc
-	NotFound     http.HandlerFunc
-	NotAuthentic http.HandlerFunc
+	SignupPage   http.Handler
+	Signup       http.Handler
+	LoginPage    http.Handler
+	Login        http.Handler
+	Logout       http.Handler
+	BooksPage    http.Handler
+	NewBookPage  http.Handler
+	NewBook      http.Handler
+	BookPage     http.Handler
+	EditBook     http.Handler
+	DeleteBook   http.Handler
+	NotFound     http.Handler
+	NotAuthentic http.Handler
 }
 
 // New init all handlers
-func New(srvcs *services.Services, views *view.Views) *Handlers {
+func New(
+	srvcs *services.Services,
+	views *view.Views,
+	authenticated router.Middleware,
+) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
 		Signup:      HandleSignup(&views.Signup, srvcs.Auth),
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, srvcs.Auth),
-		Logout:      HandleLogout(srvcs.Auth),
-		BooksPage:   HandleBooksPage(&views.Books, srvcs.Book),
-		NewBookPage: HandleNewBookPage(&views.NewBook),
-		NewBook:     HandleNewBook(&views.NewBook, srvcs.Book),
-		BookPage:    HandleBookPage(&views.EditBook, srvcs.Book),
-		EditBook:    HandleEditBook(&views.EditBook, srvcs.Book),
-		DeleteBook:  HandleDeleteBook(&views.EditBook, srvcs.Book),
+		Logout:      authenticated(HandleLogout(srvcs.Auth)),
+		BooksPage:   authenticated(HandleBooksPage(&views.Books, srvcs.Book)),
+		NewBookPage: authenticated(HandleNewBookPage(&views.NewBook)),
+		NewBook:     authenticated(HandleNewBook(&views.NewBook, srvcs.Book)),
+		BookPage:    authenticated(HandleBookPage(&views.EditBook, srvcs.Book)),
+		EditBook:    authenticated(HandleEditBook(&views.EditBook, srvcs.Book)),
+		DeleteBook:  authenticated(HandleDeleteBook(&views.EditBook, srvcs.Book)),
 		NotFound:    HandleNotFound(&views.NotFound),
 		NotAuthentic: HandleError(
 			&views.Error,
