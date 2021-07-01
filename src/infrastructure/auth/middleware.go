@@ -1,10 +1,15 @@
 package auth
 
 import (
+	"context"
 	"net/http"
-
-	"github.com/felipeguilhermefs/selene/context"
 )
+
+const (
+	UserKey privateKey = "user"
+)
+
+type privateKey string
 
 func NewMiddleware(authService AuthService) func(next http.Handler) http.Handler {
 
@@ -18,7 +23,7 @@ func NewMiddleware(authService AuthService) func(next http.Handler) http.Handler
 				return
 			}
 
-			ctx := context.WithUser(r, user)
+			ctx := context.WithValue(r.Context(), UserKey, user)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
