@@ -4,10 +4,9 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/services"
 )
 
-func New(authService services.AuthService) func(next http.Handler) http.Handler {
+func NewMiddleware(authService AuthService) func(next http.Handler) http.Handler {
 
 	return func(next http.Handler) http.Handler {
 

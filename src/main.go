@@ -7,7 +7,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -45,7 +45,7 @@ func run() error {
 
 	views := view.NewViews()
 
-	authenticated := auth.New(srvcs.Auth)
+	authenticated := auth.NewMiddleware(srvcs.Auth)
 
 	hdlrs := handlers.New(srvcs, views, authenticated)
 
