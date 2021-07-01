@@ -3,6 +3,7 @@ package services
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/context"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/models"
@@ -30,6 +31,13 @@ type authService struct {
 }
 
 func (as *authService) GetUser(r *http.Request) (*models.User, error) {
+	userCtx := r.Context().Value(context.UserKey)
+	if userCtx != nil {
+		if user, ok := userCtx.(*models.User); ok {
+			return user, nil
+		}
+	}
+
 	email, err := as.sessionRepository.GetUserEmail(r)
 	if err != nil {
 		return nil, err

@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/context"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -11,6 +11,7 @@ import (
 func HandleBookPage(
 	bookView *view.View,
 	bookService services.BookService,
+	authService auth.AuthService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,10 @@ func HandleBookPage(
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
-		user := context.User(r)
+		user, err := authService.GetUser(r)
+		if err != nil {
+			bookView.Render(w, r, vd.WithError(err))
+		}
 
 		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
@@ -43,6 +47,7 @@ func HandleBookPage(
 func HandleEditBook(
 	bookView *view.View,
 	bookService services.BookService,
+	authService auth.AuthService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +65,10 @@ func HandleEditBook(
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
-		user := context.User(r)
+		user, err := authService.GetUser(r)
+		if err != nil {
+			bookView.Render(w, r, vd.WithError(err))
+		}
 
 		book, err := bookService.GetBook(user.ID, id)
 		if err != nil {
@@ -84,6 +92,7 @@ func HandleEditBook(
 func HandleDeleteBook(
 	bookView *view.View,
 	bookService services.BookService,
+	authService auth.AuthService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +103,10 @@ func HandleDeleteBook(
 			bookView.Render(w, r, vd.WithError(err))
 		}
 
-		user := context.User(r)
+		user, err := authService.GetUser(r)
+		if err != nil {
+			bookView.Render(w, r, vd.WithError(err))
+		}
 
 		err = bookService.Delete(user.ID, id)
 		if err != nil {

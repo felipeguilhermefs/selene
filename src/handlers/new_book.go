@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/context"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -31,6 +31,7 @@ func HandleNewBookPage(newBookView *view.View) http.HandlerFunc {
 func HandleNewBook(
 	newBookView *view.View,
 	bookService services.BookService,
+	authService auth.AuthService,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +44,10 @@ func HandleNewBook(
 			return
 		}
 
-		user := context.User(r)
+		user, err := authService.GetUser(r)
+		if err != nil {
+			newBookView.Render(w, r, vd.WithError(err))
+		}
 
 		book := &models.Book{
 			Title:    form.Title,
