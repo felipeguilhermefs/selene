@@ -4,24 +4,17 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
 
-// AuthService handle operations over sessions
-type AuthService interface {
-	GetUser(r *http.Request) (*models.User, error)
-	Login(w http.ResponseWriter, r *http.Request, email, password string) error
-	Logout(w http.ResponseWriter, r *http.Request) error
-	SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error
-}
-
-// newAuthService creates a new instance of AuthService
-func newAuthService(
+// NewAuthService creates a new instance of AuthService
+func NewAuthService(
 	sessionRepository repositories.SessionRepository,
 	userRepository repositories.UserRepository,
 	passwordService PasswordService,
-) AuthService {
+) auth.AuthService {
 
 	return &authService{
 		passwordService:   passwordService,

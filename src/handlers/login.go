@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -22,7 +22,7 @@ func HandleLoginPage(loginView *view.View) http.HandlerFunc {
 	}
 }
 
-func HandleLogin(loginView *view.View, authService services.AuthService) http.HandlerFunc {
+func HandleLogin(loginView *view.View, authService auth.AuthService) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var form loginForm

@@ -45,9 +45,11 @@ func run() error {
 
 	views := view.NewViews()
 
-	authenticated := auth.NewMiddleware(srvcs.Auth)
+	authService := services.NewAuthService(repos.Session, repos.User, srvcs.Password)
 
-	hdlrs := handlers.New(srvcs, views, authenticated)
+	authenticated := auth.NewMiddleware(authService)
+
+	hdlrs := handlers.New(srvcs, views, authenticated, authService)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},

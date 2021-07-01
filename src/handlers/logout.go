@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 )
 
-func HandleLogout(authService services.AuthService) http.HandlerFunc {
+func HandleLogout(authService auth.AuthService) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := authService.Logout(w, r)

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -30,13 +31,14 @@ func New(
 	srvcs *services.Services,
 	views *view.Views,
 	authenticated router.Middleware,
+	authService auth.AuthService,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
-		Signup:      HandleSignup(&views.Signup, srvcs.Auth),
+		Signup:      HandleSignup(&views.Signup, authService),
 		LoginPage:   HandleLoginPage(&views.Login),
-		Login:       HandleLogin(&views.Login, srvcs.Auth),
-		Logout:      authenticated(HandleLogout(srvcs.Auth)),
+		Login:       HandleLogin(&views.Login, authService),
+		Logout:      authenticated(HandleLogout(authService)),
 		BooksPage:   authenticated(HandleBooksPage(&views.Books, srvcs.Book)),
 		NewBookPage: authenticated(HandleNewBookPage(&views.NewBook)),
 		NewBook:     authenticated(HandleNewBook(&views.NewBook, srvcs.Book)),

@@ -7,7 +7,6 @@ import (
 
 // Services all services in this app
 type Services struct {
-	Auth     AuthService
 	Password PasswordService
 	Book     BookService
 }
@@ -17,7 +16,6 @@ func New(passwordConfig *config.PasswordConfig, repos *repositories.Repositories
 	passwordService := newPasswordService(passwordConfig)
 
 	return &Services{
-		Auth:     newAuthService(repos.Session, repos.User, passwordService),
 		Password: passwordService,
 		Book:     newBookService(repos.Book),
 	}
