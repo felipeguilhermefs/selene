@@ -6,18 +6,20 @@ import (
 	"github.com/felipeguilhermefs/selene/models"
 )
 
-type AuthenticatedRequest struct {
+type Request struct {
 	Request *http.Request
 	User    *models.User
 }
 
-type AuthenticatedHandler = func(w http.ResponseWriter, r *AuthenticatedRequest)
+type Handler = func(w http.ResponseWriter, r *Request)
 
-type Middleware = func(next AuthenticatedHandler) http.Handler
+type Middleware = func(next Handler) http.Handler
 
-func NewMiddleware(getUser UserGetterFn) Middleware {
+type UserGetter = func(r *http.Request) (*models.User, error)
 
-	return func(next AuthenticatedHandler) http.Handler {
+func NewMiddleware(getUser UserGetter) Middleware {
+
+	return func(next Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -27,7 +29,7 @@ func NewMiddleware(getUser UserGetterFn) Middleware {
 				return
 			}
 
-			next(w, &AuthenticatedRequest{
+			next(w, &Request{
 				Request: r,
 				User:    user,
 			})

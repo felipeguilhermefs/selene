@@ -7,9 +7,9 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 )
 
-func HandleLogout(authService auth.AuthService) auth.AuthenticatedHandler {
+func HandleLogout(authService auth.AuthService) auth.Handler {
 
-	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
+	return func(w http.ResponseWriter, r *auth.Request) {
 		err := authService.Logout(w, r.Request)
 		if err != nil {
 			log.Println(err)

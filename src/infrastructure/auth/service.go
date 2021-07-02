@@ -11,5 +11,3 @@ type AuthService interface {
 	Logout(w http.ResponseWriter, r *http.Request) error
 	SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error
 }
-
-type UserGetterFn = func(r *http.Request) (*models.User, error)

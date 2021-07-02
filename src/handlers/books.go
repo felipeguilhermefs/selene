@@ -11,9 +11,9 @@ import (
 func HandleBooksPage(
 	booksView *view.View,
 	bookService services.BookService,
-) auth.AuthenticatedHandler {
+) auth.Handler {
 
-	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
+	return func(w http.ResponseWriter, r *auth.Request) {
 		var vd view.Data
 
 		books, err := bookService.GetBooks(r.User.ID)

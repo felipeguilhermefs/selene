@@ -17,9 +17,9 @@ type bookForm struct {
 	Tags     string `schema:"tags"`
 }
 
-func HandleNewBookPage(newBookView *view.View) auth.AuthenticatedHandler {
+func HandleNewBookPage(newBookView *view.View) auth.Handler {
 
-	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
+	return func(w http.ResponseWriter, r *auth.Request) {
 		var form bookForm
 		vd := view.NewData(&form)
 
@@ -31,9 +31,9 @@ func HandleNewBookPage(newBookView *view.View) auth.AuthenticatedHandler {
 func HandleNewBook(
 	newBookView *view.View,
 	bookService services.BookService,
-) auth.AuthenticatedHandler {
+) auth.Handler {
 
-	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
+	return func(w http.ResponseWriter, r *auth.Request) {
 		var form bookForm
 		vd := view.NewData(&form)
 
