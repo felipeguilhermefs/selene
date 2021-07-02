@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -28,7 +29,7 @@ type AuthService struct {
 	userRepository    repositories.UserRepository
 }
 
-func (as *AuthService) GetUser(r *http.Request) (*models.User, error) {
+func (as *AuthService) GetUser(r *http.Request) (*auth.User, error) {
 
 	email, err := as.sessionRepository.GetUserEmail(r)
 	if err != nil {
@@ -42,7 +43,9 @@ func (as *AuthService) GetUser(r *http.Request) (*models.User, error) {
 
 	user.Secret = ""
 
-	return user, nil
+	return &auth.User{
+		ID: user.ID,
+	}, nil
 }
 
 func (as *AuthService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {

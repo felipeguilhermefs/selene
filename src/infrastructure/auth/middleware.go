@@ -1,23 +1,34 @@
 package auth
 
-import (
-	"net/http"
+import "net/http"
 
-	"github.com/felipeguilhermefs/selene/models"
-)
-
-type Request struct {
-	Request *http.Request
-	User    *models.User
+// User represents an user of the system
+type User struct {
+	ID uint
 }
 
+// Request wraps an http.Request with the authenticated User
+type Request struct {
+	Request *http.Request
+	User    *User
+}
+
+// Handler is analogous to http.HandlerFunc, but accepts the auth.Request
 type Handler = func(w http.ResponseWriter, r *Request)
 
+// Middleware simple http.Handler to http.Handler middleware
 type Middleware = func(next Handler) http.Handler
 
-type UserGetter = func(r *http.Request) (*models.User, error)
+// UserGetter function to figure out user from http.Request
+type UserGetter = func(r *http.Request) (*User, error)
 
-func NewMiddleware(getUser UserGetter) Middleware {
+// ErrorHandler callback when user is not found
+type ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error)
+
+func NewMiddleware(
+	getUser UserGetter,
+	errorHandler ErrorHandler,
+) Middleware {
 
 	return func(next Handler) http.Handler {
 
@@ -25,7 +36,7 @@ func NewMiddleware(getUser UserGetter) Middleware {
 
 			user, err := getUser(r)
 			if err != nil {
-				http.Redirect(w, r, "/login", http.StatusFound)
+				errorHandler(w, r, err)
 				return
 			}
 

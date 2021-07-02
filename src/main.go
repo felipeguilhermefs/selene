@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
@@ -47,7 +48,12 @@ func run() error {
 
 	authService := services.NewAuthService(repos.Session, repos.User, srvcs.Password)
 
-	authenticated := auth.NewMiddleware(authService.GetUser)
+	authenticated := auth.NewMiddleware(
+		authService.GetUser,
+		func (w http.ResponseWriter, r *http.Request, err error) {
+			http.Redirect(w, r, "/login", http.StatusFound)
+		},
+	)
 
 	hdlrs := handlers.New(srvcs, views, authenticated, authService)
 
