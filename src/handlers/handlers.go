@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infrastructure/auth"
-	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -30,7 +29,7 @@ type Handlers struct {
 func New(
 	srvcs *services.Services,
 	views *view.Views,
-	authenticated router.Middleware,
+	authenticated auth.Middleware,
 	authService auth.AuthService,
 ) *Handlers {
 	return &Handlers{
@@ -39,12 +38,12 @@ func New(
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, authService),
 		Logout:      authenticated(HandleLogout(authService)),
-		BooksPage:   authenticated(HandleBooksPage(&views.Books, srvcs.Book, authService)),
+		BooksPage:   authenticated(HandleBooksPage(&views.Books, srvcs.Book)),
 		NewBookPage: authenticated(HandleNewBookPage(&views.NewBook)),
-		NewBook:     authenticated(HandleNewBook(&views.NewBook, srvcs.Book, authService)),
-		BookPage:    authenticated(HandleBookPage(&views.EditBook, srvcs.Book, authService)),
-		EditBook:    authenticated(HandleEditBook(&views.EditBook, srvcs.Book, authService)),
-		DeleteBook:  authenticated(HandleDeleteBook(&views.EditBook, srvcs.Book, authService)),
+		NewBook:     authenticated(HandleNewBook(&views.NewBook, srvcs.Book)),
+		BookPage:    authenticated(HandleBookPage(&views.EditBook, srvcs.Book)),
+		EditBook:    authenticated(HandleEditBook(&views.EditBook, srvcs.Book)),
+		DeleteBook:  authenticated(HandleDeleteBook(&views.EditBook, srvcs.Book)),
 		NotFound:    HandleNotFound(&views.NotFound),
 		NotAuthentic: HandleError(
 			&views.Error,

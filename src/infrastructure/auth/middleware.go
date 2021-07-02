@@ -1,19 +1,23 @@
 package auth
 
 import (
-	"context"
 	"net/http"
+
+	"github.com/felipeguilhermefs/selene/models"
 )
 
-const (
-	UserKey privateKey = "user"
-)
+type AuthenticatedRequest struct {
+	Request *http.Request
+	User    *models.User
+}
 
-type privateKey string
+type AuthenticatedHandler = func(w http.ResponseWriter, r *AuthenticatedRequest)
 
-func NewMiddleware(authService AuthService) func(next http.Handler) http.Handler {
+type Middleware = func(next AuthenticatedHandler) http.Handler
 
-	return func(next http.Handler) http.Handler {
+func NewMiddleware(authService AuthService) Middleware {
+
+	return func(next AuthenticatedHandler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -23,9 +27,10 @@ func NewMiddleware(authService AuthService) func(next http.Handler) http.Handler
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), UserKey, user)
-
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next(w, &AuthenticatedRequest{
+				Request: r,
+				User:    user,
+			})
 		})
 	}
 }

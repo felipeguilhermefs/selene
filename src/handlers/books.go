@@ -11,23 +11,17 @@ import (
 func HandleBooksPage(
 	booksView *view.View,
 	bookService services.BookService,
-	authService auth.AuthService,
-) http.HandlerFunc {
+) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var vd view.Data
 
-		user, err := authService.GetUser(r)
+		books, err := bookService.GetBooks(r.User.ID)
 		if err != nil {
-			booksView.Render(w, r, vd.WithError(err))
-		}
-
-		books, err := bookService.GetBooks(user.ID)
-		if err != nil {
-			booksView.Render(w, r, vd.WithError(err))
+			booksView.Render(w, r.Request, vd.WithError(err))
 			return
 		}
 
-		booksView.Render(w, r, view.NewData(books))
+		booksView.Render(w, r.Request, view.NewData(books))
 	}
 }

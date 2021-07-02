@@ -30,12 +30,6 @@ type authService struct {
 }
 
 func (as *authService) GetUser(r *http.Request) (*models.User, error) {
-	userCtx := r.Context().Value(auth.UserKey)
-	if userCtx != nil {
-		if user, ok := userCtx.(*models.User); ok {
-			return user, nil
-		}
-	}
 
 	email, err := as.sessionRepository.GetUserEmail(r)
 	if err != nil {

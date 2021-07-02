@@ -17,36 +17,30 @@ type bookForm struct {
 	Tags     string `schema:"tags"`
 }
 
-func HandleNewBookPage(newBookView *view.View) http.HandlerFunc {
+func HandleNewBookPage(newBookView *view.View) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var form bookForm
 		vd := view.NewData(&form)
 
-		parseURLParams(r, &form)
-		newBookView.Render(w, r, vd)
+		parseURLParams(r.Request, &form)
+		newBookView.Render(w, r.Request, vd)
 	}
 }
 
 func HandleNewBook(
 	newBookView *view.View,
 	bookService services.BookService,
-	authService auth.AuthService,
-) http.HandlerFunc {
+) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var form bookForm
 		vd := view.NewData(&form)
 
-		err := parseForm(r, &form)
+		err := parseForm(r.Request, &form)
 		if err != nil {
-			newBookView.Render(w, r, vd.WithError(err))
+			newBookView.Render(w, r.Request, vd.WithError(err))
 			return
-		}
-
-		user, err := authService.GetUser(r)
-		if err != nil {
-			newBookView.Render(w, r, vd.WithError(err))
 		}
 
 		book := &models.Book{
@@ -54,13 +48,13 @@ func HandleNewBook(
 			Author:   form.Author,
 			Comments: form.Comments,
 			Tags:     form.Tags,
-			UserID:   user.ID,
+			UserID:   r.User.ID,
 		}
 		if err := bookService.Create(book); err != nil {
-			newBookView.Render(w, r, vd.WithError(err))
+			newBookView.Render(w, r.Request, vd.WithError(err))
 			return
 		}
 
-		http.Redirect(w, r, "/books", http.StatusFound)
+		http.Redirect(w, r.Request, "/books", http.StatusFound)
 	}
 }

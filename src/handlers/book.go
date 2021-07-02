@@ -11,25 +11,19 @@ import (
 func HandleBookPage(
 	bookView *view.View,
 	bookService services.BookService,
-	authService auth.AuthService,
-) http.HandlerFunc {
+) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var vd view.Data
 
-		id, err := getUIntFromPath(r, "id")
+		id, err := getUIntFromPath(r.Request, "id")
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
-		user, err := authService.GetUser(r)
+		book, err := bookService.GetBook(r.User.ID, id)
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
-		}
-
-		book, err := bookService.GetBook(user.ID, id)
-		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
 		form := bookForm{
@@ -40,39 +34,33 @@ func HandleBookPage(
 			Tags:     book.Tags,
 		}
 
-		bookView.Render(w, r, view.NewData(&form))
+		bookView.Render(w, r.Request, view.NewData(&form))
 	}
 }
 
 func HandleEditBook(
 	bookView *view.View,
 	bookService services.BookService,
-	authService auth.AuthService,
-) http.HandlerFunc {
+) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var form bookForm
 		vd := view.NewData(&form)
 
-		err := parseForm(r, &form)
+		err := parseForm(r.Request, &form)
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 			return
 		}
 
-		id, err := getUIntFromPath(r, "id")
+		id, err := getUIntFromPath(r.Request, "id")
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
-		user, err := authService.GetUser(r)
+		book, err := bookService.GetBook(r.User.ID, id)
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
-		}
-
-		book, err := bookService.GetBook(user.ID, id)
-		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
 		book.Title = form.Title
@@ -81,38 +69,32 @@ func HandleEditBook(
 		book.Tags = form.Tags
 
 		if err := bookService.Update(book); err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 			return
 		}
 
-		http.Redirect(w, r, "/books", http.StatusFound)
+		http.Redirect(w, r.Request, "/books", http.StatusFound)
 	}
 }
 
 func HandleDeleteBook(
 	bookView *view.View,
 	bookService services.BookService,
-	authService auth.AuthService,
-) http.HandlerFunc {
+) auth.AuthenticatedHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
 		var vd view.Data
 
-		id, err := getUIntFromPath(r, "id")
+		id, err := getUIntFromPath(r.Request, "id")
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
-		user, err := authService.GetUser(r)
+		err = bookService.Delete(r.User.ID, id)
 		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+			bookView.Render(w, r.Request, vd.WithError(err))
 		}
 
-		err = bookService.Delete(user.ID, id)
-		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
-		}
-
-		http.Redirect(w, r, "/books", http.StatusFound)
+		http.Redirect(w, r.Request, "/books", http.StatusFound)
 	}
 }
