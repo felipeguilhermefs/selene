@@ -15,13 +15,13 @@ type AuthenticatedHandler = func(w http.ResponseWriter, r *AuthenticatedRequest)
 
 type Middleware = func(next AuthenticatedHandler) http.Handler
 
-func NewMiddleware(authService AuthService) Middleware {
+func NewMiddleware(getUser UserGetterFn) Middleware {
 
 	return func(next AuthenticatedHandler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			user, err := authService.GetUser(r)
+			user, err := getUser(r)
 			if err != nil {
 				http.Redirect(w, r, "/login", http.StatusFound)
 				return

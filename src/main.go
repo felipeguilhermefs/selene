@@ -47,7 +47,7 @@ func run() error {
 
 	authService := services.NewAuthService(repos.Session, repos.User, srvcs.Password)
 
-	authenticated := auth.NewMiddleware(authService)
+	authenticated := auth.NewMiddleware(authService.GetUser)
 
 	hdlrs := handlers.New(srvcs, views, authenticated, authService)
 

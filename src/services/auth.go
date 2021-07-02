@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
-	"github.com/felipeguilhermefs/selene/infrastructure/auth"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -14,22 +13,22 @@ func NewAuthService(
 	sessionRepository repositories.SessionRepository,
 	userRepository repositories.UserRepository,
 	passwordService PasswordService,
-) auth.AuthService {
+) *AuthService {
 
-	return &authService{
+	return &AuthService{
 		passwordService:   passwordService,
 		sessionRepository: sessionRepository,
 		userRepository:    userRepository,
 	}
 }
 
-type authService struct {
+type AuthService struct {
 	passwordService   PasswordService
 	sessionRepository repositories.SessionRepository
 	userRepository    repositories.UserRepository
 }
 
-func (as *authService) GetUser(r *http.Request) (*models.User, error) {
+func (as *AuthService) GetUser(r *http.Request) (*models.User, error) {
 
 	email, err := as.sessionRepository.GetUserEmail(r)
 	if err != nil {
@@ -46,7 +45,7 @@ func (as *authService) GetUser(r *http.Request) (*models.User, error) {
 	return user, nil
 }
 
-func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {
+func (as *AuthService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {
 	user, err := as.userRepository.ByEmail(email)
 	if err != nil {
 		return err
@@ -60,11 +59,11 @@ func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, pass
 	return as.sessionRepository.SignIn(w, r, user)
 }
 
-func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
+func (as *AuthService) Logout(w http.ResponseWriter, r *http.Request) error {
 	return as.sessionRepository.SignOut(w, r)
 }
 
-func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
+func (as *AuthService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
 	if user.Email == "" {
 		return errors.ErrEmailRequired
 	}
