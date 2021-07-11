@@ -8,9 +8,9 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csp"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
+	htmlMiddleware "github.com/felipeguilhermefs/selene/infrastructure/middleware/html"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/policy"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
@@ -46,19 +46,20 @@ func run() error {
 	views := view.NewViews()
 
 	authenticated := auth.New(srvcs.Auth)
+	html := htmlMiddleware.New()
 
 	hdlrs := handlers.New(srvcs, views, authenticated)
 
 	routes := []router.Route{
-		{Method: "GET", Path: "/signup", Handler: hdlrs.SignupPage},
+		{Method: "GET", Path: "/signup", Handler: html(hdlrs.SignupPage)},
 		{Method: "POST", Path: "/signup", Handler: hdlrs.Signup},
-		{Method: "GET", Path: "/login", Handler: hdlrs.LoginPage},
+		{Method: "GET", Path: "/login", Handler: html(hdlrs.LoginPage)},
 		{Method: "POST", Path: "/login", Handler: hdlrs.Login},
 		{Method: "POST", Path: "/logout", Handler: hdlrs.Logout},
-		{Method: "GET", Path: "/books", Handler: hdlrs.BooksPage},
-		{Method: "GET", Path: "/books/new", Handler: hdlrs.NewBookPage},
+		{Method: "GET", Path: "/books", Handler: html(hdlrs.BooksPage)},
+		{Method: "GET", Path: "/books/new", Handler: html(hdlrs.NewBookPage)},
 		{Method: "POST", Path: "/books/new", Handler: hdlrs.NewBook},
-		{Method: "GET", Path: "/books/{id:[0-9]+}", Handler: hdlrs.BookPage},
+		{Method: "GET", Path: "/books/{id:[0-9]+}", Handler: html(hdlrs.BookPage)},
 		{Method: "POST", Path: "/books/{id:[0-9]+}/edit", Handler: hdlrs.EditBook},
 		{Method: "POST", Path: "/books/{id:[0-9]+}/delete", Handler: hdlrs.DeleteBook},
 	}
@@ -67,7 +68,6 @@ func run() error {
 		csrf.New(&cfg.Sec),
 		policy.New(&cfg.Sec),
 		hsts.New(&cfg.Sec),
-		csp.New(&cfg.Sec),
 	}
 
 	r := router.New(routes, mdws, hdlrs.NotFound)
