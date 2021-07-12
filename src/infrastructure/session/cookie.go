@@ -13,11 +13,10 @@ const (
 	noUser        = ""
 )
 
-// NewCookieStore init a cookie session store
-func NewCookieStore(cfg Config) SessionStore {
+func newCookieStore(cfg Config) SessionStore {
 	store := sessions.NewCookieStore(
-		[]byte(cfg.AuthKey()),
-		[]byte(cfg.CryptoKey()),
+		[]byte(cfg.AuthenticationKey()),
+		[]byte(cfg.EncryptionKey()),
 	)
 
 	store.Options = &sessions.Options{

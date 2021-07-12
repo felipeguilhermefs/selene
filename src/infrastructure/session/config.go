@@ -1,7 +1,7 @@
 package session
 
 type Config interface {
-	AuthKey() string
-	CryptoKey() string
+	AuthenticationKey() string
+	EncryptionKey() string
 	TimeToLive() int
 }

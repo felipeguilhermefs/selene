@@ -34,7 +34,7 @@ func run() error {
 		return err
 	}
 
-	sessionStore := session.NewCookieStore(&cfg.Sec.Session)
+	sessionStore := session.NewStore(&cfg.Sec.Session)
 
 	repos := repositories.New(db)
 	if err := repos.AutoMigrate(); err != nil {
