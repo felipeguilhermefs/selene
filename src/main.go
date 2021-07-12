@@ -6,7 +6,6 @@ import (
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
-	"github.com/felipeguilhermefs/selene/infra/session"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -14,6 +13,7 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/policy"
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
@@ -36,12 +36,12 @@ func run() error {
 
 	sessionStore := session.NewCookieStore(&cfg.Sec.Session)
 
-	repos := repositories.New(db, sessionStore)
+	repos := repositories.New(db)
 	if err := repos.AutoMigrate(); err != nil {
 		return err
 	}
 
-	srvcs := services.New(&cfg.Sec.Password, repos)
+	srvcs := services.New(&cfg.Sec.Password, repos, sessionStore)
 
 	views := view.NewViews()
 

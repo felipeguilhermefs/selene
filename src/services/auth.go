@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -18,26 +19,26 @@ type AuthService interface {
 
 // newAuthService creates a new instance of AuthService
 func newAuthService(
-	sessionRepository repositories.SessionRepository,
+	sessionStore session.SessionStore,
 	userRepository repositories.UserRepository,
 	passwordService PasswordService,
 ) AuthService {
 
 	return &authService{
-		passwordService:   passwordService,
-		sessionRepository: sessionRepository,
-		userRepository:    userRepository,
+		passwordService: passwordService,
+		sessionStore:    sessionStore,
+		userRepository:  userRepository,
 	}
 }
 
 type authService struct {
-	passwordService   PasswordService
-	sessionRepository repositories.SessionRepository
-	userRepository    repositories.UserRepository
+	passwordService PasswordService
+	sessionStore    session.SessionStore
+	userRepository  repositories.UserRepository
 }
 
 func (as *authService) GetUser(r *http.Request) (*models.User, error) {
-	email, err := as.sessionRepository.GetUserEmail(r)
+	email, err := as.sessionStore.GetUserID(r)
 	if err != nil {
 		return nil, err
 	}
@@ -63,11 +64,11 @@ func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, pass
 		return err
 	}
 
-	return as.sessionRepository.SignIn(w, r, user)
+	return as.sessionStore.SignIn(w, r, user.Email)
 }
 
 func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
-	return as.sessionRepository.SignOut(w, r)
+	return as.sessionStore.SignOut(w, r)
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
@@ -87,5 +88,5 @@ func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *mode
 		return err
 	}
 
-	return as.sessionRepository.SignIn(w, r, user)
+	return as.sessionStore.SignIn(w, r, user.Email)
 }

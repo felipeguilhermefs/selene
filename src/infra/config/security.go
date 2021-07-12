@@ -58,7 +58,19 @@ type PasswordConfig struct {
 }
 
 type SessionConfig struct {
-	AuthKey   string `json:"auth_key"`
-	CryptoKey string `json:"crypto_key"`
-	TTL       int    `json:"ttl"`
+	AuthK  string `json:"auth_key"`
+	CryptK string `json:"crypto_key"`
+	TTL    int    `json:"ttl"`
+}
+
+func (c *SessionConfig) AuthKey() string {
+	return c.AuthK
+}
+
+func (c *SessionConfig) CryptoKey() string {
+	return c.CryptK
+}
+
+func (c *SessionConfig) TimeToLive() int {
+	return c.TTL
 }

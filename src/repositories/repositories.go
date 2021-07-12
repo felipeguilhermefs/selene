@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/gorilla/sessions"
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/models"
@@ -9,20 +8,18 @@ import (
 
 // Repositories holds reference to all repositories
 type Repositories struct {
-	db      *gorm.DB
-	Session SessionRepository
-	User    UserRepository
-	Book    BookRepository
+	db   *gorm.DB
+	User UserRepository
+	Book BookRepository
 }
 
 // New init all repositories
-func New(db *gorm.DB, store sessions.Store) *Repositories {
+func New(db *gorm.DB) *Repositories {
 
 	return &Repositories{
-		db:      db,
-		Session: newSessionRespository(store),
-		User:    newUserRespository(db),
-		Book:    newBookRespository(db),
+		db:   db,
+		User: newUserRespository(db),
+		Book: newBookRespository(db),
 	}
 }
 
