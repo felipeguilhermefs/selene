@@ -10,6 +10,6 @@ type SessionStore interface {
 	SignOut(w http.ResponseWriter, r *http.Request) error
 }
 
-func NewStore(cfg Config) SessionStore {
+func NewStore(cfg *Config) SessionStore {
 	return newCookieStore(cfg)
 }

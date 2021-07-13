@@ -1,7 +1,7 @@
 package session
 
-type Config interface {
-	AuthenticationKey() string
-	EncryptionKey() string
-	TimeToLive() int
+type Config struct {
+	AuthenticationKey string
+	EncryptionKey     string
+	TimeToLive        int
 }

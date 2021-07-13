@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -15,7 +14,7 @@ type Services struct {
 
 // New init all services
 func New(
-	passwordConfig *config.PasswordConfig,
+	passwordConfig *PasswordConfig,
 	repos *repositories.Repositories,
 	sessionStore session.SessionStore,
 ) *Services {

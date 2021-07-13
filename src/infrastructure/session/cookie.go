@@ -13,10 +13,10 @@ const (
 	noUser        = ""
 )
 
-func newCookieStore(cfg Config) SessionStore {
+func newCookieStore(cfg *Config) SessionStore {
 	store := sessions.NewCookieStore(
-		[]byte(cfg.AuthenticationKey()),
-		[]byte(cfg.EncryptionKey()),
+		[]byte(cfg.AuthenticationKey),
+		[]byte(cfg.EncryptionKey),
 	)
 
 	store.Options = &sessions.Options{
@@ -25,7 +25,7 @@ func newCookieStore(cfg Config) SessionStore {
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	}
-	store.MaxAge(cfg.TimeToLive())
+	store.MaxAge(cfg.TimeToLive)
 
 	return &cookieStore{store}
 }

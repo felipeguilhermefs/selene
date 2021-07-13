@@ -6,13 +6,13 @@ import (
 	"github.com/gorilla/csrf"
 )
 
-type Config interface {
-	Secret() string
+type Config struct {
+	Secret string
 }
 
-func New(cfg Config) func(next http.Handler) http.Handler {
+func New(cfg *Config) func(next http.Handler) http.Handler {
 	csrfCheck := csrf.Protect(
-		[]byte(cfg.Secret()),
+		[]byte(cfg.Secret),
 		csrf.SameSite(csrf.SameSiteStrictMode),
 	)
 

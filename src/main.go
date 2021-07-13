@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/felipeguilhermefs/selene/handlers"
-	"github.com/felipeguilhermefs/selene/infra/config"
 	"github.com/felipeguilhermefs/selene/infra/database"
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -20,7 +20,7 @@ import (
 )
 
 func run() error {
-	cfg, err := config.LoadFromFile("config.json")
+	cfg, err := config.Load()
 	if err != nil {
 		return err
 	}
@@ -34,14 +34,14 @@ func run() error {
 		return err
 	}
 
-	sessionStore := session.NewStore(&cfg.Sec.Session)
+	sessionStore := session.NewStore(&cfg.Session)
 
 	repos := repositories.New(db)
 	if err := repos.AutoMigrate(); err != nil {
 		return err
 	}
 
-	srvcs := services.New(&cfg.Sec.Password, repos, sessionStore)
+	srvcs := services.New(&cfg.Password, repos, sessionStore)
 
 	views := view.NewViews()
 
@@ -65,9 +65,9 @@ func run() error {
 	}
 
 	mdws := []router.Middleware{
-		csrf.New(&cfg.Sec),
-		policy.New(&cfg.Sec),
-		hsts.New(&cfg.Sec),
+		csrf.New(&cfg.CSRF),
+		policy.Policy,
+		hsts.HSTS,
 	}
 
 	r := router.New(routes, mdws, hdlrs.NotFound)
