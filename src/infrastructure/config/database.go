@@ -1,6 +1,6 @@
 package config
 
-import "github.com/felipeguilhermefs/selene/infra/database"
+import "github.com/felipeguilhermefs/selene/infrastructure/database"
 
 // SELENE_DB_HOST: DB host.
 // SELENE_DB_PORT: DB port.

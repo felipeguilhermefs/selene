@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/felipeguilhermefs/selene/handlers"
-	"github.com/felipeguilhermefs/selene/infra/database"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
+	"github.com/felipeguilhermefs/selene/infrastructure/database"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -29,7 +29,7 @@ func run() error {
 		return err
 	}
 
-	db, err := database.ConnectPostgres(&cfg.DB)
+	db, err := database.Connect(&cfg.DB)
 	if err != nil {
 		return err
 	}

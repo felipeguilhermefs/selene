@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/felipeguilhermefs/selene/infra/database"
+	"github.com/felipeguilhermefs/selene/infrastructure/database"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"

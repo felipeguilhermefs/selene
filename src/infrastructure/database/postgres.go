@@ -1,13 +1,14 @@
 package database
 
 import (
+	"fmt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-// ConnectPostgres connect to DB and creates a connection pool
-func ConnectPostgres(cfg *Config) (*gorm.DB, error) {
-	pgDialect := postgres.Open(cfg.ConnInfo())
+func connectPostgres(cfg *Config) (*gorm.DB, error) {
+	pgDialect := postgres.Open(buildConnString(cfg))
 
 	db, err := gorm.Open(pgDialect, &gorm.Config{})
 	if err != nil {
@@ -24,4 +25,11 @@ func ConnectPostgres(cfg *Config) (*gorm.DB, error) {
 	sqlDB.SetConnMaxLifetime(cfg.Conn.TTL)
 
 	return db, nil
+}
+
+func buildConnString(cfg *Config) string {
+	return fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name,
+	)
 }
