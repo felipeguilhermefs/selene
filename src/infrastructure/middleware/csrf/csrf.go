@@ -4,15 +4,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/csrf"
+
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
 )
 
-type Config struct {
-	Secret string
-}
+func New(cfg config.ConfigStore) func(next http.Handler) http.Handler {
+	secret := cfg.Get("SELENE_CSRF_SECRET", "SecretWith32Chars...............")
 
-func New(cfg *Config) func(next http.Handler) http.Handler {
 	csrfCheck := csrf.Protect(
-		[]byte(cfg.Secret),
+		[]byte(secret),
 		csrf.SameSite(csrf.SameSiteStrictMode),
 	)
 

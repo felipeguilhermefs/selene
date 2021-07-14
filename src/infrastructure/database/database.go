@@ -1,7 +1,10 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
+	"gorm.io/gorm"
+)
 
-func Connect(cfg *Config) (*gorm.DB, error) {
+func Connect(cfg config.ConfigStore) (*gorm.DB, error) {
 	return connectPostgres(cfg)
 }

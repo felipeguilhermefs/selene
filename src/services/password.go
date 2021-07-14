@@ -4,12 +4,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
 )
-
-type PasswordConfig struct {
-	MinLen int
-	Pepper string
-}
 
 // PasswordService handles operations over a secret key
 type PasswordService interface {
@@ -18,10 +14,10 @@ type PasswordService interface {
 }
 
 // newPasswordService creates a new instance of PasswordService
-func newPasswordService(cfg *PasswordConfig) PasswordService {
+func newPasswordService(cfg config.ConfigStore) PasswordService {
 	return &passwordService{
-		minLen: cfg.MinLen,
-		pepper: cfg.Pepper,
+		minLen: cfg.GetInt("SELENE_PW_MIN_LEN", 8),
+		pepper: cfg.Get("SELENE_PW_PEPPER", "PepperWith64Chars..............................................."),
 	}
 }
 

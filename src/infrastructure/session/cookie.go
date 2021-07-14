@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/gorilla/sessions"
 )
 
@@ -13,10 +14,10 @@ const (
 	noUser        = ""
 )
 
-func newCookieStore(cfg *Config) SessionStore {
+func newCookieStore(cfg config.ConfigStore) SessionStore {
 	store := sessions.NewCookieStore(
-		[]byte(cfg.AuthenticationKey),
-		[]byte(cfg.EncryptionKey),
+		[]byte(cfg.Get("SELENE_SESSION_AUTH_KEY", "AuthKeyWith64Chars..............................................")),
+		[]byte(cfg.Get("SELENE_SESSION_CRYPTO_KEY", "CryptoKeyWith32Chars............")),
 	)
 
 	store.Options = &sessions.Options{
@@ -25,7 +26,7 @@ func newCookieStore(cfg *Config) SessionStore {
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	}
-	store.MaxAge(cfg.TimeToLive)
+	store.MaxAge(cfg.GetInt("SELENE_SESSION_TTL", 900))
 
 	return &cookieStore{store}
 }

@@ -20,28 +20,21 @@ import (
 )
 
 func run() error {
-	cfg, err := config.Load()
+	cfg := config.New()
+
+	db, err := database.Connect(cfg)
 	if err != nil {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
-
-	db, err := database.Connect(&cfg.DB)
-	if err != nil {
-		return err
-	}
-
-	sessionStore := session.NewStore(&cfg.Session)
+	sessionStore := session.NewStore(cfg)
 
 	repos := repositories.New(db)
 	if err := repos.AutoMigrate(); err != nil {
 		return err
 	}
 
-	srvcs := services.New(&cfg.Password, repos, sessionStore)
+	srvcs := services.New(cfg, repos, sessionStore)
 
 	views := view.NewViews()
 
@@ -65,14 +58,14 @@ func run() error {
 	}
 
 	mdws := []router.Middleware{
-		csrf.New(&cfg.CSRF),
+		csrf.New(cfg),
 		policy.Policy,
 		hsts.HSTS,
 	}
 
 	r := router.New(routes, mdws, hdlrs.NotFound)
 
-	s := server.New(&cfg.Server, r)
+	s := server.New(cfg, r)
 
 	log.Printf("Server started at %v...\n", s.Addr)
 	return s.ListenAndServe()

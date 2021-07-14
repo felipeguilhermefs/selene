@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
@@ -14,11 +15,11 @@ type Services struct {
 
 // New init all services
 func New(
-	passwordConfig *PasswordConfig,
+	cfg config.ConfigStore,
 	repos *repositories.Repositories,
 	sessionStore session.SessionStore,
 ) *Services {
-	passwordService := newPasswordService(passwordConfig)
+	passwordService := newPasswordService(cfg)
 
 	return &Services{
 		Auth:     newAuthService(sessionStore, repos.User, passwordService),

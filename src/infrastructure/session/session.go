@@ -1,6 +1,10 @@
 package session
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
+)
 
 type UserID = string
 
@@ -10,6 +14,6 @@ type SessionStore interface {
 	SignOut(w http.ResponseWriter, r *http.Request) error
 }
 
-func NewStore(cfg *Config) SessionStore {
+func NewStore(cfg config.ConfigStore) SessionStore {
 	return newCookieStore(cfg)
 }
