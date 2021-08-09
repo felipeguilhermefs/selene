@@ -1,3 +1,6 @@
+# Repo Overview
+![Visualization of this repo](./diagram.svg)
+
 # Pages
 - [Signup Page](./docs/pages/signup.md)
 - [Login Page](./docs/pages/login.md)
