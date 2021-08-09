@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@main
       - name: Update diagram
         uses: githubocto/repo-visualizer@main
         with:
           excluded_paths: "ignore,.github"
+          output_file: "./docs/images/repo_visualization.svg"
+          commit_message: "Update repository visualization"

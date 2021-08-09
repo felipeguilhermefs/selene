@@ -1,5 +1,5 @@
 # Repo Overview
-![Visualization of this repo](./diagram.svg)
+![Visualization of this repo](./docs/images/repo_visualization.svg)
 
 # Pages
 - [Signup Page](./docs/pages/signup.md)
