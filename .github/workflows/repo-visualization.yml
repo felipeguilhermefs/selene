@@ -1,9 +1,7 @@
 name: Generate Diagram
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  schedule:
+    - cron:  '0 12 21 * *'
 jobs:
   get_data:
     runs-on: ubuntu-latest
