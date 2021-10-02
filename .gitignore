@@ -2,3 +2,5 @@ selene
 main
 
 config.json
+
+*.swp
