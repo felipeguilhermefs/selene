@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY src/ ./
 RUN go mod download
-RUN go build -o /selene
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /selene
 
 ##
 ## Deploy
