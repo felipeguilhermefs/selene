@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY src/ ./
 RUN go mod download
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /selene
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /selene
 
 ##
 ## Deploy
@@ -20,7 +20,7 @@ WORKDIR /
 
 COPY --from=build /selene /selene
 
-EXPOSE 8000
+EXPOSE 8080
 
 USER nonroot:nonroot
 

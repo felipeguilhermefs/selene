@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  selene:
+    build: .
+    environment:
+      - SELENE_DB_HOST=postgres
+      - SELENE_DB_PORT=5432
+      - SELENE_DB_USER=selene
+      - SELENE_DB_PW=selene
+      - SELENE_DB_NAME=selene
+      - SELENE_DB_CONN_MAXIDLE=2
+      - SELENE_DB_CONN_MAXOPEN=5
+      - SELENE_DB_CONN_TTL=5m
+      - SELENE_SESSION_AUTH_KEY=AuthKeyWith64Chars..............................................
+      - SELENE_SESSION_CRYPTO_KEY=CryptoKeyWith32Chars............
+      - SELENE_SESSION_TTL=900
+      - SELENE_PW_MIN_LEN=8
+      - SELENE_PW_PEPPER=PepperWith64Chars...............................................
+      - SELENE_CSRF_SECRET=SecretWith32Chars...............
+      - SELENE_SERVER_PORT=8000
+      - SELENE_SERVER_READ_TIMEOUT=15s
+      - SELENE_SERVER_WRITE_TIMEOUT=15s
+      - SELENE_SERVER_IDLE_TIMEOUT=60s
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks:
+      - selene-postgres-net
+  postgres:
+    image: "postgres:14-alpine"
+    environment:
+      - POSTGRES_PASSWORD=selene
+      - POSTGRES_USER=selene
+      - POSTGRES_DB=selene
+    ports:
+      - 5432:5432
+    networks:
+      - selene-postgres-net
+networks:
+  selene-postgres-net:
+    driver: bridge
