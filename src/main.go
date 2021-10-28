@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log"
 
 	"github.com/felipeguilhermefs/selene/handlers"
@@ -19,6 +20,9 @@ import (
 	"github.com/felipeguilhermefs/selene/view"
 )
 
+//go:embed templates
+var templates embed.FS
+
 func run() error {
 	cfg := config.New()
 
@@ -36,7 +40,7 @@ func run() error {
 
 	srvcs := services.New(cfg, repos, sessionStore)
 
-	views := view.NewViews()
+	views := view.NewViews(templates)
 
 	authenticated := auth.New(srvcs.Auth)
 	html := htmlMiddleware.New()

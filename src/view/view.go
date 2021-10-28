@@ -2,12 +2,11 @@ package view
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
-	"path/filepath"
 	"sync"
 
 	"github.com/gorilla/csrf"
@@ -19,10 +18,12 @@ const baseLayout = "base"
 
 // View represents a page that renders (lazily) from a template
 type View struct {
-	name   string
-	once   sync.Once
-	tpl    *template.Template
-	tplerr error
+	name      string
+	once      sync.Once
+	layouts   string
+	templates fs.FS
+	tpl       *template.Template
+	tplerr    error
 }
 
 // Render will render and enrich a view template with provided data
@@ -48,18 +49,9 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 }
 
 func (v *View) parse() {
-	templateFile := fmt.Sprintf("view/templates/%s.gohtml", v.name)
-
-	layoutFiles, err := filepath.Glob("view/templates/layouts/*.gohtml")
-	if err != nil {
-		v.tplerr = err
-	}
-
-	templateFiles := append([]string{templateFile}, layoutFiles...)
-
 	v.tpl, v.tplerr = template.New("").
 		Funcs(v.csrfTag(nil)).
-		ParseFiles(templateFiles...)
+		ParseFS(v.templates, v.name, v.layouts)
 }
 
 func (v *View) csrfTag(r *http.Request) template.FuncMap {
