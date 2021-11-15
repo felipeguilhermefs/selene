@@ -17,7 +17,7 @@ type PasswordService interface {
 func newPasswordService(cfg config.ConfigStore) PasswordService {
 	return &passwordService{
 		minLen: cfg.GetInt("SELENE_PW_MIN_LEN", 8),
-		pepper: cfg.Get("SELENE_PW_PEPPER", "PepperWith64Chars..............................................."),
+		pepper: cfg.GetSecret("SELENE_PW_PEPPER", "PepperWith64Chars..............................................."),
 	}
 }
 

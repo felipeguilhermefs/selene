@@ -34,8 +34,8 @@ func buildConnString(cfg config.ConfigStore) string {
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		cfg.Get("SELENE_DB_HOST", "localhost"),
 		cfg.GetInt("SELENE_DB_PORT", 5432),
-		cfg.Get("SELENE_DB_USER", "selene"),
-		cfg.Get("SELENE_DB_PW", "selene"),
-		cfg.Get("SELENE_DB_NAME", "selene"),
+		cfg.GetSecret("SELENE_DB_USER", "selene"),
+		cfg.GetSecret("SELENE_DB_PW", "selene"),
+		cfg.GetSecret("SELENE_DB_NAME", "selene"),
 	)
 }

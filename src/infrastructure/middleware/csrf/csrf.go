@@ -9,7 +9,7 @@ import (
 )
 
 func New(cfg config.ConfigStore) func(next http.Handler) http.Handler {
-	secret := cfg.Get("SELENE_CSRF_SECRET", "SecretWith32Chars...............")
+	secret := cfg.GetSecret("SELENE_CSRF_SECRET", "SecretWith32Chars...............")
 
 	csrfCheck := csrf.Protect(
 		[]byte(secret),

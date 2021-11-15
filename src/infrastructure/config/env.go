@@ -35,6 +35,22 @@ func (ecs *envConfigStore) GetInt(key string, defaultValue int) int {
 	return res
 }
 
+func (ecs *envConfigStore) GetSecret(key, defaultValue string) string {
+	secretPath := os.Getenv(key)
+
+	if secretPath == "" {
+		return defaultValue
+	}
+
+	secret, err := os.ReadFile(secretPath)
+	if err != nil {
+		log.Printf("Error reading file %s for key %s falling back to %s", secretPath, key, defaultValue)
+		return defaultValue
+	}
+
+	return string(secret)
+}
+
 func (ecs *envConfigStore) GetTime(key, defaultValue string) time.Duration {
 	value := os.Getenv(key)
 

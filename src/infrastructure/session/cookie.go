@@ -16,8 +16,8 @@ const (
 
 func newCookieStore(cfg config.ConfigStore) SessionStore {
 	store := sessions.NewCookieStore(
-		[]byte(cfg.Get("SELENE_SESSION_AUTH_KEY", "AuthKeyWith64Chars..............................................")),
-		[]byte(cfg.Get("SELENE_SESSION_CRYPTO_KEY", "CryptoKeyWith32Chars............")),
+		[]byte(cfg.GetSecret("SELENE_SESSION_AUTH_KEY", "AuthKeyWith64Chars..............................................")),
+		[]byte(cfg.GetSecret("SELENE_SESSION_CRYPTO_KEY", "CryptoKeyWith32Chars............")),
 	)
 
 	store.Options = &sessions.Options{
