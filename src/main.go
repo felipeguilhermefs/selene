@@ -3,6 +3,9 @@ package main
 import (
 	"embed"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
@@ -69,14 +72,28 @@ func run() error {
 
 	r := router.New(routes, mdws, hdlrs.NotFound)
 
-	s := server.New(cfg, r)
+	exiting := make(chan error, 1)
 
-	log.Printf("Server started at %v...\n", s.Addr)
-	return s.ListenAndServe()
+	s := server.New(cfg, r)
+	go func() {
+		exiting <- s.Serve()
+	}()
+
+	go func() {
+		gracefulShutdown := make(chan os.Signal, 1)
+		signal.Notify(gracefulShutdown, syscall.SIGINT, syscall.SIGTERM)
+
+		log.Printf("Received %s, gracefully shutting down...", <-gracefulShutdown)
+
+		exiting <- s.Shutdown()
+	}()
+
+	return <-exiting
+
 }
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatal(err)
+		log.Fatalln("Fatal Error", err)
 	}
 }
