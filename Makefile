@@ -1,0 +1,7 @@
+update:
+	@echo "Going into sources..."
+    cd src/
+	@echo "Updating dependencies..."
+	go get -u
+	@echo "Cleaning up..."
+	go mod tidy
