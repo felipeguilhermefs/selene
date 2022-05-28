@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/core"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -28,6 +29,7 @@ type Handlers struct {
 func New(
 	srvcs *services.Services,
 	views *view.Views,
+	bookControl *core.BookControl,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
@@ -37,7 +39,7 @@ func New(
 		Logout:      HandleLogout(srvcs.Auth),
 		BooksPage:   HandleBooksPage(&views.Books, srvcs.Book),
 		NewBookPage: HandleNewBookPage(&views.NewBook),
-		NewBook:     HandleNewBook(&views.NewBook, srvcs.Book),
+		NewBook:     HandleNewBook(&views.NewBook, bookControl),
 		BookPage:    HandleBookPage(&views.EditBook, srvcs.Book),
 		EditBook:    HandleEditBook(&views.EditBook, srvcs.Book),
 		DeleteBook:  HandleDeleteBook(&views.EditBook, srvcs.Book),

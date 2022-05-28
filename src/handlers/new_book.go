@@ -4,8 +4,7 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/models"
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/core"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -30,7 +29,7 @@ func HandleNewBookPage(newBookView *view.View) http.HandlerFunc {
 
 func HandleNewBook(
 	newBookView *view.View,
-	bookService services.BookService,
+	bookAdder core.BookAdder,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -45,14 +44,14 @@ func HandleNewBook(
 
 		user := context.User(r)
 
-		book := &models.Book{
+		book := &core.NewBook{
 			Title:    form.Title,
 			Author:   form.Author,
 			Comments: form.Comments,
 			Tags:     form.Tags,
 			UserID:   user.ID,
 		}
-		if err := bookService.Create(book); err != nil {
+		if err := bookAdder.Add(book); err != nil {
 			newBookView.Render(w, r, vd.WithError(err))
 			return
 		}

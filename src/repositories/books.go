@@ -11,7 +11,6 @@ import (
 
 // BookRepository interacts with book DB
 type BookRepository interface {
-	Create(book *models.Book) error
 	Update(book *models.Book) error
 	Delete(userID, bookID uint) error
 	ByUserAndID(userID, bookID uint) (*models.Book, error)
@@ -28,22 +27,6 @@ func newBookRespository(db *gorm.DB) BookRepository {
 
 type bookRepository struct {
 	db *gorm.DB
-}
-
-func (br *bookRepository) Create(book *models.Book) error {
-	if book.UserID <= 0 {
-		return errors.ErrUserIDRequired
-	}
-
-	if strings.TrimSpace(book.Title) == "" {
-		return errors.ErrTitleRequired
-	}
-
-	if strings.TrimSpace(book.Author) == "" {
-		return errors.ErrAuthorRequired
-	}
-
-	return br.db.Create(book).Error
 }
 
 func (br *bookRepository) Update(book *models.Book) error {

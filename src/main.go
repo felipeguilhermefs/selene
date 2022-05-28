@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/felipeguilhermefs/selene/boundary"
+	"github.com/felipeguilhermefs/selene/core"
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/database"
@@ -48,7 +50,13 @@ func run() error {
 	authenticated := auth.New(srvcs.Auth)
 	html := htmlMiddleware.New()
 
-	hdlrs := handlers.New(srvcs, views)
+	bookControl := &core.BookControl{
+		BookRepository: &boundary.PostgresBookRepository{
+			DB: db,
+		},
+	}
+
+	hdlrs := handlers.New(srvcs, views, bookControl)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: html(hdlrs.SignupPage)},
