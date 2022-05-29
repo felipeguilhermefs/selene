@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
+	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -42,7 +44,7 @@ func HandleBookPage(
 
 func HandleEditBook(
 	bookView *view.View,
-	bookService services.BookService,
+	bookUpdater core.BookUpdater,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -61,18 +63,20 @@ func HandleEditBook(
 		}
 
 		user := context.User(r)
-
-		book, err := bookService.GetBook(user.ID, id)
-		if err != nil {
-			bookView.Render(w, r, vd.WithError(err))
+		if user == nil {
+			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
 		}
 
-		book.Title = form.Title
-		book.Author = form.Author
-		book.Comments = form.Comments
-		book.Tags = form.Tags
+		book := &core.UpdatedBook{
+			ID:       id,
+			UserID:   user.ID,
+			Title:    form.Title,
+			Author:   form.Author,
+			Comments: form.Comments,
+			Tags:     form.Tags,
+		}
 
-		if err := bookService.Update(book); err != nil {
+		if err := bookUpdater.Update(book); err != nil {
 			bookView.Render(w, r, vd.WithError(err))
 			return
 		}

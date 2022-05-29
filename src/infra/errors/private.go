@@ -12,6 +12,8 @@ const (
 
 	// ErrIDInvalid book id required
 	ErrIDInvalid PrivateError = "ID is invalid"
+
+	ErrUserMismatch PublicError = "User mismatch, should be same"
 )
 
 type PrivateError string

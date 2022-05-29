@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"strings"
-
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
@@ -11,7 +9,6 @@ import (
 
 // BookRepository interacts with book DB
 type BookRepository interface {
-	Update(book *models.Book) error
 	Delete(userID, bookID uint) error
 	ByUserAndID(userID, bookID uint) (*models.Book, error)
 	ByUserID(userID uint) ([]models.Book, error)
@@ -27,22 +24,6 @@ func newBookRespository(db *gorm.DB) BookRepository {
 
 type bookRepository struct {
 	db *gorm.DB
-}
-
-func (br *bookRepository) Update(book *models.Book) error {
-	if book.UserID <= 0 {
-		return errors.ErrUserIDRequired
-	}
-
-	if strings.TrimSpace(book.Title) == "" {
-		return errors.ErrTitleRequired
-	}
-
-	if strings.TrimSpace(book.Author) == "" {
-		return errors.ErrAuthorRequired
-	}
-
-	return br.db.Save(book).Error
 }
 
 func (br *bookRepository) Delete(userID, bookID uint) error {
