@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := fmt
+
 update:
 	@echo "Going into sources..."
     cd src/
@@ -5,3 +7,6 @@ update:
 	go get -u
 	@echo "Cleaning up..."
 	go mod tidy
+
+fmt:
+	gofmt -s -w .
