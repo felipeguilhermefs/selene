@@ -28,3 +28,16 @@ type BookUpdater interface {
 type BookRemover interface {
 	Remove(userID uint, id uint) error
 }
+
+type FullBook struct {
+	ID       uint
+	UserID   uint
+	Title    string
+	Author   string
+	Comments string
+	Tags     string
+}
+
+type BookFetcher interface {
+	Fetch(userID uint, id uint) (*FullBook, error)
+}

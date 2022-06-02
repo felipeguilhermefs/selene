@@ -9,7 +9,6 @@ import (
 
 // BookRepository interacts with book DB
 type BookRepository interface {
-	ByUserAndID(userID, bookID uint) (*models.Book, error)
 	ByUserID(userID uint) ([]models.Book, error)
 }
 
@@ -23,28 +22,6 @@ func newBookRespository(db *gorm.DB) BookRepository {
 
 type bookRepository struct {
 	db *gorm.DB
-}
-
-func (br *bookRepository) ByUserAndID(userID, bookID uint) (*models.Book, error) {
-	if userID <= 0 {
-		return nil, errors.ErrUserIDRequired
-	}
-
-	if bookID <= 0 {
-		return nil, errors.ErrIDInvalid
-	}
-
-	var book models.Book
-
-	err := br.db.Where("user_id = ? AND id = ?", userID, bookID).First(&book).Error
-	switch err {
-	case gorm.ErrRecordNotFound:
-		return nil, errors.ErrBookNotFound
-	case nil:
-		return &book, nil
-	default:
-		return nil, err
-	}
 }
 
 func (br *bookRepository) ByUserID(userID uint) ([]models.Book, error) {

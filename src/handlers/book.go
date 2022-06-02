@@ -6,13 +6,12 @@ import (
 	"github.com/felipeguilhermefs/selene/context"
 	"github.com/felipeguilhermefs/selene/core"
 	"github.com/felipeguilhermefs/selene/infra/errors"
-	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 func HandleBookPage(
 	bookView *view.View,
-	bookService services.BookService,
+	bookFetcher core.BookFetcher,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +23,11 @@ func HandleBookPage(
 		}
 
 		user := context.User(r)
+		if user == nil {
+			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
+		}
 
-		book, err := bookService.GetBook(user.ID, id)
+		book, err := bookFetcher.Fetch(user.ID, id)
 		if err != nil {
 			bookView.Render(w, r, vd.WithError(err))
 		}

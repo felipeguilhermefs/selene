@@ -6,15 +6,6 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
-type FullBook struct {
-	ID       uint
-	UserID   uint
-	Title    string
-	Author   string
-	Comments string
-	Tags     string
-}
-
 type BookRepository interface {
 	Insert(book *NewBook) error
 	Update(book *UpdatedBook) error
@@ -90,4 +81,25 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 	}
 
 	return bc.BookRepository.Delete(id)
+}
+
+func (bc *BookControl) Fetch(userID, id uint) (*FullBook, error) {
+	if id <= 0 {
+		return nil, errors.ErrIDInvalid
+	}
+
+	if userID <= 0 {
+		return nil, errors.ErrUserIDRequired
+	}
+
+	book, err := bc.BookRepository.Fetch(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if book.UserID != userID {
+		return nil, errors.ErrUserMismatch
+	}
+
+	return book, nil
 }
