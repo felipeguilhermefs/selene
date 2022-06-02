@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/core"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 func HandleBooksPage(
 	booksView *view.View,
-	bookService services.BookService,
+	bookFetcher core.BookFetcher,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +18,7 @@ func HandleBooksPage(
 
 		user := context.User(r)
 
-		books, err := bookService.GetBooks(user.ID)
+		books, err := bookFetcher.FetchMany(user.ID)
 		if err != nil {
 			booksView.Render(w, r, vd.WithError(err))
 			return

@@ -27,7 +27,7 @@ func HandleBookPage(
 			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
 		}
 
-		book, err := bookFetcher.Fetch(user.ID, id)
+		book, err := bookFetcher.FetchOne(user.ID, id)
 		if err != nil {
 			bookView.Render(w, r, vd.WithError(err))
 		}

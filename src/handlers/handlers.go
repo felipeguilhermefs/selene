@@ -37,7 +37,7 @@ func New(
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, srvcs.Auth),
 		Logout:      HandleLogout(srvcs.Auth),
-		BooksPage:   HandleBooksPage(&views.Books, srvcs.Book),
+		BooksPage:   HandleBooksPage(&views.Books, bookControl),
 		NewBookPage: HandleNewBookPage(&views.NewBook),
 		NewBook:     HandleNewBook(&views.NewBook, bookControl),
 		BookPage:    HandleBookPage(&views.EditBook, bookControl),

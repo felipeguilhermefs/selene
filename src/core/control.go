@@ -9,7 +9,8 @@ import (
 type BookRepository interface {
 	Insert(book *NewBook) error
 	Update(book *UpdatedBook) error
-	Fetch(id uint) (*FullBook, error)
+	FindOne(id uint) (*FullBook, error)
+	FindMany(userID uint) ([]FullBook, error)
 	Delete(id uint) error
 }
 
@@ -50,7 +51,7 @@ func (bc *BookControl) Update(book *UpdatedBook) error {
 		return errors.ErrAuthorRequired
 	}
 
-	current, err := bc.BookRepository.Fetch(book.ID)
+	current, err := bc.BookRepository.FindOne(book.ID)
 	if err != nil {
 		return err
 	}
@@ -71,7 +72,7 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 		return errors.ErrUserIDRequired
 	}
 
-	book, err := bc.BookRepository.Fetch(id)
+	book, err := bc.BookRepository.FindOne(id)
 	if err != nil {
 		return err
 	}
@@ -83,7 +84,7 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 	return bc.BookRepository.Delete(id)
 }
 
-func (bc *BookControl) Fetch(userID, id uint) (*FullBook, error) {
+func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
 	if id <= 0 {
 		return nil, errors.ErrIDInvalid
 	}
@@ -92,7 +93,7 @@ func (bc *BookControl) Fetch(userID, id uint) (*FullBook, error) {
 		return nil, errors.ErrUserIDRequired
 	}
 
-	book, err := bc.BookRepository.Fetch(id)
+	book, err := bc.BookRepository.FindOne(id)
 	if err != nil {
 		return nil, err
 	}
@@ -102,4 +103,12 @@ func (bc *BookControl) Fetch(userID, id uint) (*FullBook, error) {
 	}
 
 	return book, nil
+}
+
+func (bc *BookControl) FetchMany(userID uint) ([]FullBook, error) {
+	if userID <= 0 {
+		return nil, errors.ErrUserIDRequired
+	}
+
+	return bc.BookRepository.FindMany(userID)
 }

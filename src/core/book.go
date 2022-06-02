@@ -39,5 +39,6 @@ type FullBook struct {
 }
 
 type BookFetcher interface {
-	Fetch(userID uint, id uint) (*FullBook, error)
+	FetchOne(userID uint, id uint) (*FullBook, error)
+	FetchMany(userID uint) ([]FullBook, error)
 }

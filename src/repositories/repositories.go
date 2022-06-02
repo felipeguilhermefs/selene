@@ -10,7 +10,6 @@ import (
 type Repositories struct {
 	db   *gorm.DB
 	User UserRepository
-	Book BookRepository
 }
 
 // New init all repositories
@@ -19,7 +18,6 @@ func New(db *gorm.DB) *Repositories {
 	return &Repositories{
 		db:   db,
 		User: newUserRespository(db),
-		Book: newBookRespository(db),
 	}
 }
 

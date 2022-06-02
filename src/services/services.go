@@ -10,7 +10,6 @@ import (
 type Services struct {
 	Auth     AuthService
 	Password PasswordService
-	Book     BookService
 }
 
 // New init all services
@@ -24,6 +23,5 @@ func New(
 	return &Services{
 		Auth:     newAuthService(sessionStore, repos.User, passwordService),
 		Password: passwordService,
-		Book:     newBookService(repos.Book),
 	}
 }
