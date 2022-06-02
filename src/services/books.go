@@ -7,7 +7,6 @@ import (
 
 // BookService handle operations over sessions
 type BookService interface {
-	Delete(userID, bookID uint) error
 	GetBook(userID, bookID uint) (*models.Book, error)
 	GetBooks(userID uint) ([]models.Book, error)
 }
@@ -22,10 +21,6 @@ func newBookService(bookRepository repositories.BookRepository) BookService {
 
 type bookService struct {
 	bookRepository repositories.BookRepository
-}
-
-func (bs *bookService) Delete(userID, bookID uint) error {
-	return bs.bookRepository.Delete(userID, bookID)
 }
 
 func (bs *bookService) GetBook(userID, bookID uint) (*models.Book, error) {

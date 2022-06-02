@@ -54,3 +54,8 @@ func (br *PostgresBookRepository) Fetch(id uint) (*core.FullBook, error) {
 		Tags:     book.Tags,
 	}, nil
 }
+
+func (br *PostgresBookRepository) Delete(id uint) error {
+	book := models.Book{Model: gorm.Model{ID: id}}
+	return br.DB.Delete(&book).Error
+}

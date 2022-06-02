@@ -87,7 +87,7 @@ func HandleEditBook(
 
 func HandleDeleteBook(
 	bookView *view.View,
-	bookService services.BookService,
+	bookRemover core.BookRemover,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +100,7 @@ func HandleDeleteBook(
 
 		user := context.User(r)
 
-		err = bookService.Delete(user.ID, id)
+		err = bookRemover.Remove(user.ID, id)
 		if err != nil {
 			bookView.Render(w, r, vd.WithError(err))
 		}

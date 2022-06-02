@@ -19,6 +19,7 @@ type BookRepository interface {
 	Insert(book *NewBook) error
 	Update(book *UpdatedBook) error
 	Fetch(id uint) (*FullBook, error)
+	Delete(id uint) error
 }
 
 type BookControl struct {
@@ -68,4 +69,25 @@ func (bc *BookControl) Update(book *UpdatedBook) error {
 	}
 
 	return bc.BookRepository.Update(book)
+}
+
+func (bc *BookControl) Remove(userID uint, id uint) error {
+	if id <= 0 {
+		return errors.ErrIDInvalid
+	}
+
+	if userID <= 0 {
+		return errors.ErrUserIDRequired
+	}
+
+	book, err := bc.BookRepository.Fetch(id)
+	if err != nil {
+		return err
+	}
+
+	if book.UserID != userID {
+		return errors.ErrUserMismatch
+	}
+
+	return bc.BookRepository.Delete(id)
 }

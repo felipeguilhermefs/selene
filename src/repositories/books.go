@@ -9,7 +9,6 @@ import (
 
 // BookRepository interacts with book DB
 type BookRepository interface {
-	Delete(userID, bookID uint) error
 	ByUserAndID(userID, bookID uint) (*models.Book, error)
 	ByUserID(userID uint) ([]models.Book, error)
 }
@@ -24,19 +23,6 @@ func newBookRespository(db *gorm.DB) BookRepository {
 
 type bookRepository struct {
 	db *gorm.DB
-}
-
-func (br *bookRepository) Delete(userID, bookID uint) error {
-	if userID <= 0 {
-		return errors.ErrUserIDRequired
-	}
-
-	if bookID <= 0 {
-		return errors.ErrIDInvalid
-	}
-
-	book := models.Book{Model: gorm.Model{ID: bookID}}
-	return br.db.Delete(&book).Error
 }
 
 func (br *bookRepository) ByUserAndID(userID, bookID uint) (*models.Book, error) {

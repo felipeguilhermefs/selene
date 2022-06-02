@@ -42,7 +42,7 @@ func New(
 		NewBook:     HandleNewBook(&views.NewBook, bookControl),
 		BookPage:    HandleBookPage(&views.EditBook, srvcs.Book),
 		EditBook:    HandleEditBook(&views.EditBook, bookControl),
-		DeleteBook:  HandleDeleteBook(&views.EditBook, srvcs.Book),
+		DeleteBook:  HandleDeleteBook(&views.EditBook, bookControl),
 		NotFound:    HandleNotFound(&views.NotFound),
 		NotAuthentic: HandleError(
 			&views.Error,
