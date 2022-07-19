@@ -42,3 +42,11 @@ type BookFetcher interface {
 	FetchOne(userID uint, id uint) (*FullBook, error)
 	FetchMany(userID uint) ([]FullBook, error)
 }
+
+type BookRepository interface {
+	Insert(book *NewBook) error
+	Update(book *UpdatedBook) error
+	FindOne(id uint) (*FullBook, error)
+	FindMany(userID uint) ([]FullBook, error)
+	Delete(id uint) error
+}
