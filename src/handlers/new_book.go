@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -29,7 +29,7 @@ func HandleNewBookPage(newBookView *view.View) http.HandlerFunc {
 
 func HandleNewBook(
 	newBookView *view.View,
-	bookAdder core.BookAdder,
+	bookAdder bookshelf.BookAdder,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func HandleNewBook(
 
 		user := context.User(r)
 
-		book := &core.NewBook{
+		book := &bookshelf.NewBook{
 			Title:    form.Title,
 			Author:   form.Author,
 			Comments: form.Comments,

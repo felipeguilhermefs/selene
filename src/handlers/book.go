@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 func HandleBookPage(
 	bookView *view.View,
-	bookFetcher core.BookFetcher,
+	bookFetcher bookshelf.BookFetcher,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func HandleBookPage(
 
 func HandleEditBook(
 	bookView *view.View,
-	bookUpdater core.BookUpdater,
+	bookUpdater bookshelf.BookUpdater,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,7 @@ func HandleEditBook(
 			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
 		}
 
-		book := &core.UpdatedBook{
+		book := &bookshelf.UpdatedBook{
 			ID:       id,
 			UserID:   user.ID,
 			Title:    form.Title,
@@ -89,7 +89,7 @@ func HandleEditBook(
 
 func HandleDeleteBook(
 	bookView *view.View,
-	bookRemover core.BookRemover,
+	bookRemover bookshelf.BookRemover,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

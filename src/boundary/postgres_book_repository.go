@@ -3,7 +3,7 @@ package boundary
 import (
 	"gorm.io/gorm"
 
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/models"
 )
@@ -12,7 +12,7 @@ type PostgresBookRepository struct {
 	DB *gorm.DB
 }
 
-func (br *PostgresBookRepository) Insert(book *core.NewBook) error {
+func (br *PostgresBookRepository) Insert(book *bookshelf.NewBook) error {
 	b := &models.Book{
 		Title:    book.Title,
 		Author:   book.Author,
@@ -23,7 +23,7 @@ func (br *PostgresBookRepository) Insert(book *core.NewBook) error {
 	return br.DB.Create(b).Error
 }
 
-func (br *PostgresBookRepository) Update(book *core.UpdatedBook) error {
+func (br *PostgresBookRepository) Update(book *bookshelf.UpdatedBook) error {
 	b := &models.Book{
 		Title:    book.Title,
 		Author:   book.Author,
@@ -33,7 +33,7 @@ func (br *PostgresBookRepository) Update(book *core.UpdatedBook) error {
 	return br.DB.Where("id = ?", book.ID).Updates(b).Error
 }
 
-func (br *PostgresBookRepository) FindOne(id uint) (*core.FullBook, error) {
+func (br *PostgresBookRepository) FindOne(id uint) (*bookshelf.FullBook, error) {
 	var record models.Book
 
 	err := br.DB.Where("id = ?", id).First(&record).Error
@@ -45,7 +45,7 @@ func (br *PostgresBookRepository) FindOne(id uint) (*core.FullBook, error) {
 		return nil, err
 	}
 
-	return &core.FullBook{
+	return &bookshelf.FullBook{
 		ID:       record.ID,
 		UserID:   record.UserID,
 		Title:    record.Title,
@@ -55,7 +55,7 @@ func (br *PostgresBookRepository) FindOne(id uint) (*core.FullBook, error) {
 	}, nil
 }
 
-func (br *PostgresBookRepository) FindMany(userID uint) ([]core.FullBook, error) {
+func (br *PostgresBookRepository) FindMany(userID uint) ([]bookshelf.FullBook, error) {
 	if userID <= 0 {
 		return nil, errors.ErrUserIDRequired
 	}
@@ -64,12 +64,12 @@ func (br *PostgresBookRepository) FindMany(userID uint) ([]core.FullBook, error)
 
 	err := br.DB.Where("user_id = ?", userID).Find(&records).Error
 	if err != nil {
-		return []core.FullBook{}, err
+		return []bookshelf.FullBook{}, err
 	}
 
-	books := make([]core.FullBook, len(records))
+	books := make([]bookshelf.FullBook, len(records))
 	for _, record := range records {
-		book := core.FullBook{
+		book := bookshelf.FullBook{
 			ID:       record.ID,
 			UserID:   record.UserID,
 			Title:    record.Title,

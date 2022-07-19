@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/felipeguilhermefs/selene/boundary"
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/database"
@@ -50,7 +50,7 @@ func run() error {
 	authenticated := auth.New(srvcs.Auth)
 	html := htmlMiddleware.New()
 
-	bookControl := &core.BookControl{
+	bookControl := &bookshelf.BookControl{
 		BookRepository: &boundary.PostgresBookRepository{
 			DB: db,
 		},

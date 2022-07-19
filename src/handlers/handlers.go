@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -29,7 +29,7 @@ type Handlers struct {
 func New(
 	srvcs *services.Services,
 	views *view.Views,
-	bookControl *core.BookControl,
+	bookControl *bookshelf.BookControl,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),

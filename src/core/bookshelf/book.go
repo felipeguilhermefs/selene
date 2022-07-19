@@ -1,4 +1,4 @@
-package core
+package bookshelf
 
 type NewBook struct {
 	UserID   uint

@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
-	"github.com/felipeguilhermefs/selene/core"
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
 func HandleBooksPage(
 	booksView *view.View,
-	bookFetcher core.BookFetcher,
+	bookFetcher bookshelf.BookFetcher,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
