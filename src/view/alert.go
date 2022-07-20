@@ -3,6 +3,7 @@ package view
 import (
 	"log"
 
+	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
@@ -29,6 +30,8 @@ func newErrorAlert(err error) *Alert {
 	var message string
 
 	if _, ok := err.(errors.PublicError); ok {
+		message = err.Error()
+	} else if _, ok := err.(bookshelf.BookshelfError); ok {
 		message = err.Error()
 	} else {
 		log.Println(err)

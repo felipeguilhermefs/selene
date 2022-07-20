@@ -6,14 +6,6 @@ const (
 
 	// ErrNotLoggedIn user not logged in
 	ErrNotLoggedIn PrivateError = "Not logged in"
-
-	// ErrUserIDRequired user id required
-	ErrUserIDRequired PrivateError = "UserID is required"
-
-	// ErrIDInvalid book id required
-	ErrIDInvalid PrivateError = "ID is invalid"
-
-	ErrUserMismatch PublicError = "User mismatch, should be same"
 )
 
 type PrivateError string

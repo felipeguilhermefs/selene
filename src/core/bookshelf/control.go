@@ -1,10 +1,6 @@
 package bookshelf
 
-import (
-	"strings"
-
-	"github.com/felipeguilhermefs/selene/infra/errors"
-)
+import "strings"
 
 type BookControl struct {
 	BookRepository BookRepository
@@ -12,15 +8,15 @@ type BookControl struct {
 
 func (bc *BookControl) Add(book *NewBook) error {
 	if book.UserID <= 0 {
-		return errors.ErrUserIDRequired
+		return ErrUserIDRequired
 	}
 
 	if strings.TrimSpace(book.Title) == "" {
-		return errors.ErrTitleRequired
+		return ErrTitleRequired
 	}
 
 	if strings.TrimSpace(book.Author) == "" {
-		return errors.ErrAuthorRequired
+		return ErrAuthorRequired
 	}
 
 	return bc.BookRepository.Insert(book)
@@ -28,19 +24,19 @@ func (bc *BookControl) Add(book *NewBook) error {
 
 func (bc *BookControl) Update(book *UpdatedBook) error {
 	if book.ID <= 0 {
-		return errors.ErrIDInvalid
+		return ErrIDInvalid
 	}
 
 	if book.UserID <= 0 {
-		return errors.ErrUserIDRequired
+		return ErrUserIDRequired
 	}
 
 	if strings.TrimSpace(book.Title) == "" {
-		return errors.ErrTitleRequired
+		return ErrTitleRequired
 	}
 
 	if strings.TrimSpace(book.Author) == "" {
-		return errors.ErrAuthorRequired
+		return ErrAuthorRequired
 	}
 
 	current, err := bc.BookRepository.FindOne(book.ID)
@@ -49,7 +45,7 @@ func (bc *BookControl) Update(book *UpdatedBook) error {
 	}
 
 	if current.UserID != book.UserID {
-		return errors.ErrUserMismatch
+		return ErrUserMismatch
 	}
 
 	return bc.BookRepository.Update(book)
@@ -57,11 +53,11 @@ func (bc *BookControl) Update(book *UpdatedBook) error {
 
 func (bc *BookControl) Remove(userID uint, id uint) error {
 	if id <= 0 {
-		return errors.ErrIDInvalid
+		return ErrIDInvalid
 	}
 
 	if userID <= 0 {
-		return errors.ErrUserIDRequired
+		return ErrUserIDRequired
 	}
 
 	book, err := bc.BookRepository.FindOne(id)
@@ -70,7 +66,7 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 	}
 
 	if book.UserID != userID {
-		return errors.ErrUserMismatch
+		return ErrUserMismatch
 	}
 
 	return bc.BookRepository.Delete(id)
@@ -78,11 +74,11 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 
 func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
 	if id <= 0 {
-		return nil, errors.ErrIDInvalid
+		return nil, ErrIDInvalid
 	}
 
 	if userID <= 0 {
-		return nil, errors.ErrUserIDRequired
+		return nil, ErrUserIDRequired
 	}
 
 	book, err := bc.BookRepository.FindOne(id)
@@ -91,7 +87,7 @@ func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
 	}
 
 	if book.UserID != userID {
-		return nil, errors.ErrUserMismatch
+		return nil, ErrUserMismatch
 	}
 
 	return book, nil
@@ -99,7 +95,7 @@ func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
 
 func (bc *BookControl) FetchMany(userID uint) ([]FullBook, error) {
 	if userID <= 0 {
-		return nil, errors.ErrUserIDRequired
+		return nil, ErrUserIDRequired
 	}
 
 	return bc.BookRepository.FindMany(userID)

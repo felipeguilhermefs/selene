@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/models"
 )
 
@@ -38,7 +37,7 @@ func (br *PostgresBookRepository) FindOne(id uint) (*bookshelf.FullBook, error) 
 
 	err := br.DB.Where("id = ?", id).First(&record).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil, errors.ErrBookNotFound
+		return nil, bookshelf.ErrBookNotFound
 	}
 
 	if err != nil {
@@ -56,10 +55,6 @@ func (br *PostgresBookRepository) FindOne(id uint) (*bookshelf.FullBook, error) 
 }
 
 func (br *PostgresBookRepository) FindMany(userID uint) ([]bookshelf.FullBook, error) {
-	if userID <= 0 {
-		return nil, errors.ErrUserIDRequired
-	}
-
 	var records []models.Book
 
 	err := br.DB.Where("user_id = ?", userID).Find(&records).Error
