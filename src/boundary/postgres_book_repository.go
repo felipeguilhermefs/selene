@@ -4,15 +4,23 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
-	"github.com/felipeguilhermefs/selene/models"
 )
+
+type Book struct {
+	gorm.Model
+	UserID   uint   `gorm:"not null;index"`
+	Title    string `gorm:"not null"`
+	Author   string `gorm:"not null"`
+	Comments string
+	Tags     string
+}
 
 type PostgresBookRepository struct {
 	DB *gorm.DB
 }
 
 func (br *PostgresBookRepository) Insert(book *bookshelf.NewBook) error {
-	b := &models.Book{
+	b := &Book{
 		Title:    book.Title,
 		Author:   book.Author,
 		Comments: book.Comments,
@@ -23,7 +31,7 @@ func (br *PostgresBookRepository) Insert(book *bookshelf.NewBook) error {
 }
 
 func (br *PostgresBookRepository) Update(book *bookshelf.UpdatedBook) error {
-	b := &models.Book{
+	b := &Book{
 		Title:    book.Title,
 		Author:   book.Author,
 		Comments: book.Comments,
@@ -33,7 +41,7 @@ func (br *PostgresBookRepository) Update(book *bookshelf.UpdatedBook) error {
 }
 
 func (br *PostgresBookRepository) FindOne(id uint) (*bookshelf.FullBook, error) {
-	var record models.Book
+	var record Book
 
 	err := br.DB.Where("id = ?", id).First(&record).Error
 	if err == gorm.ErrRecordNotFound {
@@ -55,7 +63,7 @@ func (br *PostgresBookRepository) FindOne(id uint) (*bookshelf.FullBook, error) 
 }
 
 func (br *PostgresBookRepository) FindMany(userID uint) ([]bookshelf.FullBook, error) {
-	var records []models.Book
+	var records []Book
 
 	err := br.DB.Where("user_id = ?", userID).Find(&records).Error
 	if err != nil {
@@ -78,6 +86,6 @@ func (br *PostgresBookRepository) FindMany(userID uint) ([]bookshelf.FullBook, e
 }
 
 func (br *PostgresBookRepository) Delete(id uint) error {
-	book := models.Book{Model: gorm.Model{ID: id}}
+	book := Book{Model: gorm.Model{ID: id}}
 	return br.DB.Delete(&book).Error
 }
