@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"regexp"
 	"syscall"
 
 	"github.com/felipeguilhermefs/selene/boundary"
@@ -43,7 +44,12 @@ func run() error {
 		return err
 	}
 
-	srvcs := services.New(cfg, repos, sessionStore)
+	userRepository := &boundary.PostgresUserRepository{
+		DB:         db,
+		EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+	}
+
+	srvcs := services.New(cfg, userRepository, sessionStore)
 
 	views := view.NewViews(templates)
 

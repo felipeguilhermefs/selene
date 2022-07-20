@@ -8,16 +8,14 @@ import (
 
 // Repositories holds reference to all repositories
 type Repositories struct {
-	db   *gorm.DB
-	User UserRepository
+	db *gorm.DB
 }
 
 // New init all repositories
 func New(db *gorm.DB) *Repositories {
 
 	return &Repositories{
-		db:   db,
-		User: newUserRespository(db),
+		db: db,
 	}
 }
 

@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/boundary"
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
-	"github.com/felipeguilhermefs/selene/repositories"
 )
 
 // AuthService handle operations over sessions
@@ -20,7 +20,7 @@ type AuthService interface {
 // newAuthService creates a new instance of AuthService
 func newAuthService(
 	sessionStore session.SessionStore,
-	userRepository repositories.UserRepository,
+	userRepository auth.UserRepository,
 	passwordService PasswordService,
 ) AuthService {
 
@@ -34,7 +34,7 @@ func newAuthService(
 type authService struct {
 	passwordService PasswordService
 	sessionStore    session.SessionStore
-	userRepository  repositories.UserRepository
+	userRepository  auth.UserRepository
 }
 
 func (as *authService) GetUser(r *http.Request) (*boundary.User, error) {
