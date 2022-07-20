@@ -3,18 +3,18 @@ package services
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/boundary"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
-	"github.com/felipeguilhermefs/selene/models"
 	"github.com/felipeguilhermefs/selene/repositories"
 )
 
 // AuthService handle operations over sessions
 type AuthService interface {
-	GetUser(r *http.Request) (*models.User, error)
+	GetUser(r *http.Request) (*boundary.User, error)
 	Login(w http.ResponseWriter, r *http.Request, email, password string) error
 	Logout(w http.ResponseWriter, r *http.Request) error
-	SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error
+	SignUp(w http.ResponseWriter, r *http.Request, user *boundary.User) error
 }
 
 // newAuthService creates a new instance of AuthService
@@ -37,7 +37,7 @@ type authService struct {
 	userRepository  repositories.UserRepository
 }
 
-func (as *authService) GetUser(r *http.Request) (*models.User, error) {
+func (as *authService) GetUser(r *http.Request) (*boundary.User, error) {
 	email, err := as.sessionStore.GetUserID(r)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
 	return as.sessionStore.SignOut(w, r)
 }
 
-func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *models.User) error {
+func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *boundary.User) error {
 	if user.Email == "" {
 		return errors.ErrEmailRequired
 	}

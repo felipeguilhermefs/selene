@@ -6,16 +6,16 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/felipeguilhermefs/selene/boundary"
 	"github.com/felipeguilhermefs/selene/infra/errors"
-	"github.com/felipeguilhermefs/selene/models"
 )
 
 const emailRegex = `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`
 
 // UserRepository interacts with user DB
 type UserRepository interface {
-	Create(user *models.User) error
-	ByEmail(email string) (*models.User, error)
+	Create(user *boundary.User) error
+	ByEmail(email string) (*boundary.User, error)
 }
 
 // newUserRespository creates a new instance of UserRepository
@@ -32,7 +32,7 @@ type userRepository struct {
 	emailRegex *regexp.Regexp
 }
 
-func (ur *userRepository) Create(user *models.User) error {
+func (ur *userRepository) Create(user *boundary.User) error {
 	normalizedEmail := ur.normalizeEmail(user.Email)
 
 	if !ur.emailRegex.MatchString(normalizedEmail) {
@@ -44,7 +44,7 @@ func (ur *userRepository) Create(user *models.User) error {
 	return ur.db.Create(user).Error
 }
 
-func (ur *userRepository) ByEmail(email string) (*models.User, error) {
+func (ur *userRepository) ByEmail(email string) (*boundary.User, error) {
 	normalized := ur.normalizeEmail(email)
 
 	if !ur.emailRegex.MatchString(normalized) {
@@ -54,8 +54,8 @@ func (ur *userRepository) ByEmail(email string) (*models.User, error) {
 	return ur.first("email = ?", normalized)
 }
 
-func (ur *userRepository) first(query interface{}, params ...interface{}) (*models.User, error) {
-	var user models.User
+func (ur *userRepository) first(query interface{}, params ...interface{}) (*boundary.User, error) {
+	var user boundary.User
 
 	err := ur.db.Where(query, params...).First(&user).Error
 	switch err {

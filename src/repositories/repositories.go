@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/felipeguilhermefs/selene/boundary"
-	"github.com/felipeguilhermefs/selene/models"
 )
 
 // Repositories holds reference to all repositories
@@ -24,7 +23,7 @@ func New(db *gorm.DB) *Repositories {
 
 func (r *Repositories) allModels() []interface{} {
 	return []interface{}{
-		&models.User{},
+		&boundary.User{},
 		&boundary.Book{},
 	}
 }
