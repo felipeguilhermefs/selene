@@ -17,7 +17,7 @@ type User struct {
 }
 
 type PostgresUserRepository struct {
-	DB         *gorm.DB
+	db         *gorm.DB
 	EmailRegex *regexp.Regexp
 }
 
@@ -30,7 +30,7 @@ func (ur *PostgresUserRepository) Create(user *User) error {
 
 	user.Email = normalizedEmail
 
-	return ur.DB.Create(user).Error
+	return ur.db.Create(user).Error
 }
 
 func (ur *PostgresUserRepository) ByEmail(email string) (*User, error) {
@@ -46,7 +46,7 @@ func (ur *PostgresUserRepository) ByEmail(email string) (*User, error) {
 func (ur *PostgresUserRepository) first(query interface{}, params ...interface{}) (*User, error) {
 	var user User
 
-	err := ur.DB.Where(query, params...).First(&user).Error
+	err := ur.db.Where(query, params...).First(&user).Error
 	switch err {
 	case gorm.ErrRecordNotFound:
 		return nil, errors.ErrUserNotFound

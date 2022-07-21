@@ -15,9 +15,9 @@ func New(cfg config.ConfigStore) (*Postgres, error) {
 
 	return &Postgres{
 		db:             db,
-		BookRepository: &PostgresBookRepository{DB: db},
+		BookRepository: &PostgresBookRepository{db},
 		UserRepository: &PostgresUserRepository{
-			DB:         db,
+			db:         db,
 			EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
 		},
 	}, nil
