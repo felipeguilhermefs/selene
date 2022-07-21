@@ -18,7 +18,7 @@ type FullUser struct {
 }
 
 type UserFetcher interface {
-	FetchOne(userID uint, id uint) (*FullUser, error)
+	FetchOne(email string) (*FullUser, error)
 }
 
 type UserRepository interface {

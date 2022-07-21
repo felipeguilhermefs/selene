@@ -47,7 +47,7 @@ func run() error {
 		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
 	}
 
-	srvcs := services.New(cfg, userControl, sessionStore)
+	srvcs := services.New(cfg, userControl, userControl, sessionStore)
 
 	views := view.NewViews(templates)
 

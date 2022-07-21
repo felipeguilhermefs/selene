@@ -20,21 +20,24 @@ type AuthService interface {
 // newAuthService creates a new instance of AuthService
 func newAuthService(
 	sessionStore session.SessionStore,
-	userControl *auth.UserControl,
+	userAdder auth.UserAdder,
+	userFetcher auth.UserFetcher,
 	passwordService PasswordService,
 ) AuthService {
 
 	return &authService{
 		passwordService: passwordService,
 		sessionStore:    sessionStore,
-		userControl:     userControl,
+		userAdder:       userAdder,
+		userFetcher:     userFetcher,
 	}
 }
 
 type authService struct {
 	passwordService PasswordService
 	sessionStore    session.SessionStore
-	userControl     *auth.UserControl
+	userAdder       auth.UserAdder
+	userFetcher     auth.UserFetcher
 }
 
 func (as *authService) GetUser(r *http.Request) (*auth.FullUser, error) {
@@ -43,7 +46,7 @@ func (as *authService) GetUser(r *http.Request) (*auth.FullUser, error) {
 		return nil, err
 	}
 
-	user, err := as.userControl.FetchOne(email)
+	user, err := as.userFetcher.FetchOne(email)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +57,7 @@ func (as *authService) GetUser(r *http.Request) (*auth.FullUser, error) {
 }
 
 func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {
-	user, err := as.userControl.FetchOne(email)
+	user, err := as.userFetcher.FetchOne(email)
 	if err != nil {
 		return err
 	}
@@ -81,7 +84,7 @@ func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *post
 		return err
 	}
 
-	err = as.userControl.Add(&auth.NewUser{
+	err = as.userAdder.Add(&auth.NewUser{
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: secret,
