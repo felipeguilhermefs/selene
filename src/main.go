@@ -42,23 +42,23 @@ func run() error {
 		return err
 	}
 
-	userControl := &auth.UserControl{
+	authControl := &auth.AuthControl{
 		UserRepository: pg.UserRepository,
 		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
 	}
 
-	srvcs := services.New(cfg, userControl, userControl, sessionStore)
+	srvcs := services.New(cfg, authControl, authControl, sessionStore)
 
 	views := view.NewViews(templates)
 
 	authenticated := authMiddleware.New(srvcs.Auth)
 	html := htmlMiddleware.New()
 
-	bookControl := &bookshelf.BookControl{
+	bookshelfControl := &bookshelf.BookshelfControl{
 		BookRepository: pg.BookRepository,
 	}
 
-	hdlrs := handlers.New(srvcs, views, bookControl)
+	hdlrs := handlers.New(srvcs, views, bookshelfControl)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: html(hdlrs.SignupPage)},

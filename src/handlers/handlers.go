@@ -29,7 +29,7 @@ type Handlers struct {
 func New(
 	srvcs *services.Services,
 	views *view.Views,
-	bookControl *bookshelf.BookControl,
+	bookshelfControl *bookshelf.BookshelfControl,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
@@ -37,12 +37,12 @@ func New(
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, srvcs.Auth),
 		Logout:      HandleLogout(srvcs.Auth),
-		BooksPage:   HandleBooksPage(&views.Books, bookControl),
+		BooksPage:   HandleBooksPage(&views.Books, bookshelfControl),
 		NewBookPage: HandleNewBookPage(&views.NewBook),
-		NewBook:     HandleNewBook(&views.NewBook, bookControl),
-		BookPage:    HandleBookPage(&views.EditBook, bookControl),
-		EditBook:    HandleEditBook(&views.EditBook, bookControl),
-		DeleteBook:  HandleDeleteBook(&views.EditBook, bookControl),
+		NewBook:     HandleNewBook(&views.NewBook, bookshelfControl),
+		BookPage:    HandleBookPage(&views.EditBook, bookshelfControl),
+		EditBook:    HandleEditBook(&views.EditBook, bookshelfControl),
+		DeleteBook:  HandleDeleteBook(&views.EditBook, bookshelfControl),
 		NotFound:    HandleNotFound(&views.NotFound),
 		NotAuthentic: HandleError(
 			&views.Error,

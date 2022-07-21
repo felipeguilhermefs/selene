@@ -7,12 +7,12 @@ import (
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
-type UserControl struct {
+type AuthControl struct {
 	UserRepository UserRepository
 	EmailRegex     *regexp.Regexp
 }
 
-func (uc *UserControl) Add(user *NewUser) error {
+func (uc *AuthControl) Add(user *NewUser) error {
 	if strings.TrimSpace(user.Password) == "" {
 		return errors.ErrPasswordTooShort
 	}
@@ -28,7 +28,7 @@ func (uc *UserControl) Add(user *NewUser) error {
 	return uc.UserRepository.Add(user)
 }
 
-func (uc *UserControl) FetchOne(email string) (*FullUser, error) {
+func (uc *AuthControl) FetchOne(email string) (*FullUser, error) {
 	normalized := uc.normalizeEmail(email)
 
 	if !uc.EmailRegex.MatchString(normalized) {
@@ -38,6 +38,6 @@ func (uc *UserControl) FetchOne(email string) (*FullUser, error) {
 	return uc.UserRepository.FindOne(normalized)
 }
 
-func (uc *UserControl) normalizeEmail(input string) string {
+func (uc *AuthControl) normalizeEmail(input string) string {
 	return strings.ToLower(strings.TrimSpace(input))
 }

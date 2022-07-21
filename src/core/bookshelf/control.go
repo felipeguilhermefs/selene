@@ -2,11 +2,11 @@ package bookshelf
 
 import "strings"
 
-type BookControl struct {
+type BookshelfControl struct {
 	BookRepository BookRepository
 }
 
-func (bc *BookControl) Add(book *NewBook) error {
+func (bc *BookshelfControl) Add(book *NewBook) error {
 	if book.UserID <= 0 {
 		return ErrUserIDRequired
 	}
@@ -22,7 +22,7 @@ func (bc *BookControl) Add(book *NewBook) error {
 	return bc.BookRepository.Insert(book)
 }
 
-func (bc *BookControl) Update(book *UpdatedBook) error {
+func (bc *BookshelfControl) Update(book *UpdatedBook) error {
 	if book.ID <= 0 {
 		return ErrIDInvalid
 	}
@@ -51,7 +51,7 @@ func (bc *BookControl) Update(book *UpdatedBook) error {
 	return bc.BookRepository.Update(book)
 }
 
-func (bc *BookControl) Remove(userID uint, id uint) error {
+func (bc *BookshelfControl) Remove(userID uint, id uint) error {
 	if id <= 0 {
 		return ErrIDInvalid
 	}
@@ -72,7 +72,7 @@ func (bc *BookControl) Remove(userID uint, id uint) error {
 	return bc.BookRepository.Delete(id)
 }
 
-func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
+func (bc *BookshelfControl) FetchOne(userID, id uint) (*FullBook, error) {
 	if id <= 0 {
 		return nil, ErrIDInvalid
 	}
@@ -93,7 +93,7 @@ func (bc *BookControl) FetchOne(userID, id uint) (*FullBook, error) {
 	return book, nil
 }
 
-func (bc *BookControl) FetchMany(userID uint) ([]FullBook, error) {
+func (bc *BookshelfControl) FetchMany(userID uint) ([]FullBook, error) {
 	if userID <= 0 {
 		return nil, ErrUserIDRequired
 	}
