@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"regexp"
 	"syscall"
 
 	"github.com/felipeguilhermefs/selene/boundary/postgres"
@@ -30,23 +29,18 @@ var templates embed.FS
 func run() error {
 	cfg := config.New()
 
-	db, err := postgres.Connect(cfg)
+	pg, err := postgres.New(cfg)
 	if err != nil {
 		return err
 	}
 
 	sessionStore := session.NewStore(cfg)
 
-	if err := postgres.RunMigrations(db); err != nil {
+	if err := pg.RunMigrations(); err != nil {
 		return err
 	}
 
-	userRepository := &postgres.PostgresUserRepository{
-		DB:         db,
-		EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
-	}
-
-	srvcs := services.New(cfg, userRepository, sessionStore)
+	srvcs := services.New(cfg, pg.UserRepository, sessionStore)
 
 	views := view.NewViews(templates)
 
@@ -54,9 +48,7 @@ func run() error {
 	html := htmlMiddleware.New()
 
 	bookControl := &bookshelf.BookControl{
-		BookRepository: &postgres.PostgresBookRepository{
-			DB: db,
-		},
+		BookRepository: pg.BookRepository,
 	}
 
 	hdlrs := handlers.New(srvcs, views, bookControl)

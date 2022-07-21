@@ -15,32 +15,10 @@ const (
 	backoffTime          = 5 * time.Second
 )
 
-func Connect(cfg config.ConfigStore) (*gorm.DB, error) {
-	db, err := connectPostgres(cfg)
-	if err == nil {
-		return db, nil
-	}
+func connect(cfg config.ConfigStore) (*gorm.DB, error) {
+	connString := buildConnString(cfg)
 
-	// We try to connect to database a couple of times since
-	// it might not be available at startup time
-	for try := 0; try < maxConnectionRetries; try++ {
-
-		// A simple constant backoff should be ok for this simple case
-		time.Sleep(backoffTime)
-
-		db, err = connectPostgres(cfg)
-		if err == nil {
-			return db, nil
-		}
-	}
-
-	return nil, err
-}
-
-func connectPostgres(cfg config.ConfigStore) (*gorm.DB, error) {
-	pgDialect := postgres.Open(buildConnString(cfg))
-
-	db, err := gorm.Open(pgDialect, &gorm.Config{})
+	db, err := tryConnect(connString, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +31,26 @@ func connectPostgres(cfg config.ConfigStore) (*gorm.DB, error) {
 	sqlDB.SetMaxIdleConns(cfg.GetInt("SELENE_DB_CONN_MAXIDLE", 2))
 	sqlDB.SetMaxOpenConns(cfg.GetInt("SELENE_DB_CONN_MAXOPEN", 5))
 	sqlDB.SetConnMaxLifetime(cfg.GetTime("SELENE_DB_CONN_TTL", "5m"))
+
+	return db, nil
+}
+
+func tryConnect(connString string, retry int) (*gorm.DB, error) {
+	pgDialect := postgres.Open(connString)
+
+	db, err := gorm.Open(pgDialect, &gorm.Config{})
+	if err != nil {
+		// We try to connect to database a couple of times since
+		// it might not be available at startup time
+		if retry < maxConnectionRetries {
+			// A simple constant backoff should be ok for this simple case
+			time.Sleep(backoffTime)
+
+			return tryConnect(connString, retry+1)
+		}
+
+		return nil, err
+	}
 
 	return db, nil
 }
