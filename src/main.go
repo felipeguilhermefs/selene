@@ -12,7 +12,6 @@ import (
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
-	"github.com/felipeguilhermefs/selene/infrastructure/database"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
@@ -31,7 +30,7 @@ var templates embed.FS
 func run() error {
 	cfg := config.New()
 
-	db, err := database.Connect(cfg)
+	db, err := postgres.Connect(cfg)
 	if err != nil {
 		return err
 	}
