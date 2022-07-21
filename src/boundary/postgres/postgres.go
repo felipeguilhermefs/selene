@@ -1,8 +1,6 @@
 package postgres
 
 import (
-	"regexp"
-
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"gorm.io/gorm"
 )
@@ -16,10 +14,7 @@ func New(cfg config.ConfigStore) (*Postgres, error) {
 	return &Postgres{
 		db:             db,
 		BookRepository: &PostgresBookRepository{db},
-		UserRepository: &PostgresUserRepository{
-			db:         db,
-			EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
-		},
+		UserRepository: &PostgresUserRepository{db},
 	}, nil
 }
 

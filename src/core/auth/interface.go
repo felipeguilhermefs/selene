@@ -1,8 +1,27 @@
 package auth
 
-import "github.com/felipeguilhermefs/selene/boundary/postgres"
+type NewUser struct {
+	Name     string
+	Email    string
+	Password string
+}
+
+type UserAdder interface {
+	Add(user *NewUser) error
+}
+
+type FullUser struct {
+	ID       uint
+	Name     string
+	Email    string
+	Password string
+}
+
+type UserFetcher interface {
+	FetchOne(userID uint, id uint) (*FullUser, error)
+}
 
 type UserRepository interface {
-	Create(user *postgres.User) error
-	ByEmail(email string) (*postgres.User, error)
+	Add(user *NewUser) error
+	FindOne(email string) (*FullUser, error)
 }

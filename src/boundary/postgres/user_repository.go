@@ -1,9 +1,7 @@
 package postgres
 
 import (
-	"regexp"
-	"strings"
-
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/infra/errors"
 	"gorm.io/gorm"
 )
@@ -12,51 +10,39 @@ type User struct {
 	gorm.Model
 	Name     string
 	Email    string `gorm:"not null;unique_index"`
-	Password string `gorm:"-"`
-	Secret   string `gorm:"not null"`
+	Password string `gorm:"not null"`
 }
 
 type PostgresUserRepository struct {
-	db         *gorm.DB
-	EmailRegex *regexp.Regexp
+	db *gorm.DB
 }
 
-func (ur *PostgresUserRepository) Create(user *User) error {
-	normalizedEmail := ur.normalizeEmail(user.Email)
-
-	if !ur.EmailRegex.MatchString(normalizedEmail) {
-		return errors.ErrEmailInvalid
+func (ur *PostgresUserRepository) Add(user *auth.NewUser) error {
+	u := &User{
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
 	}
 
-	user.Email = normalizedEmail
-
-	return ur.db.Create(user).Error
+	return ur.db.Create(u).Error
 }
 
-func (ur *PostgresUserRepository) ByEmail(email string) (*User, error) {
-	normalized := ur.normalizeEmail(email)
+func (ur *PostgresUserRepository) FindOne(email string) (*auth.FullUser, error) {
+	var record User
 
-	if !ur.EmailRegex.MatchString(normalized) {
-		return nil, errors.ErrEmailInvalid
-	}
-
-	return ur.first("email = ?", normalized)
-}
-
-func (ur *PostgresUserRepository) first(query interface{}, params ...interface{}) (*User, error) {
-	var user User
-
-	err := ur.db.Where(query, params...).First(&user).Error
-	switch err {
-	case gorm.ErrRecordNotFound:
+	err := ur.db.Where("email = ?", email).First(&record).Error
+	if err == gorm.ErrRecordNotFound {
 		return nil, errors.ErrUserNotFound
-	case nil:
-		return &user, nil
-	default:
+	}
+
+	if err != nil {
 		return nil, err
 	}
-}
 
-func (ur *PostgresUserRepository) normalizeEmail(input string) string {
-	return strings.ToLower(strings.TrimSpace(input))
+	return &auth.FullUser{
+		ID:       record.ID,
+		Name:     record.Name,
+		Email:    record.Email,
+		Password: record.Password,
+	}, nil
 }

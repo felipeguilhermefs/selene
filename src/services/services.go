@@ -15,13 +15,13 @@ type Services struct {
 // New init all services
 func New(
 	cfg config.ConfigStore,
-	userRepository auth.UserRepository,
+	userControl *auth.UserControl,
 	sessionStore session.SessionStore,
 ) *Services {
 	passwordService := newPasswordService(cfg)
 
 	return &Services{
-		Auth:     newAuthService(sessionStore, userRepository, passwordService),
+		Auth:     newAuthService(sessionStore, userControl, passwordService),
 		Password: passwordService,
 	}
 }

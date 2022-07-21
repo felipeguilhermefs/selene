@@ -5,13 +5,15 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"regexp"
 	"syscall"
 
 	"github.com/felipeguilhermefs/selene/boundary/postgres"
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
-	"github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
+	authMiddleware "github.com/felipeguilhermefs/selene/infrastructure/middleware/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/csrf"
 	"github.com/felipeguilhermefs/selene/infrastructure/middleware/hsts"
 	htmlMiddleware "github.com/felipeguilhermefs/selene/infrastructure/middleware/html"
@@ -40,11 +42,16 @@ func run() error {
 		return err
 	}
 
-	srvcs := services.New(cfg, pg.UserRepository, sessionStore)
+	userControl := &auth.UserControl{
+		UserRepository: pg.UserRepository,
+		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+	}
+
+	srvcs := services.New(cfg, userControl, sessionStore)
 
 	views := view.NewViews(templates)
 
-	authenticated := auth.New(srvcs.Auth)
+	authenticated := authMiddleware.New(srvcs.Auth)
 	html := htmlMiddleware.New()
 
 	bookControl := &bookshelf.BookControl{
