@@ -26,11 +26,20 @@ func (uc *AuthControl) Add(user *NewUser) error {
 	return uc.UserRepository.Add(user)
 }
 
-func (uc *AuthControl) FetchOne(email string) (*FullUser, error) {
+func (uc *AuthControl) FetchOne(email string) (*User, error) {
 	normalizedEmail, err := uc.EmailNormalizer.Normalize(email)
 	if err != nil {
 		return nil, err
 	}
 
-	return uc.UserRepository.FindOne(normalizedEmail)
+	fullUser, err := uc.UserRepository.FindOne(normalizedEmail)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		ID:    fullUser.ID,
+		Name:  fullUser.Name,
+		Email: fullUser.Email,
+	}, nil
 }

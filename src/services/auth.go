@@ -11,7 +11,6 @@ import (
 
 // AuthService handle operations over sessions
 type AuthService interface {
-	GetUser(r *http.Request) (*auth.FullUser, error)
 	Login(w http.ResponseWriter, r *http.Request, email, password string) error
 	Logout(w http.ResponseWriter, r *http.Request) error
 	SignUp(w http.ResponseWriter, r *http.Request, user *postgres.User) error
@@ -38,22 +37,6 @@ type authService struct {
 	sessionStore    session.SessionStore
 	userAdder       auth.UserAdder
 	userFetcher     auth.UserFetcher
-}
-
-func (as *authService) GetUser(r *http.Request) (*auth.FullUser, error) {
-	email, err := as.sessionStore.GetUserID(r)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := as.userFetcher.FetchOne(email)
-	if err != nil {
-		return nil, err
-	}
-
-	user.Password = ""
-
-	return user, nil
 }
 
 func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {

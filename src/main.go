@@ -50,7 +50,7 @@ func run() error {
 
 	views := view.NewViews(templates)
 
-	authenticated := authMiddleware.New(srvcs.Auth)
+	authenticated := authMiddleware.New(authControl, sessionStore)
 	html := htmlMiddleware.New()
 
 	bookshelfControl := &bookshelf.BookshelfControl{
