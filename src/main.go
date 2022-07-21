@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"syscall"
 
-	"github.com/felipeguilhermefs/selene/boundary"
+	"github.com/felipeguilhermefs/selene/boundary/postgres"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/handlers"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
@@ -21,7 +21,6 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
-	"github.com/felipeguilhermefs/selene/repositories"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -39,12 +38,11 @@ func run() error {
 
 	sessionStore := session.NewStore(cfg)
 
-	repos := repositories.New(db)
-	if err := repos.AutoMigrate(); err != nil {
+	if err := postgres.RunMigrations(db); err != nil {
 		return err
 	}
 
-	userRepository := &boundary.PostgresUserRepository{
+	userRepository := &postgres.PostgresUserRepository{
 		DB:         db,
 		EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
 	}
@@ -57,7 +55,7 @@ func run() error {
 	html := htmlMiddleware.New()
 
 	bookControl := &bookshelf.BookControl{
-		BookRepository: &boundary.PostgresBookRepository{
+		BookRepository: &postgres.PostgresBookRepository{
 			DB: db,
 		},
 	}

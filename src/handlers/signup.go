@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/boundary"
+	"github.com/felipeguilhermefs/selene/boundary/postgres"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -36,7 +36,7 @@ func HandleSignup(signupView *view.View, authService services.AuthService) http.
 			return
 		}
 
-		newUser := boundary.User{
+		newUser := postgres.User{
 			Name:     form.Name,
 			Email:    form.Email,
 			Password: form.Password,

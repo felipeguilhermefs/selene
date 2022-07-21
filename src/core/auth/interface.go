@@ -1,8 +1,8 @@
 package auth
 
-import "github.com/felipeguilhermefs/selene/boundary"
+import "github.com/felipeguilhermefs/selene/boundary/postgres"
 
 type UserRepository interface {
-	Create(user *boundary.User) error
-	ByEmail(email string) (*boundary.User, error)
+	Create(user *postgres.User) error
+	ByEmail(email string) (*postgres.User, error)
 }
