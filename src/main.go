@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"regexp"
 	"syscall"
 
 	"github.com/felipeguilhermefs/selene/boundary/postgres"
@@ -43,8 +42,8 @@ func run() error {
 	}
 
 	authControl := &auth.AuthControl{
-		UserRepository: pg.UserRepository,
-		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+		UserRepository:  pg.UserRepository,
+		EmailNormalizer: auth.EmailNormalizer{},
 	}
 
 	srvcs := services.New(cfg, authControl, authControl, sessionStore)

@@ -1,15 +1,14 @@
 package auth
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 type AuthControl struct {
-	UserRepository UserRepository
-	EmailRegex     *regexp.Regexp
+	UserRepository  UserRepository
+	EmailNormalizer EmailNormalizer
 }
 
 func (uc *AuthControl) Add(user *NewUser) error {
@@ -17,10 +16,9 @@ func (uc *AuthControl) Add(user *NewUser) error {
 		return errors.ErrPasswordTooShort
 	}
 
-	normalizedEmail := uc.normalizeEmail(user.Email)
-
-	if !uc.EmailRegex.MatchString(normalizedEmail) {
-		return errors.ErrEmailInvalid
+	normalizedEmail, err := uc.EmailNormalizer.Normalize(user.Email)
+	if err != nil {
+		return err
 	}
 
 	user.Email = normalizedEmail
@@ -29,15 +27,10 @@ func (uc *AuthControl) Add(user *NewUser) error {
 }
 
 func (uc *AuthControl) FetchOne(email string) (*FullUser, error) {
-	normalized := uc.normalizeEmail(email)
-
-	if !uc.EmailRegex.MatchString(normalized) {
-		return nil, errors.ErrEmailInvalid
+	normalizedEmail, err := uc.EmailNormalizer.Normalize(email)
+	if err != nil {
+		return nil, err
 	}
 
-	return uc.UserRepository.FindOne(normalized)
-}
-
-func (uc *AuthControl) normalizeEmail(input string) string {
-	return strings.ToLower(strings.TrimSpace(input))
+	return uc.UserRepository.FindOne(normalizedEmail)
 }
