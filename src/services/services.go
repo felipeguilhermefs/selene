@@ -8,22 +8,18 @@ import (
 
 // Services all services in this app
 type Services struct {
-	Auth     AuthService
-	Password PasswordService
+	Auth AuthService
 }
 
 // New init all services
 func New(
 	cfg config.ConfigStore,
 	userAdder auth.UserAdder,
-	userFetcher auth.UserFetcher,
+	userVerifier auth.UserVerifier,
 	sessionStore session.SessionStore,
-	passwordEncripter auth.PasswordEncripter,
+	passwordComparer auth.PasswordComparer,
 ) *Services {
-	passwordService := newPasswordService(cfg, passwordEncripter)
-
 	return &Services{
-		Auth:     newAuthService(sessionStore, userAdder, userFetcher, passwordService),
-		Password: passwordService,
+		Auth: newAuthService(sessionStore, userAdder, userVerifier),
 	}
 }

@@ -19,32 +19,24 @@ type AuthService interface {
 func newAuthService(
 	sessionStore session.SessionStore,
 	userAdder auth.UserAdder,
-	userFetcher auth.UserFetcher,
-	passwordService PasswordService,
+	userVerifier auth.UserVerifier,
 ) AuthService {
 
 	return &authService{
-		passwordService: passwordService,
-		sessionStore:    sessionStore,
-		userAdder:       userAdder,
-		userFetcher:     userFetcher,
+		sessionStore: sessionStore,
+		userAdder:    userAdder,
+		userVerifier: userVerifier,
 	}
 }
 
 type authService struct {
-	passwordService PasswordService
-	sessionStore    session.SessionStore
-	userAdder       auth.UserAdder
-	userFetcher     auth.UserFetcher
+	sessionStore session.SessionStore
+	userAdder    auth.UserAdder
+	userVerifier auth.UserVerifier
 }
 
 func (as *authService) Login(w http.ResponseWriter, r *http.Request, email, password string) error {
-	user, err := as.userFetcher.FetchOne(email)
-	if err != nil {
-		return err
-	}
-
-	err = as.passwordService.Compare(user.Password, password)
+	user, err := as.userVerifier.Verify(email, password)
 	if err != nil {
 		return err
 	}

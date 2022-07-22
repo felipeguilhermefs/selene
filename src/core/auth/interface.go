@@ -20,6 +20,10 @@ type UserFetcher interface {
 	FetchOne(email string) (*User, error)
 }
 
+type UserVerifier interface {
+	Verify(email, password string) (*User, error)
+}
+
 type FullUser struct {
 	ID       uint
 	Name     string

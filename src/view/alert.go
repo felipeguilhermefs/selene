@@ -3,8 +3,8 @@ package view
 import (
 	"log"
 
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 const (
@@ -29,7 +29,7 @@ type Alert struct {
 func newErrorAlert(err error) *Alert {
 	var message string
 
-	if _, ok := err.(errors.PublicError); ok {
+	if _, ok := err.(auth.AuthError); ok {
 		message = err.Error()
 	} else if _, ok := err.(bookshelf.BookshelfError); ok {
 		message = err.Error()

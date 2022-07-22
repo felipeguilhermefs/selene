@@ -6,6 +6,10 @@ type PasswordEncripter interface {
 	Encript(password string) (string, error)
 }
 
+type PasswordComparer interface {
+	Compare(secret, password string) error
+}
+
 type PasswordControl struct {
 	MinLen int
 	Pepper string
@@ -23,4 +27,17 @@ func (pc *PasswordControl) Encript(password string) (string, error) {
 	}
 
 	return string(hashed), nil
+}
+
+func (pc *PasswordControl) Compare(secret, password string) error {
+	secretBytes := []byte(secret)
+	passwordBytes := []byte(password + pc.Pepper)
+
+	err := bcrypt.CompareHashAndPassword(secretBytes, passwordBytes)
+
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return ErrCredentialsInvalid
+	}
+
+	return err
 }

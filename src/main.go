@@ -47,9 +47,10 @@ func run() error {
 	}
 
 	authControl := &auth.AuthControl{
-		UserRepository:  pg.UserRepository,
-		EmailNormalizer: auth.EmailNormalizer{},
+		UserRepository:    pg.UserRepository,
+		EmailNormalizer:   auth.EmailNormalizer{},
 		PasswordEncripter: passwordControl,
+		PasswordComparer:  passwordControl,
 	}
 
 	srvcs := services.New(cfg, authControl, authControl, sessionStore, passwordControl)

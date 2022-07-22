@@ -4,6 +4,7 @@ type AuthControl struct {
 	UserRepository    UserRepository
 	EmailNormalizer   EmailNormalizer
 	PasswordEncripter PasswordEncripter
+	PasswordComparer  PasswordComparer
 }
 
 func (uc *AuthControl) Add(user *NewUser) error {
@@ -28,12 +29,7 @@ func (uc *AuthControl) Add(user *NewUser) error {
 }
 
 func (uc *AuthControl) FetchOne(email string) (*User, error) {
-	normalizedEmail, err := uc.EmailNormalizer.Normalize(email)
-	if err != nil {
-		return nil, err
-	}
-
-	fullUser, err := uc.UserRepository.FindOne(normalizedEmail)
+	fullUser, err := uc.findOne(email)
 	if err != nil {
 		return nil, err
 	}
@@ -43,4 +39,31 @@ func (uc *AuthControl) FetchOne(email string) (*User, error) {
 		Name:  fullUser.Name,
 		Email: fullUser.Email,
 	}, nil
+}
+
+func (uc *AuthControl) Verify(email, password string) (*User, error) {
+	fullUser, err := uc.findOne(email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = uc.PasswordComparer.Compare(fullUser.Password, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		ID:    fullUser.ID,
+		Name:  fullUser.Name,
+		Email: fullUser.Email,
+	}, nil
+}
+
+func (uc *AuthControl) findOne(email string) (*FullUser, error) {
+	normalizedEmail, err := uc.EmailNormalizer.Normalize(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return uc.UserRepository.FindOne(normalizedEmail)
 }
