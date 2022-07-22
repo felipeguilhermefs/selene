@@ -57,15 +57,10 @@ func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *postgres.User) error {
-	secret, err := as.passwordService.Generate(user.Password)
-	if err != nil {
-		return err
-	}
-
-	err = as.userAdder.Add(&auth.NewUser{
+	err := as.userAdder.Add(&auth.NewUser{
 		Name:     user.Name,
 		Email:    user.Email,
-		Password: secret,
+		Password: user.Password,
 	})
 	if err != nil {
 		return err

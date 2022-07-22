@@ -18,8 +18,9 @@ func New(
 	userAdder auth.UserAdder,
 	userFetcher auth.UserFetcher,
 	sessionStore session.SessionStore,
+	passwordEncripter auth.PasswordEncripter,
 ) *Services {
-	passwordService := newPasswordService(cfg)
+	passwordService := newPasswordService(cfg, passwordEncripter)
 
 	return &Services{
 		Auth:     newAuthService(sessionStore, userAdder, userFetcher, passwordService),

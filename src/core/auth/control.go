@@ -1,10 +1,9 @@
 package auth
 
-import "strings"
-
 type AuthControl struct {
-	UserRepository  UserRepository
-	EmailNormalizer EmailNormalizer
+	UserRepository    UserRepository
+	EmailNormalizer   EmailNormalizer
+	PasswordEncripter PasswordEncripter
 }
 
 func (uc *AuthControl) Add(user *NewUser) error {
@@ -17,11 +16,13 @@ func (uc *AuthControl) Add(user *NewUser) error {
 		return err
 	}
 
-	if strings.TrimSpace(user.Password) == "" {
-		return ErrPasswordTooShort
+	encriptedPassword, err := uc.PasswordEncripter.Encript(user.Password)
+	if err != nil {
+		return err
 	}
 
 	user.Email = normalizedEmail
+	user.Password = encriptedPassword
 
 	return uc.UserRepository.Add(user)
 }
