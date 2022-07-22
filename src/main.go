@@ -47,7 +47,7 @@ func run() error {
 		PasswordControl: auth.NewPasswordControl(cfg),
 	}
 
-	srvcs := services.New(cfg, authControl, authControl, sessionStore)
+	srvcs := services.New(authControl, sessionStore)
 
 	views := view.NewViews(templates)
 
@@ -58,7 +58,7 @@ func run() error {
 		BookRepository: pg.BookRepository,
 	}
 
-	hdlrs := handlers.New(srvcs, views, bookshelfControl)
+	hdlrs := handlers.New(srvcs, views, bookshelfControl, authControl, sessionStore)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: html(hdlrs.SignupPage)},

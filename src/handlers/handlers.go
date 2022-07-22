@@ -3,7 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
@@ -30,12 +32,14 @@ func New(
 	srvcs *services.Services,
 	views *view.Views,
 	bookshelfControl *bookshelf.BookshelfControl,
+	userVerifier auth.UserVerifier,
+	sessionStore session.SessionStore,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
 		Signup:      HandleSignup(&views.Signup, srvcs.Auth),
 		LoginPage:   HandleLoginPage(&views.Login),
-		Login:       HandleLogin(&views.Login, srvcs.Auth),
+		Login:       HandleLogin(&views.Login, userVerifier, sessionStore),
 		Logout:      HandleLogout(srvcs.Auth),
 		BooksPage:   HandleBooksPage(&views.Books, bookshelfControl),
 		NewBookPage: HandleNewBookPage(&views.NewBook),

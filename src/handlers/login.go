@@ -3,7 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/core/auth"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -22,7 +23,7 @@ func HandleLoginPage(loginView *view.View) http.HandlerFunc {
 	}
 }
 
-func HandleLogin(loginView *view.View, authService services.AuthService) http.HandlerFunc {
+func HandleLogin(loginView *view.View, userVerifier auth.UserVerifier, sessionStore session.SessionStore) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var form loginForm
@@ -34,7 +35,13 @@ func HandleLogin(loginView *view.View, authService services.AuthService) http.Ha
 			return
 		}
 
-		err = authService.Login(w, r, form.Email, form.Password)
+		user, err := userVerifier.Verify(form.Email, form.Password)
+		if err != nil {
+			loginView.Render(w, r, vd.WithError(err))
+			return
+		}
+
+		err = sessionStore.SignIn(w, r, user.Email)
 		if err != nil {
 			loginView.Render(w, r, vd.WithError(err))
 			return

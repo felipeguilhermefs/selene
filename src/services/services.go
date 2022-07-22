@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/felipeguilhermefs/selene/core/auth"
-	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
 )
 
@@ -13,12 +12,10 @@ type Services struct {
 
 // New init all services
 func New(
-	cfg config.ConfigStore,
 	userAdder auth.UserAdder,
-	userVerifier auth.UserVerifier,
 	sessionStore session.SessionStore,
 ) *Services {
 	return &Services{
-		Auth: newAuthService(sessionStore, userAdder, userVerifier),
+		Auth: newAuthService(sessionStore, userAdder),
 	}
 }
