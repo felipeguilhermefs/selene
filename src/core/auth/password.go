@@ -1,26 +1,33 @@
 package auth
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"github.com/felipeguilhermefs/selene/infrastructure/config"
+	"golang.org/x/crypto/bcrypt"
+)
 
-type PasswordEncripter interface {
-	Encript(password string) (string, error)
-}
-
-type PasswordComparer interface {
+type PasswordControl interface {
+	Generate(password string) (string, error)
 	Compare(secret, password string) error
 }
 
-type PasswordControl struct {
-	MinLen int
-	Pepper string
+func NewPasswordControl(cfg config.ConfigStore) PasswordControl {
+	return &bcriptPasswordControl{
+		minLen: cfg.GetInt("SELENE_PW_MIN_LEN", 8),
+		pepper: cfg.GetSecret("SELENE_PW_PEPPER", "PepperWith64Chars..............................................."),
+	}
 }
 
-func (pc *PasswordControl) Encript(password string) (string, error) {
-	if len(password) < pc.MinLen {
+type bcriptPasswordControl struct {
+	minLen int
+	pepper string
+}
+
+func (bpc *bcriptPasswordControl) Generate(password string) (string, error) {
+	if len(password) < bpc.minLen {
 		return "", ErrPasswordTooShort
 	}
 
-	raw := []byte(password + pc.Pepper)
+	raw := []byte(password + bpc.pepper)
 	hashed, err := bcrypt.GenerateFromPassword(raw, bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -29,9 +36,9 @@ func (pc *PasswordControl) Encript(password string) (string, error) {
 	return string(hashed), nil
 }
 
-func (pc *PasswordControl) Compare(secret, password string) error {
+func (bpc *bcriptPasswordControl) Compare(secret, password string) error {
 	secretBytes := []byte(secret)
-	passwordBytes := []byte(password + pc.Pepper)
+	passwordBytes := []byte(password + bpc.pepper)
 
 	err := bcrypt.CompareHashAndPassword(secretBytes, passwordBytes)
 

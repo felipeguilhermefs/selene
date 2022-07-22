@@ -1,10 +1,9 @@
 package auth
 
 type AuthControl struct {
-	UserRepository    UserRepository
-	EmailNormalizer   EmailNormalizer
-	PasswordEncripter PasswordEncripter
-	PasswordComparer  PasswordComparer
+	UserRepository  UserRepository
+	EmailNormalizer EmailNormalizer
+	PasswordControl PasswordControl
 }
 
 func (uc *AuthControl) Add(user *NewUser) error {
@@ -17,7 +16,7 @@ func (uc *AuthControl) Add(user *NewUser) error {
 		return err
 	}
 
-	encriptedPassword, err := uc.PasswordEncripter.Encript(user.Password)
+	encriptedPassword, err := uc.PasswordControl.Generate(user.Password)
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,7 @@ func (uc *AuthControl) Verify(email, password string) (*User, error) {
 		return nil, err
 	}
 
-	err = uc.PasswordComparer.Compare(fullUser.Password, password)
+	err = uc.PasswordControl.Compare(fullUser.Password, password)
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,6 @@ func New(
 	userAdder auth.UserAdder,
 	userVerifier auth.UserVerifier,
 	sessionStore session.SessionStore,
-	passwordComparer auth.PasswordComparer,
 ) *Services {
 	return &Services{
 		Auth: newAuthService(sessionStore, userAdder, userVerifier),

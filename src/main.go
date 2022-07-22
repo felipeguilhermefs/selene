@@ -41,19 +41,13 @@ func run() error {
 		return err
 	}
 
-	passwordControl := &auth.PasswordControl{
-		MinLen: cfg.GetInt("SELENE_PW_MIN_LEN", 8),
-		Pepper: cfg.GetSecret("SELENE_PW_PEPPER", "PepperWith64Chars..............................................."),
-	}
-
 	authControl := &auth.AuthControl{
-		UserRepository:    pg.UserRepository,
-		EmailNormalizer:   auth.EmailNormalizer{},
-		PasswordEncripter: passwordControl,
-		PasswordComparer:  passwordControl,
+		UserRepository:  pg.UserRepository,
+		EmailNormalizer: auth.EmailNormalizer{},
+		PasswordControl: auth.NewPasswordControl(cfg),
 	}
 
-	srvcs := services.New(cfg, authControl, authControl, sessionStore, passwordControl)
+	srvcs := services.New(cfg, authControl, authControl, sessionStore)
 
 	views := view.NewViews(templates)
 
