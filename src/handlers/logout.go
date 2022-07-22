@@ -4,13 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 )
 
-func HandleLogout(authService services.AuthService) http.HandlerFunc {
+func HandleLogout(sessionStore session.SessionStore) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := authService.Logout(w, r)
+		err := sessionStore.SignOut(w, r)
 		if err != nil {
 			log.Println(err)
 		}

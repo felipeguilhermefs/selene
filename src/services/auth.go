@@ -10,7 +10,6 @@ import (
 
 // AuthService handle operations over sessions
 type AuthService interface {
-	Logout(w http.ResponseWriter, r *http.Request) error
 	SignUp(w http.ResponseWriter, r *http.Request, user *postgres.User) error
 }
 
@@ -29,10 +28,6 @@ func newAuthService(
 type authService struct {
 	sessionStore session.SessionStore
 	userAdder    auth.UserAdder
-}
-
-func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
-	return as.sessionStore.SignOut(w, r)
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *postgres.User) error {

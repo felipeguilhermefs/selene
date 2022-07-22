@@ -40,7 +40,7 @@ func New(
 		Signup:      HandleSignup(&views.Signup, srvcs.Auth),
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, userVerifier, sessionStore),
-		Logout:      HandleLogout(srvcs.Auth),
+		Logout:      HandleLogout(sessionStore),
 		BooksPage:   HandleBooksPage(&views.Books, bookshelfControl),
 		NewBookPage: HandleNewBookPage(&views.NewBook),
 		NewBook:     HandleNewBook(&views.NewBook, bookshelfControl),
