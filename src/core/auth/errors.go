@@ -6,6 +6,7 @@ const (
 	ErrEmailInvalid       AuthError = "Email is invalid"
 	ErrUserNotFound       AuthError = "User not found"
 	ErrCredentialsInvalid AuthError = "Invalid credentials"
+	ErrNotLoggedIn        AuthError = "Not logged in"
 )
 
 type AuthError string

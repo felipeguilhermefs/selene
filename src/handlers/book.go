@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/felipeguilhermefs/selene/context"
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -24,7 +24,7 @@ func HandleBookPage(
 
 		user := context.User(r)
 		if user == nil {
-			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
+			bookView.Render(w, r, vd.WithError(auth.ErrNotLoggedIn))
 		}
 
 		book, err := bookFetcher.FetchOne(user.ID, id)
@@ -66,7 +66,7 @@ func HandleEditBook(
 
 		user := context.User(r)
 		if user == nil {
-			bookView.Render(w, r, vd.WithError(errors.ErrNotLoggedIn))
+			bookView.Render(w, r, vd.WithError(auth.ErrNotLoggedIn))
 		}
 
 		book := &bookshelf.UpdatedBook{

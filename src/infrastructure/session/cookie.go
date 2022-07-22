@@ -3,7 +3,7 @@ package session
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/infra/errors"
+	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/infrastructure/config"
 	"github.com/gorilla/sessions"
 )
@@ -44,7 +44,7 @@ func (ss *cookieStore) GetUserID(r *http.Request) (UserID, error) {
 	userID, ok := session.Values[userKey].(UserID)
 
 	if !ok || userID == noUser {
-		return "", errors.ErrNotLoggedIn
+		return "", auth.ErrNotLoggedIn
 	}
 
 	return userID, nil

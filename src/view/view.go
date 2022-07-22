@@ -10,11 +10,12 @@ import (
 	"sync"
 
 	"github.com/gorilla/csrf"
-
-	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
-const baseLayout = "base"
+const (
+	baseLayout               = "base"
+	ErrNoCSRFField CSRFError = "No CSRF field implemented"
+)
 
 // View represents a page that renders (lazily) from a template
 type View struct {
@@ -59,11 +60,17 @@ func (v *View) csrfTag(r *http.Request) template.FuncMap {
 
 	custom[csrf.TemplateTag] = func() (template.HTML, error) {
 		if r == nil {
-			return "", errors.ErrNoCSRFField
+			return "", ErrNoCSRFField
 		}
 
 		return csrf.TemplateField(r), nil
 	}
 
 	return custom
+}
+
+type CSRFError string
+
+func (e CSRFError) Error() string {
+	return string(e)
 }
