@@ -6,7 +6,6 @@ import (
 	"github.com/felipeguilhermefs/selene/core/auth"
 	"github.com/felipeguilhermefs/selene/core/bookshelf"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
-	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -29,15 +28,15 @@ type Handlers struct {
 
 // New init all handlers
 func New(
-	srvcs *services.Services,
 	views *view.Views,
 	bookshelfControl *bookshelf.BookshelfControl,
 	userVerifier auth.UserVerifier,
+	userAdder auth.UserAdder,
 	sessionStore session.SessionStore,
 ) *Handlers {
 	return &Handlers{
 		SignupPage:  HandleSignupPage(&views.Signup),
-		Signup:      HandleSignup(&views.Signup, srvcs.Auth),
+		Signup:      HandleSignup(&views.Signup, userAdder, sessionStore),
 		LoginPage:   HandleLoginPage(&views.Login),
 		Login:       HandleLogin(&views.Login, userVerifier, sessionStore),
 		Logout:      HandleLogout(sessionStore),

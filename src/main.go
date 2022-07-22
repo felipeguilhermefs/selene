@@ -20,7 +20,6 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
-	"github.com/felipeguilhermefs/selene/services"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -47,8 +46,6 @@ func run() error {
 		PasswordControl: auth.NewPasswordControl(cfg),
 	}
 
-	srvcs := services.New(authControl, sessionStore)
-
 	views := view.NewViews(templates)
 
 	authenticated := authMiddleware.New(authControl, sessionStore)
@@ -58,7 +55,7 @@ func run() error {
 		BookRepository: pg.BookRepository,
 	}
 
-	hdlrs := handlers.New(srvcs, views, bookshelfControl, authControl, sessionStore)
+	hdlrs := handlers.New(views, bookshelfControl, authControl, authControl, sessionStore)
 
 	routes := []router.Route{
 		{Method: "GET", Path: "/signup", Handler: html(hdlrs.SignupPage)},

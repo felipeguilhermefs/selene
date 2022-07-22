@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/felipeguilhermefs/selene/boundary/postgres"
-	"github.com/felipeguilhermefs/selene/services"
+	"github.com/felipeguilhermefs/selene/core/auth"
+	"github.com/felipeguilhermefs/selene/infrastructure/session"
 	"github.com/felipeguilhermefs/selene/view"
 )
 
@@ -24,7 +24,7 @@ func HandleSignupPage(signupView *view.View) http.HandlerFunc {
 	}
 }
 
-func HandleSignup(signupView *view.View, authService services.AuthService) http.HandlerFunc {
+func HandleSignup(signupView *view.View, userAdder auth.UserAdder, sessionStore session.SessionStore) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var form signupForm
@@ -36,13 +36,19 @@ func HandleSignup(signupView *view.View, authService services.AuthService) http.
 			return
 		}
 
-		newUser := postgres.User{
+		newUser := &auth.NewUser{
 			Name:     form.Name,
 			Email:    form.Email,
 			Password: form.Password,
 		}
 
-		err = authService.SignUp(w, r, &newUser)
+		err = userAdder.Add(newUser)
+		if err != nil {
+			signupView.Render(w, r, vd.WithError(err))
+			return
+		}
+
+		err = sessionStore.SignIn(w, r, newUser.Email)
 		if err != nil {
 			signupView.Render(w, r, vd.WithError(err))
 			return
