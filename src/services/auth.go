@@ -5,7 +5,6 @@ import (
 
 	"github.com/felipeguilhermefs/selene/boundary/postgres"
 	"github.com/felipeguilhermefs/selene/core/auth"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
 )
 
@@ -58,10 +57,6 @@ func (as *authService) Logout(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (as *authService) SignUp(w http.ResponseWriter, r *http.Request, user *postgres.User) error {
-	if user.Email == "" {
-		return errors.ErrEmailRequired
-	}
-
 	secret, err := as.passwordService.Generate(user.Password)
 	if err != nil {
 		return err

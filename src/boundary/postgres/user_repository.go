@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"github.com/felipeguilhermefs/selene/core/auth"
-	"github.com/felipeguilhermefs/selene/infra/errors"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +31,7 @@ func (ur *PostgresUserRepository) FindOne(email string) (*auth.FullUser, error) 
 
 	err := ur.db.Where("email = ?", email).First(&record).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil, errors.ErrUserNotFound
+		return nil, auth.ErrUserNotFound
 	}
 
 	if err != nil {

@@ -3,8 +3,6 @@ package auth
 import (
 	"regexp"
 	"strings"
-
-	"github.com/felipeguilhermefs/selene/infra/errors"
 )
 
 var emailRegex *regexp.Regexp = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`)
@@ -16,7 +14,7 @@ func (en *EmailNormalizer) Normalize(email string) (string, error) {
 	normalizedEmail := strings.ToLower(strings.TrimSpace(email))
 
 	if !emailRegex.MatchString(normalizedEmail) {
-		return "", errors.ErrEmailInvalid
+		return "", ErrEmailInvalid
 	}
 
 	return normalizedEmail, nil

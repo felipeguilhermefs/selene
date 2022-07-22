@@ -1,10 +1,6 @@
 package auth
 
-import (
-	"strings"
-
-	"github.com/felipeguilhermefs/selene/infra/errors"
-)
+import "strings"
 
 type AuthControl struct {
 	UserRepository  UserRepository
@@ -12,13 +8,17 @@ type AuthControl struct {
 }
 
 func (uc *AuthControl) Add(user *NewUser) error {
-	if strings.TrimSpace(user.Password) == "" {
-		return errors.ErrPasswordTooShort
+	if user.Email == "" {
+		return ErrEmailRequired
 	}
 
 	normalizedEmail, err := uc.EmailNormalizer.Normalize(user.Email)
 	if err != nil {
 		return err
+	}
+
+	if strings.TrimSpace(user.Password) == "" {
+		return ErrPasswordTooShort
 	}
 
 	user.Email = normalizedEmail
