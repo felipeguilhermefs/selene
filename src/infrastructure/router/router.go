@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 type Route struct {
@@ -19,15 +20,20 @@ func New(
 	middlewares []Middleware,
 	notFound http.Handler,
 ) http.Handler {
-	// r.Use(middleware.Logger)
 	router := chi.NewRouter()
 
-	for _, r := range routes {
-		router.Method(r.Method, r.Path, r.Handler)
-	}
+	router.Use(middleware.Logger)
+	router.Use(middleware.RequestID)
+	router.Use(middleware.CleanPath)
+	router.Use(middleware.StripSlashes)
+	router.Use(middleware.Recoverer)
 
 	for _, md := range middlewares {
 		router.Use(md)
+	}
+
+	for _, r := range routes {
+		router.Method(r.Method, r.Path, r.Handler)
 	}
 
 	router.NotFound(notFound.ServeHTTP)
