@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/schema"
 )
 
@@ -33,9 +33,7 @@ func parseValues(values url.Values, dst interface{}) error {
 }
 
 func getUIntFromPath(r *http.Request, variable string) (uint, error) {
-	vars := mux.Vars(r)
-
-	res, err := strconv.Atoi(vars[variable])
+	res, err := strconv.Atoi(chi.URLParam(r, variable))
 	if err != nil {
 		return 0, err
 	}

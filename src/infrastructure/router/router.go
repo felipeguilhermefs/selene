@@ -3,7 +3,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 type Route struct {
@@ -19,17 +19,18 @@ func New(
 	middlewares []Middleware,
 	notFound http.Handler,
 ) http.Handler {
-	router := mux.NewRouter()
+	// r.Use(middleware.Logger)
+	router := chi.NewRouter()
 
 	for _, r := range routes {
-		router.Handle(r.Path, r.Handler).Methods(r.Method)
+		router.Method(r.Method, r.Path, r.Handler)
 	}
 
 	for _, md := range middlewares {
-		router.Use(mux.MiddlewareFunc(md))
+		router.Use(md)
 	}
 
-	router.NotFoundHandler = notFound
+	router.NotFound(notFound.ServeHTTP)
 
 	return router
 }
