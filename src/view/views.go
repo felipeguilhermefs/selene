@@ -18,17 +18,17 @@ type Views struct {
 }
 
 // NewViews init all views
-func NewViews(templates fs.FS) *Views {
+func NewViews(fileSystem fs.FS) *Views {
 	layouts := layoutFiles()
 
 	return &Views{
-		Books:    View{name: templateFile("books"), layouts: layouts, templates: templates},
-		EditBook: View{name: templateFile("book"), layouts: layouts, templates: templates},
-		Error:    View{name: templateFile("error"), layouts: layouts, templates: templates},
-		Login:    View{name: templateFile("login"), layouts: layouts, templates: templates},
-		NewBook:  View{name: templateFile("new_book"), layouts: layouts, templates: templates},
-		NotFound: View{name: templateFile("404"), layouts: layouts, templates: templates},
-		Signup:   View{name: templateFile("signup"), layouts: layouts, templates: templates},
+		Books:    View{name: templateFile("books"), layouts: layouts, fileSystem: fileSystem},
+		EditBook: View{name: templateFile("book"), layouts: layouts, fileSystem: fileSystem},
+		Error:    View{name: templateFile("error"), layouts: layouts, fileSystem: fileSystem},
+		Login:    View{name: templateFile("login"), layouts: layouts, fileSystem: fileSystem},
+		NewBook:  View{name: templateFile("new_book"), layouts: layouts, fileSystem: fileSystem},
+		NotFound: View{name: templateFile("404"), layouts: layouts, fileSystem: fileSystem},
+		Signup:   View{name: templateFile("signup"), layouts: layouts, fileSystem: fileSystem},
 	}
 }
 

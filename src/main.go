@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"log"
 	"os"
 	"os/signal"
@@ -20,11 +19,9 @@ import (
 	"github.com/felipeguilhermefs/selene/infrastructure/router"
 	"github.com/felipeguilhermefs/selene/infrastructure/server"
 	"github.com/felipeguilhermefs/selene/infrastructure/session"
+	"github.com/felipeguilhermefs/selene/templates"
 	"github.com/felipeguilhermefs/selene/view"
 )
-
-//go:embed templates
-var templates embed.FS
 
 func run() error {
 	cfg := config.New()
@@ -46,7 +43,7 @@ func run() error {
 		PasswordControl: auth.NewPasswordControl(cfg),
 	}
 
-	views := view.NewViews(templates)
+	views := view.NewViews(templates.FS)
 
 	authenticated := authMiddleware.New(authControl, sessionStore)
 	html := htmlMiddleware.New()

@@ -19,12 +19,12 @@ const (
 
 // View represents a page that renders (lazily) from a template
 type View struct {
-	name      string
-	once      sync.Once
-	layouts   string
-	templates fs.FS
-	tpl       *template.Template
-	tplerr    error
+	name       string
+	once       sync.Once
+	layouts    string
+	fileSystem fs.FS
+	tpl        *template.Template
+	tplerr     error
 }
 
 // Render will render and enrich a view template with provided data
@@ -52,7 +52,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data *Data) {
 func (v *View) parse() {
 	v.tpl, v.tplerr = template.New("").
 		Funcs(v.csrfTag(nil)).
-		ParseFS(v.templates, v.name, v.layouts)
+		ParseFS(v.fileSystem, v.name, v.layouts)
 }
 
 func (v *View) csrfTag(r *http.Request) template.FuncMap {
